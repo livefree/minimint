@@ -42,7 +42,7 @@ For any non-trivial task, read these in order before writing code:
 
 These are derived from `REVISIONS.md` R-T0.g and locked. Lint rules enforce them; CI fails if violated.
 
-1. **No raw color hex in JSX or component CSS.** Use `rgb(var(--mint))` or Tailwind `bg-mint`. The only place hex is allowed is `styles.css`.
+1. **No raw color hex in JSX or component CSS.** Use `rgb(var(--mint))` or Tailwind `bg-mint`. Hex is allowed only in `styles.css`, OR with a per-line `// lint-tokens-ok` pragma + sibling justification comment for platform-level exceptions (e.g., Next.js viewport `themeColor` consumed pre-CSS by the browser). Pragma use must be rare and explained.
 2. **No raw numeric font sizes.** Use role-based utilities (`.t-meta`, `.t-row`, `.t-display`, …) defined in `styles.css`. No `text-[13.5px]` arbitrary values; no `style={{ fontSize: 13.5 }}`.
 3. **No `Math.random()` in SVG IDs.** Use `React.useId()` (SSR-safe).
 4. **Every TanStack Query key for profile-scoped data MUST include `profileId` as the second element.** Use `useProfileScopedQuery()` wrapper — it throws at dev time if violated.

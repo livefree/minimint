@@ -81,6 +81,11 @@ for (const dir of SCAN_DIRS) {
     const text = readFileSync(file, 'utf8');
     const lines = text.split('\n');
     lines.forEach((line, i) => {
+      // Per-line pragma: `// lint-tokens-ok` skips all rules on that line.
+      // Use sparingly; reserved for true platform-level exceptions like
+      // Next.js viewport themeColor metadata that browsers consume as
+      // raw hex pre-CSS. Document the reason in a sibling comment.
+      if (/\/\/\s*lint-tokens-ok\b/.test(line)) return;
       for (const rule of RULES) {
         rule.re.lastIndex = 0;
         if (rule.re.test(line) && rule.test(line)) {

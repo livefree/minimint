@@ -18,9 +18,12 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   viewportFit: 'cover',
+  // Browser status-bar color — consumed as HTML <meta> pre-CSS, so must be
+  // a literal hex (cannot reference CSS vars). Keep these two values in
+  // sync with --bg / light counterpart in references/designs/styles.css.
   themeColor: [
-    { media: '(prefers-color-scheme: dark)', color: '#07070a' },
-    { media: '(prefers-color-scheme: light)', color: '#f2f2f7' },
+    { media: '(prefers-color-scheme: dark)', color: '#07070a' }, // lint-tokens-ok
+    { media: '(prefers-color-scheme: light)', color: '#f2f2f7' }, // lint-tokens-ok
   ],
 };
 
