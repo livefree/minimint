@@ -52,3 +52,11 @@ db/migrations/meta/
 .pnpm-debug.log*
 .turbo/
 tsconfig.tsbuildinfo
+
+# Probe artifacts — large JSON snapshots; commit only ANALYSIS.md
+logs/probes/*-AAPL-*.json
+logs/probes/*-MSFT-*.json
+logs/probes/*-SPY-*.json
+logs/probes/*-GOOGL-*.json
+logs/probes/*-SEARCH-*.json
+logs/probes/*_summary.json
