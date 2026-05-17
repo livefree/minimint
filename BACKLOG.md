@@ -11,7 +11,7 @@
 ## P0 — sprint 0 / 1 prerequisites
 
 - [x] root scaffolding (this commit)
-- [ ] `pnpm install` + `pnpm dev` proof-of-bootability
+- [x] `pnpm install` + `pnpm dev` proof-of-bootability (cab2658)
 - [ ] Neon project provisioned via MCP; `DATABASE_URL` in `.env.local`
 - [ ] initial Drizzle migration applied (`0000_init.sql` per DATABASE_SPEC §8.2)
 - [ ] seed `app_settings` singleton with bcrypt-hashed operator password

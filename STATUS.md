@@ -15,7 +15,7 @@
   - [x] `CLAUDE.md` + `AGENTS.md` + `.claude/` agents & commands
   - [x] `package.json` + tsconfig + Next.js + Drizzle + lint configs
   - [x] CI workflow + PR template + ADR template
-  - [ ] First `pnpm install` + `pnpm dev` proof
+  - [x] First `pnpm install` + `pnpm dev` proof (cab2658 · 5 routes built · /api/health returns valid JSON · token classes render in HTML)
   - [ ] First Neon DB project created + initial migration applied
 - **blockers**: none
 - **exit criteria**: `pnpm dev` shows a login screen; `pnpm test` runs (0 tests OK); CI green on first commit
