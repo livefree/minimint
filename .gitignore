@@ -45,7 +45,9 @@ test-results/
 *.swp
 
 # Drizzle journal (committed by some teams; we keep generated SQL only)
-db/migrations/meta/
+# db/migrations/meta/ IS tracked — drizzle-kit reads _journal.json and
+# snapshot files to compute the next migration. Losing these would
+# break `pnpm db:generate` cohesion across machines.
 
 # Misc
 *.log
