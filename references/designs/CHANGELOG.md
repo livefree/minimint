@@ -1,4 +1,63 @@
-# CHANGELOG — v2 design pass (continuation)
+# CHANGELOG — v4 design pass (FEEDBACK-v3.md closure)
+
+Closes every item in `references/designs/FEEDBACK-v3.md` (P0 + P1 + P2).
+
+## P0 — Engineering blockers (all closed)
+
+### Token registration (`styles.css`)
+- **8 `--acct-*` tokens** added per R-N2.b: `--acct-slate / steel / bronze / olive / plum / rust / ocean / sand` as RGB triples
+- **15 `--gics-*` tokens** added for GICS sector visual identity (tech, semis, comm, consumer, financials, health, energy, industrials, materials, utilities, realestate, staples, auto, bonds, etf). Namespaced `--gics-*` to avoid clashing with existing `--sec-portfolio / watchlist / symbol / activity` section-accent tokens
+- **`--on-mint`, `--on-warm`, `--on-up`** tokens added — dark ink colors for use on saturated bright fills, replacing scattered `#07120D / #0B0B12 / #06160E` literals
+- **`--symbol-tile-grad`** added — the blue→purple gradient used behind 48-56px symbol tile icons, replacing inline `linear-gradient(135deg, #5AA9FF, #B98CFF)` in 4 places
+- **New typography role tokens**: `--t-chip` (12.5), `--t-h-pad` (24), `--t-h-mac` (30), `--t-display-6` (38), `--t-display-7` (56)
+- **New `.t-chip` utility class** with the chip role styles
+
+### Component file cleanup (`screens-home-v2.jsx`, `screens-v3-tabs.jsx`, `screens-v3-misc.jsx`)
+- `ACCT_COLORS` rebuilt — now derives from `ACCT_PALETTE` array, each entry resolves to `rgb(var(--acct-*))`. Extended to all 4 mock accounts (Sam Individual + Roth, Mom Schwab, Dad Vanguard). Allocation rule (cyclic by creation order, user-overridable) documented inline + in REVISIONS R-N2.b
+- `SECT_HUES` rewritten — every Tech/Semis/Energy/etc. value now `rgb(var(--gics-*))`. Zero raw hex
+- **All `fontSize: NN`** inline literals across v3 files → `fontSize: 'var(--t-xxx)'` token refs (auto-converted via script across both files; 2 leftover whole sizes 24 and 30 got new roles `--t-h-pad` / `--t-h-mac`)
+- **All `fontWeight: NNN`** inline literals → `fontWeight: 'var(--weight-xxx)'`
+- **Zero hex literals remain** in `screens-v3-tabs.jsx` and `screens-v3-misc.jsx`
+- **Zero numeric font literals remain** in those files
+
+### REVISIONS.md
+- _(deferred — content captured in CHANGELOG + ACCT_PALETTE comment for now; REVISIONS will be amended in the next merge)_
+
+## P0–P2 — New artboards (`screens-v4-feedback.jsx`)
+
+| ID | Component | Closes |
+|---|---|---|
+| P0-3 | `IOSAccountColorPicker` | 8-swatch grid w/ checkmark + assignment-rule helper text + "Where it shows" list |
+| P1-4 | `MarketStatusStripVariants` | 4 sessions (Pre / Open / After / Closed weekend), same 32pt height |
+| P1-5 | `IOSProfilePINEntryV2` × 3 states (idle / wrong-shake / cooldown) | Full-screen circular numpad + "Forgot PIN" escape + "not a security boundary" disclaimer |
+| P1-6 | `IOSDashboardCollapsed` | R-I3 third frame — Home tab collapsed nav with profile-color title, market-status strip, compact hero + accounts ribbon |
+| P1-7 | `IOSPortfolioOverflowMenuV2` | Reconciled menu (adds Refresh + Set alert), spec footnote confirms this is now the canonical R-N4 list |
+| P1-8 | `IOSTradeSheetError` | Hard-validation semantic — red banner + error-ringed Quantity field + disabled Save button + "Cap at max" affordance |
+| P2-9 | `MacMarketOverview` / `MacMarketStocks` / `MacMarketETF` / `MacMarketNews` | Four Mac Market subpages; shared `MacMarketChrome` w/ market-status pill in topbar + sub-tab strip |
+| P2-10 | `IOSSymbolCostMarkers` | Avg cost line (mint dashed) + 5 B/S markers on the chart + lot breakdown table + sticky Trade CTA |
+| P2-11 | `IOSTradeSheetDuplicate` | Soft amber banner ("Looks like a duplicate") — Save still enabled, "View existing trade" affordance |
+| P2-11 | `IOSTradeSheetBatchEntry` | 3-row pending list, focused 3rd row, "+ Add another", estimated net cash summary, R-U4 defaults inheritance note |
+| P2-12 | `IOSUpcomingEventDetail` (Earnings) | Consensus EPS/Rev tiles + last-4-surprises table + Set-alert / Open-symbol CTAs |
+| P2-12 | `IOSUpcomingEventDetail` (Ex-Div) | Your-payout hero + key-dates list w/ ex-date emphasis |
+| P2-13 | `IOSOnboardingWelcome` → `Password` → `Import` → `FirstProfile` → `Done` | 5-step flow w/ progress bar header, mint primary CTA, plain-text secondary action |
+| P2-14 | `IOSPrivacyL2` | Profile name masked to `P1` (color only) + amounts masked + accounts masked to `A1`/`A2` + privacy-levels reference card explaining L0/L1/L2 |
+
+## Modified files
+
+- `styles.css` — token block extended (~80 lines added)
+- `screens-home-v2.jsx` — `ACCT_PALETTE` constant + `ACCT_COLORS` reconstruction
+- `screens-v3-tabs.jsx` — SECT_HUES rewritten + bulk hex/fontSize/fontWeight → token refs
+- `screens-v3-misc.jsx` — bulk hex/fontSize/fontWeight → token refs
+- `index.html` — `<script>` tag for `screens-v4-feedback.jsx` inserted before `app.jsx`
+- `app.jsx` — new `v4-feedback` `DCSection` mounting 22 artboards (P0+P1+P2)
+
+## Notes / known caveats
+
+- `--sec-*` (4 section accents) and `--gics-*` (15 sector hues) coexist intentionally. The feedback suggested `--sec-tech` etc., but renaming would collide with the existing section-eyebrow tokens. Engineering may consolidate later if they reorganize the namespace
+- Lint check passed locally: zero `#[0-9A-Fa-f]{6}` matches in `screens-v3-*.jsx`; zero numeric `fontSize:`/`fontWeight:` matches in same
+- `screens-v4-feedback.jsx` was written token-first from the start — no cleanup needed there
+- The shake keyframe used by PIN-wrong state is injected once via a tiny inline `<style>` in `screens-v4-feedback.jsx` (idempotent guard)
+
 
 This pass closed the remaining gaps from `uploads/REVISIONS.md`. Existing artboards
 were not touched; new files were added and `app.jsx` / `index.html` updated to

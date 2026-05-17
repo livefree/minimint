@@ -49,6 +49,53 @@
   --sec-symbol:      201 182 255;   /* lavender */
   --sec-activity:    255 193 118;   /* amber */
 
+  /* ── Account colors (R-N2.b) ─────────────────────────────
+     8 muted hues, intentionally distinct from profile palette
+     so an account and a profile are never confused at a glance.
+     Used as left-edge stripes on holdings rows + Home account
+     ribbon top stripe + Trade Sheet account swatch.
+     Assignment rule: see REVISIONS.md R-N2.b (cyclic by creation
+     order; user-overridable in Account Editor). */
+  --acct-slate:   148 163 184;
+  --acct-steel:   122 137 158;
+  --acct-bronze:  224 178 116;
+  --acct-olive:   190 187 130;
+  --acct-plum:    192 132 188;
+  --acct-rust:    219 142 116;
+  --acct-ocean:   122 176 255;
+  --acct-sand:    214 196 162;
+
+  /* ── GICS sector colors (R-T4) ───────────────────────────
+     Used for sector-attributed dots (allocation donut, sector
+     heatmap, sector tags on news / market rows). Naming
+     intentionally namespaced `--gics-*` to avoid clashing with
+     the section-accent eyebrow tokens (--sec-portfolio etc).
+     Engineering may rename to --sec-tech / --sec-energy if the
+     namespace is reorganized first. */
+  --gics-tech:        122 182 255;
+  --gics-semis:       201 182 255;
+  --gics-comm:         96 165 250;
+  --gics-consumer:    255 193 118;
+  --gics-financials:  242 180  92;
+  --gics-health:       52 211 153;
+  --gics-energy:      248 113 113;
+  --gics-industrials: 148 163 184;
+  --gics-materials:   217 160 102;
+  --gics-utilities:   103 232 249;
+  --gics-realestate:  192 132 252;
+  --gics-staples:     251 191  36;
+  --gics-auto:        255 138 171;
+  --gics-bonds:       165 180 252;
+  --gics-etf:         107 232 184;
+
+  /* ── On-color text (R-T0.a continuation) ─────────────────
+     Use as `color` when text sits on top of a saturated bright
+     fill (mint CTA bg, account-colored chip). Replaces ad-hoc
+     #07120D / #0B0B12 / #06160E in components. */
+  --on-mint:    7  18  13;     /* #07120D — dark ink for mint bg */
+  --on-warm:   11  11  18;     /* #0B0B12 — dark ink for amber/coral */
+  --on-up:      6  22  14;     /* #06160E — dark ink for --up bg */
+
   /* ── Profile accents (R-P2) ──────────────────────────────
      Eight distinct profile colors. The active profile binds
      --current-profile = var(--p-N) at app root on switch.
@@ -83,6 +130,12 @@
   --down-area-1:  rgb(var(--down) / 0);
   --mint-soft:    rgb(var(--mint) / 0.16);
 
+  /* ── Symbol tile gradient (decorative) ───────────────────
+     The blue→purple gradient used behind the per-symbol 48-56px
+     icon tile in Symbol detail headers and Trade Sheet. Wrapped
+     as a token so component files don't carry raw hex. */
+  --symbol-tile-grad: linear-gradient(135deg, rgb(90 169 255), rgb(185 140 255));
+
   /* ── Hero ambient gradients (R-T2) ───────────────────────
      Direction picked by today's net P/L sign on consumption. */
   --hero-grad-up:      radial-gradient(140% 90% at 0% 0%, rgb(var(--up) / 0.16) 0%, transparent 55%);
@@ -106,6 +159,7 @@
   --t-caption:       11px;
   --t-eyebrow:       11.5px;
   --t-aux:           12px;
+  --t-chip:          12.5px;  /* segmented controls, chip text */
   --t-stat:          13px;
   --t-stat-mac:      14.5px;
   --t-body:          13.5px;
@@ -115,13 +169,17 @@
   --t-row-strong-2:  17px;
   --t-h-sub:         18px;
   --t-h:             22px;
+  --t-h-pad:         24px;   /* iPad medium hero numbers */
   --t-h-2:           26px;
   --t-h-3:           28px;
+  --t-h-mac:         30px;   /* mac symbol-detail title */
   --t-display:       32px;
   --t-display-2:     34px;
   --t-display-3:     40px;
   --t-display-4:     42px;
   --t-display-5:     46px;
+  --t-display-6:     38px;   /* mac hero P/L / symbol price compact */
+  --t-display-7:     56px;   /* iPad hero net worth */
 
   /* ── Letter-spacing roles (R-T0.c) ──────────────────────── */
   --tracking-display:  -0.025em;
@@ -195,6 +253,7 @@ body {
 .t-caption    { font-size: var(--t-caption);  font-weight: var(--weight-medium); color: rgb(var(--text-3) / 0.38); }
 .t-eyebrow    { font-size: var(--t-eyebrow);  letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; font-weight: var(--weight-bold); }
 .t-aux        { font-size: var(--t-aux);      font-weight: var(--weight-medium); color: rgb(var(--text-2) / 0.62); }
+.t-chip       { font-size: var(--t-chip);     font-weight: var(--weight-semi); }
 .t-stat       { font-size: var(--t-stat);     font-weight: var(--weight-bold); }
 .t-stat-mac   { font-size: var(--t-stat-mac); font-weight: var(--weight-bold); }
 .t-body       { font-size: var(--t-body); }

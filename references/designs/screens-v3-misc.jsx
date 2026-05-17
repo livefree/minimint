@@ -26,7 +26,7 @@ function IOSCollapsedNav({ title, profile, leading, trailing, accent }) {
       {leading || <ProfileChip color={c} name={profile?.name || 'Sam'}
                                 initials={profile?.avatar_value?.[0] || 'S'}/>}
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 17, fontWeight: 700, letterSpacing: '-0.005em', color: accent || c }}>
+        <div style={{ fontSize: 'var(--t-row-strong-2)', fontWeight: 'var(--weight-bold)', letterSpacing: '-0.005em', color: accent || c }}>
           {title}
         </div>
       </div>
@@ -44,11 +44,11 @@ function SpecChip({ at, label }) {
       margin: '12px 16px', padding: '10px 12px',
       borderRadius: 10, background: 'rgb(255 193 118 / 0.10)',
       border: '.5px solid rgb(255 193 118 / 0.30)',
-      color: '#FFC176',
+      color: 'rgb(var(--sec-activity))',
       display: 'flex', alignItems: 'center', gap: 10,
-      fontSize: 11.5, fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase',
+      fontSize: 'var(--t-eyebrow)', fontWeight: 'var(--weight-bold)', letterSpacing: '0.04em', textTransform: 'uppercase',
     }}>
-      <Icon name="chart" size={12} color="#FFC176"/>
+      <Icon name="chart" size={12} color="rgb(var(--sec-activity))"/>
       {at} · {label}
     </div>
   );
@@ -83,7 +83,7 @@ function IOSWatchlistCollapsed({ tweaks, height = 1080 }) {
               <div key={l} style={{
                 position: 'relative',
                 padding: '10px 0 12px',
-                fontSize: 13.5, fontWeight: i === 0 ? 700 : 500,
+                fontSize: 'var(--t-body)', fontWeight: i === 0 ? 700 : 500,
                 color: i === 0 ? 'rgb(var(--text))' : 'rgb(var(--text-3) / 0.38)',
               }}>
                 {l}
@@ -136,12 +136,12 @@ function IOSAccountsCollapsed({ tweaks, height = 1080 }) {
             background: 'rgb(var(--surface-1))', borderRadius: 999,
             boxShadow: 'var(--hairline-top)',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-            fontSize: 13.5, fontWeight: 700,
+            fontSize: 'var(--t-body)', fontWeight: 'var(--weight-bold)',
           }}>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
               <Icon name="briefcase" size={12} color="rgb(var(--text-2) / 0.62)"/>
               All accounts
-              <span style={{ fontSize: 10.5, padding: '1px 6px', borderRadius: 999,
+              <span style={{ fontSize: 'var(--t-meta)', padding: '1px 6px', borderRadius: 999,
                               background: 'rgb(var(--surface-2))', color: 'rgb(var(--text-3) / 0.38)' }}>2</span>
             </span>
             <Icon name="chevron-d" size={11} color="rgb(var(--text-2) / 0.62)"/>
@@ -164,12 +164,12 @@ function IOSAccountsCollapsed({ tweaks, height = 1080 }) {
                 borderBottom: i === 7 ? 'none' : '.5px solid var(--separator)',
               }}>
                 <div>
-                  <div style={{ fontSize: 15, fontWeight: 800 }}>{p.sym}</div>
+                  <div style={{ fontSize: 'var(--t-base)', fontWeight: 'var(--weight-black)' }}>{p.sym}</div>
                   <div className="t-meta" style={{ marginTop: 2 }}>{p.qty} sh</div>
                 </div>
                 <div className="tnum t-aux">{fmtMoney(p.marketValue, { cents: false })}</div>
                 <div className="tnum" style={{
-                  textAlign: 'right', fontWeight: 700,
+                  textAlign: 'right', fontWeight: 'var(--weight-bold)',
                   color: p.symbol.up ? 'rgb(var(--up))' : 'rgb(var(--down))',
                 }}>
                   {(p.todayPL >= 0 ? '+' : '') + fmtMoney(Math.abs(p.todayPL))}
@@ -227,19 +227,19 @@ function IOSStatusBarProfileChip({ tweaks, height = 844 }) {
                 color={c}
                 size={36}/>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 11.5, fontWeight: 700, letterSpacing: '0.08em',
+                <div style={{ fontSize: 'var(--t-eyebrow)', fontWeight: 'var(--weight-bold)', letterSpacing: '0.08em',
                                 textTransform: 'uppercase', color: c, opacity: 0.85 }}>
                   Viewing
                 </div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginTop: 3 }}>
-                  <span style={{ fontSize: 17, fontWeight: 800, color: c, letterSpacing: '-0.01em' }}>
+                  <span style={{ fontSize: 'var(--t-row-strong-2)', fontWeight: 'var(--weight-black)', color: c, letterSpacing: '-0.01em' }}>
                     {s.profile.name}
                   </span>
                   <span className="t-aux">{s.profile.display_name}</span>
                 </div>
                 <div className="tnum t-aux" style={{ marginTop: 4 }}>
                   Today{' '}
-                  <span style={{ color: s.up ? 'rgb(var(--up))' : 'rgb(var(--down))', fontWeight: 700 }}>
+                  <span style={{ color: s.up ? 'rgb(var(--up))' : 'rgb(var(--down))', fontWeight: 'var(--weight-bold)' }}>
                     {s.today}
                   </span>
                 </div>
@@ -278,11 +278,11 @@ function IOSProfilePINSetup({ tweaks, height = 980 }) {
           <div style={{ padding: '8px 16px 12px',
                         display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4,
-                            color: c, fontSize: 15, fontWeight: 600 }}>
+                            color: c, fontSize: 'var(--t-base)', fontWeight: 'var(--weight-semi)' }}>
               <Icon name="chevron-l" size={14} color={c}/> Profile
             </span>
-            <div style={{ fontSize: 17, fontWeight: 700 }}>Set PIN</div>
-            <span style={{ fontSize: 15, fontWeight: 700, color: c, opacity: 0.42 }}>Save</span>
+            <div style={{ fontSize: 'var(--t-row-strong-2)', fontWeight: 'var(--weight-bold)' }}>Set PIN</div>
+            <span style={{ fontSize: 'var(--t-base)', fontWeight: 'var(--weight-bold)', color: c, opacity: 0.42 }}>Save</span>
           </div>
 
           {/* Header attribution */}
@@ -297,7 +297,7 @@ function IOSProfilePINSetup({ tweaks, height = 980 }) {
             <div style={{ flex: 1 }}>
               <div className="t-eyebrow" style={{ color: c }}>SETTING PIN FOR</div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginTop: 4 }}>
-                <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: '-0.01em' }}>
+                <span style={{ fontSize: 'var(--t-h-sub)', fontWeight: 'var(--weight-black)', letterSpacing: '-0.01em' }}>
                   {profile.name}
                 </span>
                 <span className="t-aux">{profile.display_name}</span>
@@ -307,7 +307,7 @@ function IOSProfilePINSetup({ tweaks, height = 980 }) {
 
           {/* Title + helper */}
           <div style={{ padding: '8px 28px 18px', textAlign: 'center' }}>
-            <div className="t-h" style={{ fontSize: 22 }}>Enter a 4-digit PIN</div>
+            <div className="t-h" style={{ fontSize: 'var(--t-h)' }}>Enter a 4-digit PIN</div>
             <div className="t-aux" style={{ marginTop: 6, lineHeight: 1.4 }}>
               You'll be asked for this PIN when switching to {profile.name}'s profile.
               Operator password overrides PIN.
@@ -331,7 +331,7 @@ function IOSProfilePINSetup({ tweaks, height = 980 }) {
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           }}>
             <span className="t-aux">Step 1 of 2 · Set</span>
-            <span className="t-aux" style={{ color: c, fontWeight: 700 }}>Skip · don't set PIN</span>
+            <span className="t-aux" style={{ color: c, fontWeight: 'var(--weight-bold)' }}>Skip · don't set PIN</span>
           </div>
 
           {/* Numpad */}
@@ -347,7 +347,7 @@ function IOSProfilePINSetup({ tweaks, height = 980 }) {
                   background: k === '' ? 'transparent' : 'rgb(var(--surface-1))',
                   boxShadow: k === '' ? 'none' : 'var(--hairline-top)',
                   color: 'rgb(var(--text))',
-                  fontSize: 28, fontWeight: 500, fontVariantNumeric: 'tabular-nums',
+                  fontSize: 'var(--t-h-3)', fontWeight: 'var(--weight-medium)', fontVariantNumeric: 'tabular-nums',
                 }}>{k}</button>
               ))}
             </div>
@@ -367,7 +367,7 @@ function IOSProfilePINSetup({ tweaks, height = 980 }) {
                 <Icon name="eye-off" size={15}/>
               </span>
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 13, fontWeight: 700 }}>Not a security boundary</div>
+                <div style={{ fontSize: 'var(--t-stat)', fontWeight: 'var(--weight-bold)' }}>Not a security boundary</div>
                 <div className="t-aux" style={{ marginTop: 2, lineHeight: 1.4 }}>
                   PIN is for casual snooping protection only. Operator (you) can reset any PIN from Settings.
                 </div>
@@ -424,7 +424,7 @@ function IOSAccountSwitchWarning({ tweaks, height = 844 }) {
             <div style={{ textAlign: 'center' }}>
               <ProfileAvatar profile={from} size={40}/>
               <div className="t-meta" style={{ marginTop: 6 }}>FROM</div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: profileRgb(from), marginTop: 2 }}>
+              <div style={{ fontSize: 'var(--t-aux)', fontWeight: 'var(--weight-bold)', color: profileRgb(from), marginTop: 2 }}>
                 {from.name}
               </div>
             </div>
@@ -432,19 +432,19 @@ function IOSAccountSwitchWarning({ tweaks, height = 844 }) {
             <div style={{ textAlign: 'center' }}>
               <ProfileAvatar profile={to} size={40}/>
               <div className="t-meta" style={{ marginTop: 6 }}>TO</div>
-              <div style={{ fontSize: 12, fontWeight: 700, color: profileRgb(to), marginTop: 2 }}>
+              <div style={{ fontSize: 'var(--t-aux)', fontWeight: 'var(--weight-bold)', color: profileRgb(to), marginTop: 2 }}>
                 {to.name}
               </div>
             </div>
           </div>
 
           <div style={{
-            fontSize: 17, fontWeight: 700, textAlign: 'center', letterSpacing: '-0.01em',
+            fontSize: 'var(--t-row-strong-2)', fontWeight: 'var(--weight-bold)', textAlign: 'center', letterSpacing: '-0.01em',
             padding: '6px 0 4px',
           }}>
             Switch to {to.name}'s accounts?
           </div>
-          <div style={{ fontSize: 13, color: 'rgb(var(--text-2) / 0.62)', textAlign: 'center',
+          <div style={{ fontSize: 'var(--t-stat)', color: 'rgb(var(--text-2) / 0.62)', textAlign: 'center',
                           lineHeight: 1.4, padding: '4px 6px 12px' }}>
             You're recording a trade for <b style={{ color: profileRgb(from) }}>{from.name}</b>.
             Switching will discard <b>2 unsaved entries</b> (BUY · 50 NVDA, qty pending).
@@ -455,14 +455,14 @@ function IOSAccountSwitchWarning({ tweaks, height = 844 }) {
         <div style={{ borderTop: '.5px solid rgb(255 255 255 / 0.10)' }}>
           <div style={{
             padding: '13px 0', textAlign: 'center',
-            fontSize: 16, fontWeight: 700, color: profileRgb(to),
+            fontSize: 'var(--t-row-strong)', fontWeight: 'var(--weight-bold)', color: profileRgb(to),
             borderBottom: '.5px solid rgb(255 255 255 / 0.10)',
           }}>
             Discard & switch
           </div>
           <div style={{
             padding: '13px 0', textAlign: 'center',
-            fontSize: 16, fontWeight: 500, color: 'rgb(var(--mint))',
+            fontSize: 'var(--t-row-strong)', fontWeight: 'var(--weight-medium)', color: 'rgb(var(--mint))',
           }}>
             Cancel
           </div>
@@ -517,7 +517,7 @@ function IOSTradeSheetFromSymbol({ tweaks, height = 980, sym = 'MSFT' }) {
           <div style={{ flex: 1 }}>
             <div className="t-eyebrow" style={{ color: c }}>RECORDING FOR</div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginTop: 3 }}>
-              <span style={{ fontSize: 17, fontWeight: 800 }}>{profile.name}</span>
+              <span style={{ fontSize: 'var(--t-row-strong-2)', fontWeight: 'var(--weight-black)' }}>{profile.name}</span>
               <span className="t-aux">{profile.display_name} · self</span>
             </div>
           </div>
@@ -532,19 +532,19 @@ function IOSTradeSheetFromSymbol({ tweaks, height = 980, sym = 'MSFT' }) {
         }}>
           <div style={{
             width: 44, height: 44, borderRadius: 12,
-            background: 'linear-gradient(135deg, #5AA9FF, #B98CFF)',
+            background: 'var(--symbol-tile-grad)',
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 14, fontWeight: 800, color: '#0B0B12',
+            fontSize: 'var(--t-row)', fontWeight: 'var(--weight-black)', color: 'rgb(var(--on-warm))',
           }}>{sym}</div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 16, fontWeight: 800 }}>{s.name}</div>
+            <div style={{ fontSize: 'var(--t-row-strong)', fontWeight: 'var(--weight-black)' }}>{s.name}</div>
             <div className="t-aux" style={{ marginTop: 2 }}>{s.exch} · {s.sector}</div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div className="tnum" style={{ fontSize: 17, fontWeight: 800 }}>
+            <div className="tnum" style={{ fontSize: 'var(--t-row-strong-2)', fontWeight: 'var(--weight-black)' }}>
               ${s.price.toFixed(2)}
             </div>
-            <div className="tnum" style={{ fontSize: 11.5, fontWeight: 700,
+            <div className="tnum" style={{ fontSize: 'var(--t-eyebrow)', fontWeight: 'var(--weight-bold)',
                                               color: s.up ? 'rgb(var(--up))' : 'rgb(var(--down))', marginTop: 2 }}>
               {(s.pct >= 0 ? '+' : '') + s.pct.toFixed(2)}%
             </div>
@@ -561,13 +561,13 @@ function IOSTradeSheetFromSymbol({ tweaks, height = 980, sym = 'MSFT' }) {
           }}>
             <span style={{
               textAlign: 'center', padding: '10px 0',
-              borderRadius: 9, fontSize: 14, fontWeight: 800,
-              background: 'rgb(var(--up))', color: '#06160E',
+              borderRadius: 9, fontSize: 'var(--t-row)', fontWeight: 'var(--weight-black)',
+              background: 'rgb(var(--up))', color: 'rgb(var(--on-up))',
               letterSpacing: '0.04em',
             }}>BUY</span>
             <span style={{
               textAlign: 'center', padding: '10px 0',
-              borderRadius: 9, fontSize: 14, fontWeight: 600,
+              borderRadius: 9, fontSize: 'var(--t-row)', fontWeight: 'var(--weight-semi)',
               color: 'rgb(var(--text-2) / 0.62)',
               letterSpacing: '0.04em',
             }}>SELL</span>
@@ -594,7 +594,7 @@ function IOSTradeSheetFromSymbol({ tweaks, height = 980, sym = 'MSFT' }) {
               boxShadow: f.focused ? `0 0 0 2px ${c}, var(--hairline-top)` : 'var(--hairline-top)',
             }}>
               <div style={{
-                fontSize: 11, fontWeight: 700, letterSpacing: '0.06em',
+                fontSize: 'var(--t-caption)', fontWeight: 'var(--weight-bold)', letterSpacing: '0.06em',
                 textTransform: 'uppercase',
                 color: f.focused ? c : 'rgb(var(--text-3) / 0.38)',
               }}>{f.lbl}</div>
@@ -602,7 +602,7 @@ function IOSTradeSheetFromSymbol({ tweaks, height = 980, sym = 'MSFT' }) {
                 {f.swatch && (
                   <span style={{ width: 8, height: 8, borderRadius: 2, background: f.swatch }}/>
                 )}
-                <span style={{ flex: 1, fontSize: 16, fontWeight: 700 }}
+                <span style={{ flex: 1, fontSize: 'var(--t-row-strong)', fontWeight: 'var(--weight-bold)' }}
                       className={f.lbl === 'Quantity' || f.lbl === 'Price' ? 'tnum' : ''}>
                   {f.value}
                   {f.focused && <span style={{
@@ -635,7 +635,7 @@ function IOSTradeSheetFromSymbol({ tweaks, height = 980, sym = 'MSFT' }) {
             </div>
             <div className="t-aux">10 sh × ${s.price.toFixed(2)}</div>
           </div>
-          <div className="tnum" style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.02em',
+          <div className="tnum" style={{ fontSize: 'var(--t-h-3)', fontWeight: 'var(--weight-black)', letterSpacing: '-0.02em',
                                             marginTop: 6 }}>
             {fmtMoney(s.price * 10)}
           </div>
@@ -645,8 +645,8 @@ function IOSTradeSheetFromSymbol({ tweaks, height = 980, sym = 'MSFT' }) {
         <div style={{ padding: '0 14px' }}>
           <div style={{
             padding: '15px 0', borderRadius: 14, textAlign: 'center',
-            background: c, color: '#07120D',
-            fontSize: 16, fontWeight: 800, letterSpacing: '0.01em',
+            background: c, color: 'rgb(var(--on-mint))',
+            fontSize: 'var(--t-row-strong)', fontWeight: 'var(--weight-black)', letterSpacing: '0.01em',
           }}>
             Record BUY for {profile.name}
           </div>
@@ -709,7 +709,7 @@ function MacProfileSwitchTransition({ tweaks }) {
         <ProfileAvatar profile={to} size={72}/>
         <div style={{ flex: 1, paddingLeft: 6 }}>
           <div className="t-meta">NOW VIEWING</div>
-          <div style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.02em',
+          <div style={{ fontSize: 'var(--t-h-2)', fontWeight: 'var(--weight-black)', letterSpacing: '-0.02em',
                           color: profileRgb(to), marginTop: 4 }}>
             {to.name}
           </div>
@@ -723,8 +723,8 @@ function MacProfileSwitchTransition({ tweaks }) {
         padding: '8px 12px', borderRadius: 10,
         background: 'rgb(255 193 118 / 0.10)',
         border: '.5px solid rgb(255 193 118 / 0.30)',
-        color: '#FFC176',
-        fontSize: 11, fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase',
+        color: 'rgb(var(--sec-activity))',
+        fontSize: 'var(--t-caption)', fontWeight: 'var(--weight-bold)', letterSpacing: '0.04em', textTransform: 'uppercase',
       }}>
         Mid-transition · accent-color radial flash · sidebar stripe will swap to {to.name}'s color
       </div>
@@ -754,14 +754,14 @@ function MacDashboardAllProfiles({ tweaks }) {
           <span style={{ width: 32, height: 32, borderRadius: 10,
                           background: 'linear-gradient(135deg, rgb(var(--p-1) / 0.6), rgb(var(--p-5) / 0.5), rgb(var(--p-2) / 0.6))',
                           display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Icon name="grid" size={14} color="#0B0B12"/>
+            <Icon name="grid" size={14} color="rgb(var(--on-warm))"/>
           </span>
           <div style={{ flex: 1 }}>
             <div className="t-eyebrow" style={{ color: 'rgb(var(--text-2) / 0.62)' }}>VIEWING</div>
-            <div style={{ fontSize: 14, fontWeight: 800, letterSpacing: '-0.01em' }}>All profiles</div>
+            <div style={{ fontSize: 'var(--t-row)', fontWeight: 'var(--weight-black)', letterSpacing: '-0.01em' }}>All profiles</div>
             <div className="tnum t-aux" style={{ marginTop: 2 }}>
               {hide ? '••••' : fmtMoney(H.netWorth, { cents: false })} ·{' '}
-              <span style={{ color: H.todayPL >= 0 ? 'rgb(var(--up))' : 'rgb(var(--down))', fontWeight: 700 }}>
+              <span style={{ color: H.todayPL >= 0 ? 'rgb(var(--up))' : 'rgb(var(--down))', fontWeight: 'var(--weight-bold)' }}>
                 {(H.todayPL >= 0 ? '+' : '−') + fmtPct(Math.abs(H.todayPct), false)}
               </span>
             </div>
@@ -779,7 +779,7 @@ function MacDashboardAllProfiles({ tweaks }) {
           <div key={p.id} className="navitem" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <ProfileAvatar profile={p} size={18}/>
             <span style={{ flex: 1 }}>{p.name}</span>
-            <span className="tnum" style={{ fontSize: 10.5, fontWeight: 600,
+            <span className="tnum" style={{ fontSize: 'var(--t-meta)', fontWeight: 'var(--weight-semi)',
                                               color: 'rgb(var(--text-3) / 0.38)' }}>
               ${fmtCompact(profileMetrics(p.id).netWorth)}
             </span>
@@ -796,10 +796,10 @@ function MacDashboardAllProfiles({ tweaks }) {
           background: 'rgb(255 193 118 / 0.10)',
           border: '.5px solid rgb(255 193 118 / 0.30)',
           borderRadius: 10,
-          fontSize: 12, color: '#FFC176',
+          fontSize: 'var(--t-aux)', color: 'rgb(var(--sec-activity))',
           display: 'flex', alignItems: 'center', gap: 8,
         }}>
-          <Icon name="eye" size={12} color="#FFC176"/>
+          <Icon name="eye" size={12} color="rgb(var(--sec-activity))"/>
           Read-only · switch to a profile to record trades or modify lists
         </div>
 
@@ -814,11 +814,11 @@ function MacDashboardAllProfiles({ tweaks }) {
             <div>
               <div className="t-meta">HOUSEHOLD NET WORTH</div>
               <div className="tnum" style={{
-                fontSize: 46, fontWeight: 800, letterSpacing: '-0.025em', marginTop: 6,
+                fontSize: 'var(--t-display-5)', fontWeight: 'var(--weight-black)', letterSpacing: '-0.025em', marginTop: 6,
               }}>
                 {hide ? '••••' : fmtMoney(H.netWorth, { cents: false })}
               </div>
-              <div className="tnum" style={{ marginTop: 6, fontSize: 14, fontWeight: 700,
+              <div className="tnum" style={{ marginTop: 6, fontSize: 'var(--t-row)', fontWeight: 'var(--weight-bold)',
                                                 color: H.todayPL >= 0 ? 'rgb(var(--up))' : 'rgb(var(--down))' }}>
                 Today {(H.todayPL >= 0 ? '+' : '−') + fmtMoney(Math.abs(H.todayPL))} ·{' '}
                 {(H.todayPct >= 0 ? '+' : '−') + Math.abs(H.todayPct).toFixed(2)}%
@@ -854,7 +854,7 @@ function MacDashboardAllProfiles({ tweaks }) {
               }}>
                 <ProfileAvatar profile={sl.profile} size={24}/>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: profileRgb(sl.profile) }}>
+                  <div style={{ fontSize: 'var(--t-aux)', fontWeight: 'var(--weight-bold)', color: profileRgb(sl.profile) }}>
                     {sl.profile.name}
                   </div>
                   <div className="tnum t-aux">
@@ -862,7 +862,7 @@ function MacDashboardAllProfiles({ tweaks }) {
                     {((sl.metrics.netWorth / sliceTotal) * 100).toFixed(1)}%
                   </div>
                 </div>
-                <div className="tnum" style={{ fontSize: 12, fontWeight: 700,
+                <div className="tnum" style={{ fontSize: 'var(--t-aux)', fontWeight: 'var(--weight-bold)',
                                                   color: sl.metrics.todayPL >= 0 ? 'rgb(var(--up))' : 'rgb(var(--down))' }}>
                   {(sl.metrics.todayPL >= 0 ? '+' : '−') + fmtMoney(Math.abs(sl.metrics.todayPL))}
                 </div>
@@ -903,10 +903,10 @@ function MacDashboardAllProfiles({ tweaks }) {
                   borderBottom: i === 5 ? 'none' : '.5px solid var(--separator)',
                 }}>
                   <ProfileAvatar profile={m.profile} size={22}/>
-                  <div style={{ fontSize: 13.5, fontWeight: 800 }}>{m.sym}</div>
+                  <div style={{ fontSize: 'var(--t-body)', fontWeight: 'var(--weight-black)' }}>{m.sym}</div>
                   <div className="t-aux">{m.s.name}</div>
                   <span style={{
-                    fontSize: 10.5, fontWeight: 700, letterSpacing: '0.04em',
+                    fontSize: 'var(--t-meta)', fontWeight: 'var(--weight-bold)', letterSpacing: '0.04em',
                     padding: '2px 6px', borderRadius: 4,
                     background: profileRgb(m.profile, 0.18),
                     color: profileRgb(m.profile),
@@ -932,7 +932,7 @@ function MacDashboardAllProfiles({ tweaks }) {
               <div className="t-eyebrow" style={{ color: SEC.symbol, opacity: 0.85 }}>Allocation</div>
               <div style={{
                 background: 'rgb(var(--surface-2))', borderRadius: 999,
-                padding: 3, display: 'inline-flex', fontSize: 11.5, fontWeight: 700,
+                padding: 3, display: 'inline-flex', fontSize: 'var(--t-eyebrow)', fontWeight: 'var(--weight-bold)',
               }}>
                 <span style={{ padding: '4px 10px', borderRadius: 999,
                                   background: 'rgb(var(--surface-1))', boxShadow: 'var(--hairline-top)' }}>
@@ -953,7 +953,7 @@ function MacDashboardAllProfiles({ tweaks }) {
                 size={130} thickness={18}
                 center={<div style={{ textAlign: 'center' }}>
                   <div className="t-meta">HOUSEHOLD</div>
-                  <div className="tnum" style={{ fontSize: 13, fontWeight: 800, marginTop: 2 }}>
+                  <div className="tnum" style={{ fontSize: 'var(--t-stat)', fontWeight: 'var(--weight-black)', marginTop: 2 }}>
                     ${fmtCompact(H.netWorth)}
                   </div>
                 </div>}/>
@@ -962,7 +962,7 @@ function MacDashboardAllProfiles({ tweaks }) {
                   <div key={sl.profile.id} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <span style={{ width: 8, height: 8, borderRadius: '50%',
                                     background: profileRgb(sl.profile) }}/>
-                    <span style={{ flex: 1, fontSize: 12.5, fontWeight: 700,
+                    <span style={{ flex: 1, fontSize: 'var(--t-chip)', fontWeight: 'var(--weight-bold)',
                                     color: profileRgb(sl.profile) }}>{sl.profile.name}</span>
                     <span className="tnum t-aux">
                       {((sl.metrics.netWorth / H.netWorth) * 100).toFixed(1)}%
@@ -1011,19 +1011,19 @@ function MacSymbolDetailAllProfiles({ tweaks, sym = 'AAPL' }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 10 }}>
           <div style={{
             width: 56, height: 56, borderRadius: 14,
-            background: 'linear-gradient(135deg, #5AA9FF, #B98CFF)',
+            background: 'var(--symbol-tile-grad)',
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 16, fontWeight: 800, color: '#0B0B12',
+            fontSize: 'var(--t-row-strong)', fontWeight: 'var(--weight-black)', color: 'rgb(var(--on-warm))',
           }}>{sym}</div>
           <div style={{ flex: 1 }}>
-            <div className="t-h" style={{ fontSize: 28, letterSpacing: '-0.025em' }}>{s.name}</div>
+            <div className="t-h" style={{ fontSize: 'var(--t-h-3)', letterSpacing: '-0.025em' }}>{s.name}</div>
             <div className="t-aux">{s.exch} · {s.sector} · viewing across household</div>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div className="tnum" style={{ fontSize: 38, fontWeight: 800, letterSpacing: '-0.025em' }}>
+            <div className="tnum" style={{ fontSize: 'var(--t-display-6)', fontWeight: 'var(--weight-black)', letterSpacing: '-0.025em' }}>
               ${s.price.toFixed(2)}
             </div>
-            <div className="tnum" style={{ fontSize: 14, fontWeight: 700,
+            <div className="tnum" style={{ fontSize: 'var(--t-row)', fontWeight: 'var(--weight-bold)',
                                               color: s.up ? 'rgb(var(--up))' : 'rgb(var(--down))', marginTop: 3 }}>
               {(s.change >= 0 ? '+' : '') + s.change.toFixed(2)} ({(s.pct >= 0 ? '+' : '') + s.pct.toFixed(2)}%) today
             </div>
@@ -1060,7 +1060,7 @@ function MacSymbolDetailAllProfiles({ tweaks, sym = 'AAPL' }) {
             }}>
               <div>
                 <div className="t-meta">Total shares</div>
-                <div className="tnum" style={{ fontSize: 24, fontWeight: 800, marginTop: 4 }}>
+                <div className="tnum" style={{ fontSize: 'var(--t-h-pad)', fontWeight: 'var(--weight-black)', marginTop: 4 }}>
                   {totalQty}
                 </div>
                 <div className="tnum t-aux" style={{ marginTop: 3 }}>
@@ -1069,12 +1069,12 @@ function MacSymbolDetailAllProfiles({ tweaks, sym = 'AAPL' }) {
               </div>
               <div>
                 <div className="t-meta">Market value</div>
-                <div className="tnum" style={{ fontSize: 24, fontWeight: 800, marginTop: 4,
+                <div className="tnum" style={{ fontSize: 'var(--t-h-pad)', fontWeight: 'var(--weight-black)', marginTop: 4,
                                                   letterSpacing: '-0.02em' }}>
                   {hide ? '••••' : fmtMoney(totalMV, { cents: false })}
                 </div>
                 <div className="tnum t-aux" style={{ marginTop: 3,
-                                                          color: totalUnreal >= 0 ? 'rgb(var(--up))' : 'rgb(var(--down))', fontWeight: 700 }}>
+                                                          color: totalUnreal >= 0 ? 'rgb(var(--up))' : 'rgb(var(--down))', fontWeight: 'var(--weight-bold)' }}>
                   {(totalUnreal >= 0 ? '+' : '') + fmtMoney(Math.abs(totalUnreal), { cents: false })} unrealized
                 </div>
               </div>
@@ -1094,7 +1094,7 @@ function MacSymbolDetailAllProfiles({ tweaks, sym = 'AAPL' }) {
                     <ProfileAvatar profile={sl.profile} size={22}/>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-                        <span style={{ fontSize: 13.5, fontWeight: 800,
+                        <span style={{ fontSize: 'var(--t-body)', fontWeight: 'var(--weight-black)',
                                           color: profileRgb(sl.profile) }}>{sl.profile.name}</span>
                         <span className="t-aux">{sl.account.broker} · {sl.account.name}</span>
                       </div>
@@ -1103,10 +1103,10 @@ function MacSymbolDetailAllProfiles({ tweaks, sym = 'AAPL' }) {
                       </div>
                     </div>
                     <div className="tnum" style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: 14, fontWeight: 800 }}>
+                      <div style={{ fontSize: 'var(--t-row)', fontWeight: 'var(--weight-black)' }}>
                         {hide ? '••••' : fmtMoney(sl.mv, { cents: false })}
                       </div>
-                      <div style={{ fontSize: 11.5, fontWeight: 700,
+                      <div style={{ fontSize: 'var(--t-eyebrow)', fontWeight: 'var(--weight-bold)',
                                       color: sl.unrealized >= 0 ? 'rgb(var(--up))' : 'rgb(var(--down))', marginTop: 2 }}>
                         {(sl.unrealized >= 0 ? '+' : '') + fmtPct(sl.pct, false)}
                       </div>
@@ -1127,7 +1127,7 @@ function MacSymbolDetailAllProfiles({ tweaks, sym = 'AAPL' }) {
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         }}>
           <div>
-            <div style={{ fontSize: 14, fontWeight: 700, color: 'rgb(var(--text-3) / 0.62)' }}>
+            <div style={{ fontSize: 'var(--t-row)', fontWeight: 'var(--weight-bold)', color: 'rgb(var(--text-3) / 0.62)' }}>
               Trade disabled in household view
             </div>
             <div className="t-aux" style={{ marginTop: 3 }}>
@@ -1141,7 +1141,7 @@ function MacSymbolDetailAllProfiles({ tweaks, sym = 'AAPL' }) {
                 background: profileRgb(p, 0.18),
                 border: `1px solid ${profileRgb(p, 0.42)}`,
                 color: profileRgb(p),
-                fontSize: 13, fontWeight: 700,
+                fontSize: 'var(--t-stat)', fontWeight: 'var(--weight-bold)',
                 display: 'inline-flex', alignItems: 'center', gap: 6,
               }}>
                 <ProfileAvatar profile={p} size={16}/>
@@ -1173,7 +1173,7 @@ function IPadDashboard({ tweaks, height = 1366 }) {
       {/* iOS-style status bar but wider */}
       <div style={{
         height: 30, display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '8px 36px', fontSize: 15, fontWeight: 600,
+        padding: '8px 36px', fontSize: 'var(--t-base)', fontWeight: 'var(--weight-semi)',
       }}>
         <span>9:41</span>
         <span style={{ display: 'inline-flex', gap: 6 }}>
@@ -1191,7 +1191,7 @@ function IPadDashboard({ tweaks, height = 1366 }) {
           <ProfileChip size={36}/>
           <div>
             <div className="t-meta">GOOD EVENING, SAM</div>
-            <div style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.025em', marginTop: 4 }}>
+            <div style={{ fontSize: 'var(--t-h-mac)', fontWeight: 'var(--weight-black)', letterSpacing: '-0.025em', marginTop: 4 }}>
               Home
             </div>
           </div>
@@ -1218,11 +1218,11 @@ function IPadDashboard({ tweaks, height = 1366 }) {
             backgroundImage: 'var(--hero-grad-up)',
           }}>
             <div className="t-meta">NET WORTH</div>
-            <div className="tnum" style={{ fontSize: 56, fontWeight: 800,
+            <div className="tnum" style={{ fontSize: 'var(--t-display-7)', fontWeight: 'var(--weight-black)',
                                               letterSpacing: '-0.025em', marginTop: 8 }}>
               {hide ? '••••' : fmtMoney(P.netWorth, { cents: false })}
             </div>
-            <div className="tnum" style={{ fontSize: 16, fontWeight: 700, marginTop: 6,
+            <div className="tnum" style={{ fontSize: 'var(--t-row-strong)', fontWeight: 'var(--weight-bold)', marginTop: 6,
                                               color: P.todayPL >= 0 ? 'rgb(var(--up))' : 'rgb(var(--down))' }}>
               {(P.todayPL >= 0 ? '+' : '') + fmtMoney(P.todayPL)} ({fmtPct(P.todayPct)}) today
             </div>
@@ -1246,13 +1246,13 @@ function IPadDashboard({ tweaks, height = 1366 }) {
                   boxShadow: 'var(--hairline-top)',
                 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: 14, fontWeight: 800 }}>{m.sym}</span>
+                    <span style={{ fontSize: 'var(--t-row)', fontWeight: 'var(--weight-black)' }}>{m.sym}</span>
                     <span className={'pill-soft ' + (m.symbol.up ? 'up' : 'down')}>
                       {(m.symbol.pct >= 0 ? '+' : '') + m.symbol.pct.toFixed(2)}%
                     </span>
                   </div>
                   <MiniSpark data={m.symbol.spark} up={m.symbol.up} w={170} h={36} stroke={1.6}/>
-                  <div className="tnum" style={{ fontSize: 14, fontWeight: 700, marginTop: 4 }}>
+                  <div className="tnum" style={{ fontSize: 'var(--t-row)', fontWeight: 'var(--weight-bold)', marginTop: 4 }}>
                     ${m.symbol.price.toFixed(2)}
                   </div>
                 </div>
@@ -1282,14 +1282,14 @@ function IPadDashboard({ tweaks, height = 1366 }) {
                     <span style={{ position: 'absolute', top: 0, bottom: 0, left: 0, width: 3,
                                     background: ACCT_COLORS[a.id] }}/>
                     <div>
-                      <div style={{ fontSize: 14, fontWeight: 700 }}>{a.broker} · {a.name}</div>
+                      <div style={{ fontSize: 'var(--t-row)', fontWeight: 'var(--weight-bold)' }}>{a.broker} · {a.name}</div>
                       <div className="t-aux" style={{ marginTop: 2 }}>{a.holdings.length} positions</div>
                     </div>
                     <div className="tnum" style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: 14, fontWeight: 800 }}>
+                      <div style={{ fontSize: 'var(--t-row)', fontWeight: 'var(--weight-black)' }}>
                         {hide ? '••••' : fmtMoney(mv, { cents: false })}
                       </div>
-                      <div style={{ fontSize: 11.5, fontWeight: 700,
+                      <div style={{ fontSize: 'var(--t-eyebrow)', fontWeight: 'var(--weight-bold)',
                                       color: today >= 0 ? 'rgb(var(--up))' : 'rgb(var(--down))', marginTop: 2 }}>
                         {(today >= 0 ? '+' : '') + fmtMoney(Math.abs(today))}
                       </div>
@@ -1335,7 +1335,7 @@ function IPadDashboard({ tweaks, height = 1366 }) {
           <div key={t.l} style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
             color: t.a ? 'rgb(var(--mint))' : 'rgb(var(--text-2) / 0.62)',
-            fontSize: 11, fontWeight: 600, gap: 3,
+            fontSize: 'var(--t-caption)', fontWeight: 'var(--weight-semi)', gap: 3,
           }}>
             <Icon name={t.i} size={22}/> {t.l}
           </div>
@@ -1370,7 +1370,7 @@ function MacWatchlistCompact({ tweaks }) {
           width: 38, height: 38, borderRadius: 10,
           background: 'linear-gradient(135deg, rgb(var(--mint)), rgb(var(--mint-2)))',
           display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 13, fontWeight: 800, color: '#0B0B12',
+          fontSize: 'var(--t-stat)', fontWeight: 'var(--weight-black)', color: 'rgb(var(--on-warm))',
           marginBottom: 16,
         }}>m</div>
         {[
@@ -1404,20 +1404,20 @@ function MacWatchlistCompact({ tweaks }) {
             <div className="t-eyebrow" style={{ color: SEC.watchlist, opacity: 0.85 }}>
               Watchlist
             </div>
-            <div className="t-h" style={{ fontSize: 22, marginTop: 4 }}>My Symbols</div>
+            <div className="t-h" style={{ fontSize: 'var(--t-h)', marginTop: 4 }}>My Symbols</div>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <span style={{ padding: '6px 10px', borderRadius: 8,
                             background: 'rgb(var(--surface-1))', boxShadow: 'var(--hairline-top)',
-                            fontSize: 12, fontWeight: 600,
+                            fontSize: 'var(--t-aux)', fontWeight: 'var(--weight-semi)',
                             display: 'inline-flex', alignItems: 'center', gap: 6 }}>
               <Icon name="arrow-ud" size={11}/> Manual
             </span>
             <span style={{ padding: '6px 10px', borderRadius: 8,
-                            background: 'rgb(var(--mint))', color: '#07120D',
-                            fontSize: 12, fontWeight: 700,
+                            background: 'rgb(var(--mint))', color: 'rgb(var(--on-mint))',
+                            fontSize: 'var(--t-aux)', fontWeight: 'var(--weight-bold)',
                             display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-              <Icon name="plus" size={11} color="#07120D"/> Add
+              <Icon name="plus" size={11} color="rgb(var(--on-mint))"/> Add
             </span>
           </div>
         </div>
@@ -1432,7 +1432,7 @@ function MacWatchlistCompact({ tweaks }) {
             display: 'grid',
             gridTemplateColumns: '90px 1fr 100px 100px 100px',
             padding: '10px 14px',
-            fontSize: 11, fontWeight: 700, letterSpacing: '0.04em',
+            fontSize: 'var(--t-caption)', fontWeight: 'var(--weight-bold)', letterSpacing: '0.04em',
             textTransform: 'uppercase', color: 'rgb(var(--text-3) / 0.38)',
             borderBottom: '.5px solid var(--separator-strong)',
           }}>
@@ -1447,14 +1447,14 @@ function MacWatchlistCompact({ tweaks }) {
               gridTemplateColumns: '90px 1fr 100px 100px 100px',
               padding: '10px 14px', alignItems: 'center',
               borderBottom: i === 8 ? 'none' : '.5px solid var(--separator)',
-              fontSize: 13.5,
+              fontSize: 'var(--t-body)',
             }}>
-              <span style={{ fontWeight: 800 }}>{s.symbol}</span>
+              <span style={{ fontWeight: 'var(--weight-black)' }}>{s.symbol}</span>
               <span className="t-aux">{s.name}</span>
-              <span className="tnum" style={{ textAlign: 'right', fontWeight: 700 }}>
+              <span className="tnum" style={{ textAlign: 'right', fontWeight: 'var(--weight-bold)' }}>
                 ${s.price.toFixed(2)}
               </span>
-              <span className="tnum" style={{ textAlign: 'right', fontWeight: 600,
+              <span className="tnum" style={{ textAlign: 'right', fontWeight: 'var(--weight-semi)',
                                                 color: s.up ? 'rgb(var(--up))' : 'rgb(var(--down))' }}>
                 {(s.change >= 0 ? '+' : '') + s.change.toFixed(2)}
               </span>
@@ -1490,12 +1490,12 @@ function MacWatchlistKeyboardFocus({ tweaks }) {
                         justifyContent: 'space-between', marginBottom: 14 }}>
           <div>
             <div className="t-eyebrow" style={{ color: SEC.watchlist, opacity: 0.85 }}>Watchlist</div>
-            <div className="t-h" style={{ fontSize: 26, marginTop: 4 }}>My Symbols</div>
+            <div className="t-h" style={{ fontSize: 'var(--t-h-2)', marginTop: 4 }}>My Symbols</div>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <span style={{ padding: '6px 10px', borderRadius: 8,
                             background: 'rgb(var(--surface-1))', boxShadow: 'var(--hairline-top)',
-                            fontSize: 12.5, fontWeight: 600,
+                            fontSize: 'var(--t-chip)', fontWeight: 'var(--weight-semi)',
                             display: 'inline-flex', alignItems: 'center', gap: 6 }}>
               <Icon name="arrow-ud" size={11}/> Manual
             </span>
@@ -1508,7 +1508,7 @@ function MacWatchlistKeyboardFocus({ tweaks }) {
           background: 'rgb(var(--mint) / 0.12)',
           border: '.5px solid rgb(var(--mint) / 0.32)',
           display: 'flex', alignItems: 'center', gap: 14,
-          fontSize: 12, fontWeight: 600, color: 'rgb(var(--mint))',
+          fontSize: 'var(--t-aux)', fontWeight: 'var(--weight-semi)', color: 'rgb(var(--mint))',
         }}>
           <Icon name="check" size={12} color="rgb(var(--mint))"/>
           Keyboard navigation
@@ -1538,7 +1538,7 @@ function MacWatchlistKeyboardFocus({ tweaks }) {
             display: 'grid',
             gridTemplateColumns: '90px 1fr 110px 100px 120px 120px',
             padding: '10px 16px',
-            fontSize: 11, fontWeight: 700, letterSpacing: '0.04em',
+            fontSize: 'var(--t-caption)', fontWeight: 'var(--weight-bold)', letterSpacing: '0.04em',
             textTransform: 'uppercase', color: 'rgb(var(--text-3) / 0.38)',
             borderBottom: '.5px solid var(--separator-strong)',
           }}>
@@ -1557,18 +1557,18 @@ function MacWatchlistKeyboardFocus({ tweaks }) {
                 gridTemplateColumns: '90px 1fr 110px 100px 120px 120px',
                 padding: '10px 16px', alignItems: 'center',
                 borderBottom: i === 9 ? 'none' : '.5px solid var(--separator)',
-                fontSize: 13.5,
+                fontSize: 'var(--t-body)',
                 background: focused ? 'rgb(var(--mint) / 0.08)' : 'transparent',
                 outline: focused ? '2px solid rgb(var(--mint))' : 'none',
                 outlineOffset: focused ? '-2px' : 0,
                 borderRadius: focused ? 4 : 0,
               }}>
-                <span style={{ fontWeight: 800 }}>{s.symbol}</span>
+                <span style={{ fontWeight: 'var(--weight-black)' }}>{s.symbol}</span>
                 <span className="t-aux">{s.name}</span>
-                <span className="tnum" style={{ textAlign: 'right', fontWeight: 700 }}>
+                <span className="tnum" style={{ textAlign: 'right', fontWeight: 'var(--weight-bold)' }}>
                   ${s.price.toFixed(2)}
                 </span>
-                <span className="tnum" style={{ textAlign: 'right', fontWeight: 600,
+                <span className="tnum" style={{ textAlign: 'right', fontWeight: 'var(--weight-semi)',
                                                   color: s.up ? 'rgb(var(--up))' : 'rgb(var(--down))' }}>
                   {(s.change >= 0 ? '+' : '') + s.change.toFixed(2)}
                 </span>
@@ -1589,7 +1589,7 @@ function MacWatchlistKeyboardFocus({ tweaks }) {
         <div className="t-aux" style={{ marginTop: 12, lineHeight: 1.5 }}>
           Row 2 (<b style={{ color: 'rgb(var(--mint))' }}>MSFT</b>) shows focus state:
           <code style={{ marginLeft: 8, padding: '1px 6px', borderRadius: 4,
-                          background: 'rgb(var(--surface-2))', fontSize: 11 }}>
+                          background: 'rgb(var(--surface-2))', fontSize: 'var(--t-caption)' }}>
             :focus-visible &#123; outline: 2px solid rgb(var(--mint)); outline-offset: 2px; &#125;
           </code>
         </div>

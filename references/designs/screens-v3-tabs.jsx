@@ -5,22 +5,26 @@
 // ─────────────────────────────────────────────────────────────────
 // Small shared bits
 // ─────────────────────────────────────────────────────────────────
+// SECT_HUES — GICS sector visual identity (rgb() strings backed by
+// --gics-* tokens in styles.css). Used for allocation donut, sector
+// heatmap tiles, sector-attributed dots on rows. NEVER use for
+// semantic up/down — those stay --up / --down regardless of sector.
 const SECT_HUES = {
-  Tech:      '#7AB6FF',
-  Semis:     '#C9B6FF',
-  ETF:       '#6BE8B8',
-  Consumer:  '#FFC176',
-  Auto:      '#FF8AAB',
-  Bonds:     '#A5B4FC',
-  Financials:'#F2B45C',
-  Energy:    '#F87171',
-  Health:    '#34D399',
-  Industrials:'#94A3B8',
-  Materials: '#D9A066',
-  Utilities: '#67E8F9',
-  RealEstate:'#C084FC',
-  Comm:      '#60A5FA',
-  Staples:   '#FBBF24',
+  Tech:        'rgb(var(--gics-tech))',
+  Semis:       'rgb(var(--gics-semis))',
+  ETF:         'rgb(var(--gics-etf))',
+  Consumer:    'rgb(var(--gics-consumer))',
+  Auto:        'rgb(var(--gics-auto))',
+  Bonds:       'rgb(var(--gics-bonds))',
+  Financials:  'rgb(var(--gics-financials))',
+  Energy:      'rgb(var(--gics-energy))',
+  Health:      'rgb(var(--gics-health))',
+  Industrials: 'rgb(var(--gics-industrials))',
+  Materials:   'rgb(var(--gics-materials))',
+  Utilities:   'rgb(var(--gics-utilities))',
+  RealEstate:  'rgb(var(--gics-realestate))',
+  Comm:        'rgb(var(--gics-comm))',
+  Staples:     'rgb(var(--gics-staples))',
 };
 
 function MiniSpark({ data, up, w = 88, h = 28, stroke = 1.5 }) {
@@ -93,10 +97,10 @@ function IOSPortfolioSummary({ tweaks, height = 1480 }) {
                 padding: '0 10px', borderRight: '.5px solid rgb(255 255 255 / 0.06)',
               }}>
                 <div className="t-meta" style={{ marginBottom: 6 }}>{k.lbl}</div>
-                <div className="tnum" style={{ fontSize: 16, fontWeight: 700, color: k.col,
+                <div className="tnum" style={{ fontSize: 'var(--t-row-strong)', fontWeight: 'var(--weight-bold)', color: k.col,
                                                 letterSpacing: '-0.01em' }}>{k.v}</div>
                 {k.sub && (
-                  <div className="tnum" style={{ fontSize: 11, fontWeight: 600, color: k.col, opacity: 0.78,
+                  <div className="tnum" style={{ fontSize: 'var(--t-caption)', fontWeight: 'var(--weight-semi)', color: k.col, opacity: 0.78,
                                                   marginTop: 2 }}>{k.sub}</div>
                 )}
               </div>
@@ -131,7 +135,7 @@ function IOSPortfolioSummary({ tweaks, height = 1480 }) {
             {/* SPY benchmark dashed overlay marker */}
             <div style={{
               display: 'flex', alignItems: 'center', gap: 14,
-              padding: '6px 14px 4px', fontSize: 11, fontWeight: 600,
+              padding: '6px 14px 4px', fontSize: 'var(--t-caption)', fontWeight: 'var(--weight-semi)',
               color: 'rgb(var(--text-2) / 0.62)',
             }}>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
@@ -165,9 +169,9 @@ function IOSPortfolioSummary({ tweaks, height = 1480 }) {
               {P.allocation.slice(0, 5).map((a) => (
                 <div key={a.sector} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                   <span style={{ width: 8, height: 8, borderRadius: '50%',
-                                  background: SECT_HUES[a.sector] || '#888' }}/>
-                  <span style={{ flex: 1, fontSize: 13, fontWeight: 600 }}>{a.sector}</span>
-                  <span className="tnum" style={{ fontSize: 12, fontWeight: 600,
+                                  background: SECT_HUES[a.sector] || 'rgb(var(--text-3) / 0.42)' }}/>
+                  <span style={{ flex: 1, fontSize: 'var(--t-stat)', fontWeight: 'var(--weight-semi)' }}>{a.sector}</span>
+                  <span className="tnum" style={{ fontSize: 'var(--t-aux)', fontWeight: 'var(--weight-semi)',
                                                     color: 'rgb(var(--text-2) / 0.62)' }}>
                     {a.pct.toFixed(1)}%
                   </span>
@@ -192,10 +196,10 @@ function IOSPortfolioSummary({ tweaks, height = 1480 }) {
                 borderBottom: i === top5.length - 1 ? 'none' : '.5px solid var(--separator)',
               }}>
                 <div>
-                  <div style={{ fontSize: 15, fontWeight: 700 }}>{p.sym}</div>
+                  <div style={{ fontSize: 'var(--t-base)', fontWeight: 'var(--weight-bold)' }}>{p.sym}</div>
                   <div className="t-meta" style={{ marginTop: 2 }}>{p.account.broker}</div>
                 </div>
-                <div className="tnum" style={{ fontSize: 13, fontWeight: 600,
+                <div className="tnum" style={{ fontSize: 'var(--t-stat)', fontWeight: 'var(--weight-semi)',
                                                   color: 'rgb(var(--text-2) / 0.62)' }}>
                   {hide ? '••••' : fmtMoney(p.marketValue, { cents: false })}
                 </div>
@@ -222,13 +226,13 @@ function IOSPortfolioSummary({ tweaks, height = 1480 }) {
                 {fmtMoney(P.divYTD, { cents: false })}
               </div>
               <div className="tnum t-aux" style={{ marginTop: 4 }}>
-                <span style={{ color: 'rgb(var(--up))', fontWeight: 700 }}>+12.4%</span>
+                <span style={{ color: 'rgb(var(--up))', fontWeight: 'var(--weight-bold)' }}>+12.4%</span>
                 {' '}vs last yr
               </div>
             </div>
             <div>
               <div className="t-meta">NEXT EX-DATE</div>
-              <div style={{ marginTop: 4, fontSize: 15, fontWeight: 700 }}>MSFT · May 21</div>
+              <div style={{ marginTop: 4, fontSize: 'var(--t-base)', fontWeight: 'var(--weight-bold)' }}>MSFT · May 21</div>
               <div className="tnum t-aux" style={{ marginTop: 4 }}>
                 Est. $37.35 · 45 sh × $0.83
               </div>
@@ -252,7 +256,7 @@ function SectionTitle({ title, right, accent }) {
         <span className="t-eyebrow" style={{ color: accent, opacity: 0.85 }}>{title}</span>
       </div>
       {right && (
-        <span style={{ fontSize: 12.5, fontWeight: 600,
+        <span style={{ fontSize: 'var(--t-chip)', fontWeight: 'var(--weight-semi)',
                         color: 'rgb(var(--text-2) / 0.62)' }}>{right}</span>
       )}
     </div>
@@ -329,7 +333,7 @@ function IOSPortfolioActivity({ tweaks, height = 1280 }) {
             ].map((c) => (
               <span key={c.l} style={{
                 padding: '7px 14px', borderRadius: 999,
-                fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap',
+                fontSize: 'var(--t-stat)', fontWeight: 'var(--weight-semi)', whiteSpace: 'nowrap',
                 background: c.active ? 'rgb(var(--surface-3))' : 'rgb(var(--surface-1))',
                 color: c.active ? 'rgb(var(--text))' : 'rgb(var(--text-2) / 0.62)',
                 boxShadow: c.active ? 'var(--hairline-top)' : 'none',
@@ -342,12 +346,12 @@ function IOSPortfolioActivity({ tweaks, height = 1280 }) {
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             padding: '8px 18px 6px',
           }}>
-            <span style={{ fontSize: 12.5, fontWeight: 600,
+            <span style={{ fontSize: 'var(--t-chip)', fontWeight: 'var(--weight-semi)',
                             color: 'rgb(var(--text-2) / 0.62)' }}>
               11 transactions · YTD
             </span>
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 16,
-                            fontSize: 12.5, fontWeight: 600, color: 'rgb(var(--mint))' }}>
+                            fontSize: 'var(--t-chip)', fontWeight: 'var(--weight-semi)', color: 'rgb(var(--mint))' }}>
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
                 <Icon name="plus" size={11}/> Trade
               </span>
@@ -370,7 +374,7 @@ function IOSPortfolioActivity({ tweaks, height = 1280 }) {
                                   background: SEC.activity, opacity: 0.65, borderRadius: 2 }}/>
                   <span className="t-eyebrow" style={{ color: SEC.activity, opacity: 0.85 }}>{g.label}</span>
                 </span>
-                <span className="tnum" style={{ fontSize: 12, fontWeight: 600,
+                <span className="tnum" style={{ fontSize: 'var(--t-aux)', fontWeight: 'var(--weight-semi)',
                                                   color: g.total.startsWith('−') ? 'rgb(var(--down))' : 'rgb(var(--up))' }}>
                   {g.total}
                 </span>
@@ -391,20 +395,20 @@ function IOSPortfolioActivity({ tweaks, height = 1280 }) {
                     padding: '11px 14px',
                     borderBottom: i === g.rows.length - 1 ? 'none' : '.5px solid var(--separator)',
                   }}>
-                    <div className="tnum" style={{ fontSize: 16, fontWeight: 700, textAlign: 'center',
+                    <div className="tnum" style={{ fontSize: 'var(--t-row-strong)', fontWeight: 'var(--weight-bold)', textAlign: 'center',
                                                     color: 'rgb(var(--text))', letterSpacing: '-0.01em' }}>
                       {r.d}
                     </div>
                     <KindPill kind={r.kind}/>
                     <div>
                       <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
-                        <span style={{ fontSize: 15, fontWeight: 700 }}>{r.sym}</span>
+                        <span style={{ fontSize: 'var(--t-base)', fontWeight: 'var(--weight-bold)' }}>{r.sym}</span>
                         <span className="tnum t-aux">{r.qty} × ${r.price.toFixed(2)}</span>
                       </div>
                       <div className="t-aux" style={{ marginTop: 2 }}>{r.acc}</div>
                     </div>
                     <div className="tnum" style={{
-                      fontSize: 15, fontWeight: 700, textAlign: 'right',
+                      fontSize: 'var(--t-base)', fontWeight: 'var(--weight-bold)', textAlign: 'right',
                       color: r.kind === 'SELL' || r.kind === 'DIV' ? 'rgb(var(--up))'
                           : r.kind === 'FEE'  ? 'rgb(var(--down))'
                           : 'rgb(var(--text))',
@@ -431,14 +435,14 @@ function IOSPortfolioActivity({ tweaks, height = 1280 }) {
               <Icon name="arrow-u" size={14}/>
             </span>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 14, fontWeight: 700 }}>Import CSV from broker</div>
+              <div style={{ fontSize: 'var(--t-row)', fontWeight: 'var(--weight-bold)' }}>Import CSV from broker</div>
               <div className="t-aux" style={{ marginTop: 2 }}>
                 Fidelity · Schwab · Vanguard · IBKR
               </div>
             </div>
             <span style={{ padding: '7px 14px', borderRadius: 999,
-                            background: 'rgb(var(--mint))', color: '#07120D',
-                            fontSize: 13, fontWeight: 700 }}>Import</span>
+                            background: 'rgb(var(--mint))', color: 'rgb(var(--on-mint))',
+                            fontSize: 'var(--t-stat)', fontWeight: 'var(--weight-bold)' }}>Import</span>
           </div>
         </div>
         <IOSTabBarV2 active="portfolio"/>
@@ -494,7 +498,7 @@ function IOSPortfolioBalances({ tweaks, height = 1080 }) {
               }}>
                 <div className="t-meta">{k.lbl}</div>
                 <div className="tnum" style={{
-                  fontSize: 17, fontWeight: 800, marginTop: 6,
+                  fontSize: 'var(--t-row-strong-2)', fontWeight: 'var(--weight-black)', marginTop: 6,
                   letterSpacing: '-0.015em', color: k.col,
                 }}>{hide ? '••••' : fmtMoney(k.v, { cents: false })}</div>
               </div>
@@ -513,15 +517,15 @@ function IOSPortfolioBalances({ tweaks, height = 1080 }) {
               }}>
                 <span style={{
                   position: 'absolute', top: 0, bottom: 0, left: 0, width: 3,
-                  background: ACCT_COLORS[a.id] || '#888',
+                  background: ACCT_COLORS[a.id] || 'rgb(var(--text-3) / 0.42)',
                 }}/>
                 <div style={{ padding: '14px 16px 6px 18px',
                               display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <div style={{ fontSize: 15, fontWeight: 700 }}>{a.broker} · {a.name}</div>
+                    <div style={{ fontSize: 'var(--t-base)', fontWeight: 'var(--weight-bold)' }}>{a.broker} · {a.name}</div>
                     <div className="t-meta" style={{ marginTop: 2 }}>•••• {a.last4}</div>
                   </div>
-                  <div className="tnum" style={{ fontSize: 15, fontWeight: 700, textAlign: 'right' }}>
+                  <div className="tnum" style={{ fontSize: 'var(--t-base)', fontWeight: 'var(--weight-bold)', textAlign: 'right' }}>
                     {hide ? '••••' : fmtMoney(a.mv + a.cash, { cents: false })}
                   </div>
                 </div>
@@ -538,10 +542,10 @@ function IOSPortfolioBalances({ tweaks, height = 1080 }) {
                       borderTop: i === 0 ? 'none' : '.5px solid var(--separator)',
                     }}>
                       <div>
-                        <div style={{ fontSize: 13.5, fontWeight: 600 }}>{r.l}</div>
+                        <div style={{ fontSize: 'var(--t-body)', fontWeight: 'var(--weight-semi)' }}>{r.l}</div>
                         {r.sub && <div className="t-aux" style={{ marginTop: 2 }}>{r.sub}</div>}
                       </div>
-                      <div className="tnum" style={{ fontSize: 14.5, fontWeight: 700,
+                      <div className="tnum" style={{ fontSize: 'var(--t-stat-mac)', fontWeight: 'var(--weight-bold)',
                                                       color: r.v === 0 ? 'rgb(var(--text-3) / 0.38)' : 'rgb(var(--text))' }}>
                         {hide ? '••••' : (r.v === 0 ? '—' : fmtMoney(r.v))}
                       </div>
@@ -562,7 +566,7 @@ function IOSPortfolioBalances({ tweaks, height = 1080 }) {
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           }}>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 700 }}>Add an external cash balance</div>
+              <div style={{ fontSize: 'var(--t-row)', fontWeight: 'var(--weight-bold)' }}>Add an external cash balance</div>
               <div className="t-aux" style={{ marginTop: 2 }}>
                 Track a bank or HYSA alongside your brokerage cash
               </div>
@@ -627,14 +631,14 @@ function IOSAccountSelectorSheet({ tweaks, height = 844 }) {
               <Icon name="briefcase" size={16}/>
             </span>
             <div>
-              <div style={{ fontSize: 15, fontWeight: 700 }}>All accounts</div>
+              <div style={{ fontSize: 'var(--t-base)', fontWeight: 'var(--weight-bold)' }}>All accounts</div>
               <div className="t-aux" style={{ marginTop: 2 }}>
                 {accs.length} brokerage · {accs.reduce((s, a) => s + a.holdings.length, 0)} positions
               </div>
             </div>
             <div className="tnum" style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: 14, fontWeight: 700 }}>{fmtMoney(totalMV, { cents: false })}</div>
-              <div style={{ fontSize: 11, fontWeight: 600,
+              <div style={{ fontSize: 'var(--t-row)', fontWeight: 'var(--weight-bold)' }}>{fmtMoney(totalMV, { cents: false })}</div>
+              <div style={{ fontSize: 'var(--t-caption)', fontWeight: 'var(--weight-semi)',
                               color: totalTdy >= 0 ? 'rgb(var(--up))' : 'rgb(var(--down))', marginTop: 2 }}>
                 {(totalTdy >= 0 ? '+' : '') + fmtMoney(Math.abs(totalTdy))}
               </div>
@@ -661,20 +665,20 @@ function IOSAccountSelectorSheet({ tweaks, height = 844 }) {
                                 background: ACCT_COLORS[a.id] }}/>
                 <span style={{ position: 'absolute', inset: 0, display: 'inline-flex',
                                 alignItems: 'center', justifyContent: 'center',
-                                fontSize: 11, fontWeight: 800, letterSpacing: '0.04em',
+                                fontSize: 'var(--t-caption)', fontWeight: 'var(--weight-black)', letterSpacing: '0.04em',
                                 color: 'rgb(var(--text-2) / 0.62)' }}>
                   {a.broker.slice(0, 3).toUpperCase()}
                 </span>
               </span>
               <div>
-                <div style={{ fontSize: 15, fontWeight: 700 }}>{a.broker} · {a.name}</div>
+                <div style={{ fontSize: 'var(--t-base)', fontWeight: 'var(--weight-bold)' }}>{a.broker} · {a.name}</div>
                 <div className="t-aux" style={{ marginTop: 2 }}>
                   {a.holdings.length} positions · •••• {a.last4}
                 </div>
               </div>
               <div className="tnum" style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: 14, fontWeight: 700 }}>{fmtMoney(a.mv, { cents: false })}</div>
-                <div style={{ fontSize: 11, fontWeight: 600,
+                <div style={{ fontSize: 'var(--t-row)', fontWeight: 'var(--weight-bold)' }}>{fmtMoney(a.mv, { cents: false })}</div>
+                <div style={{ fontSize: 'var(--t-caption)', fontWeight: 'var(--weight-semi)',
                                 color: a.today >= 0 ? 'rgb(var(--up))' : 'rgb(var(--down))', marginTop: 2 }}>
                   {(a.today >= 0 ? '+' : '') + fmtMoney(Math.abs(a.today))}
                 </div>
@@ -687,11 +691,11 @@ function IOSAccountSelectorSheet({ tweaks, height = 844 }) {
         <div style={{ padding: '14px 16px 0',
                       display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6,
-                          color: 'rgb(var(--mint))', fontSize: 14, fontWeight: 700 }}>
+                          color: 'rgb(var(--mint))', fontSize: 'var(--t-row)', fontWeight: 'var(--weight-bold)' }}>
             <Icon name="plus" size={13}/> Add account
           </span>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6,
-                          color: 'rgb(var(--text-2) / 0.62)', fontSize: 13.5, fontWeight: 600 }}>
+                          color: 'rgb(var(--text-2) / 0.62)', fontSize: 'var(--t-body)', fontWeight: 'var(--weight-semi)' }}>
             Manage <Icon name="chevron-r" size={11}/>
           </span>
         </div>
@@ -754,7 +758,7 @@ function IOSPortfolioOverflowMenu({ tweaks, height = 844 }) {
             : (
               <div key={m.lbl} style={{
                 padding: '11px 16px', display: 'flex', alignItems: 'center', gap: 12,
-                fontSize: 14.5, fontWeight: 500,
+                fontSize: 'var(--t-stat-mac)', fontWeight: 'var(--weight-medium)',
               }}>
                 <span style={{ width: 20, color: 'rgb(var(--text))' }}>
                   <Icon name={m.icon} size={15}/>
@@ -784,15 +788,15 @@ function MacPortfolio_NavBar({ active }) {
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
         <ProfileChip size={28}/>
-        <div className="t-h" style={{ fontSize: 22 }}>Portfolio</div>
+        <div className="t-h" style={{ fontSize: 'var(--t-h)' }}>Portfolio</div>
         <div style={{
           marginLeft: 12, padding: '6px 14px', borderRadius: 999,
           background: 'rgb(var(--surface-1))', boxShadow: 'var(--hairline-top)',
-          fontSize: 13, fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 8,
+          fontSize: 'var(--t-stat)', fontWeight: 'var(--weight-semi)', display: 'inline-flex', alignItems: 'center', gap: 8,
         }}>
           <Icon name="briefcase" size={13} color="rgb(var(--text-2) / 0.62)"/>
           All accounts
-          <span style={{ fontSize: 11, padding: '2px 7px', borderRadius: 999,
+          <span style={{ fontSize: 'var(--t-caption)', padding: '2px 7px', borderRadius: 999,
                           background: 'rgb(var(--surface-2))', color: 'rgb(var(--text-3) / 0.38)' }}>2</span>
           <Icon name="chevron-d" size={11} color="rgb(var(--text-2) / 0.62)"/>
         </div>
@@ -817,7 +821,7 @@ function MacPortfolioSubTabs({ active }) {
         return (
           <div key={t} style={{
             position: 'relative', padding: '10px 0 14px',
-            fontSize: 14, fontWeight: a ? 700 : 500,
+            fontSize: 'var(--t-row)', fontWeight: a ? 700 : 500,
             color: a ? 'rgb(var(--text))' : 'rgb(var(--text-2) / 0.62)',
           }}>
             {t}
@@ -866,10 +870,10 @@ function MacPortfolioSummary({ tweaks }) {
               ].map((k) => (
                 <div key={k.lbl}>
                   <div className="t-meta">{k.lbl}</div>
-                  <div className="tnum" style={{ fontSize: 26, fontWeight: 800,
+                  <div className="tnum" style={{ fontSize: 'var(--t-h-2)', fontWeight: 'var(--weight-black)',
                                                     color: k.col, letterSpacing: '-0.02em',
                                                     marginTop: 8 }}>{k.v}</div>
-                  <div className="tnum" style={{ fontSize: 11.5, fontWeight: 600,
+                  <div className="tnum" style={{ fontSize: 'var(--t-eyebrow)', fontWeight: 'var(--weight-semi)',
                                                     color: k.col, opacity: 0.78, marginTop: 4 }}>
                     {k.sub}
                   </div>
@@ -889,7 +893,7 @@ function MacPortfolioSummary({ tweaks }) {
                     Performance · vs SPY
                   </div>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, marginTop: 8 }}>
-                    <span className="tnum" style={{ fontSize: 30, fontWeight: 800,
+                    <span className="tnum" style={{ fontSize: 'var(--t-h-mac)', fontWeight: 'var(--weight-black)',
                                                       letterSpacing: '-0.025em', color: 'rgb(var(--up))' }}>
                       +18.3%
                     </span>
@@ -923,9 +927,9 @@ function MacPortfolioSummary({ tweaks }) {
                   {P.allocation.slice(0, 6).map((a) => (
                     <div key={a.sector} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <span style={{ width: 7, height: 7, borderRadius: '50%',
-                                      background: SECT_HUES[a.sector] || '#888' }}/>
-                      <span style={{ flex: 1, fontSize: 12.5, fontWeight: 600 }}>{a.sector}</span>
-                      <span className="tnum" style={{ fontSize: 11.5, fontWeight: 600,
+                                      background: SECT_HUES[a.sector] || 'rgb(var(--text-3) / 0.42)' }}/>
+                      <span style={{ flex: 1, fontSize: 'var(--t-chip)', fontWeight: 'var(--weight-semi)' }}>{a.sector}</span>
+                      <span className="tnum" style={{ fontSize: 'var(--t-eyebrow)', fontWeight: 'var(--weight-semi)',
                                                         color: 'rgb(var(--text-2) / 0.62)' }}>
                         {a.pct.toFixed(1)}%
                       </span>
@@ -951,13 +955,13 @@ function MacPortfolioSummary({ tweaks }) {
                   padding: '8px 14px',
                   borderBottom: i === top5.length - 1 ? 'none' : '.5px solid var(--separator)',
                 }}>
-                  <div style={{ fontSize: 14, fontWeight: 700 }}>{p.sym}</div>
+                  <div style={{ fontSize: 'var(--t-row)', fontWeight: 'var(--weight-bold)' }}>{p.sym}</div>
                   <div className="tnum t-aux" style={{ color: 'rgb(var(--text-2) / 0.62)' }}>
                     {hide ? '••••' : fmtMoney(p.marketValue, { cents: false })}
                   </div>
                   <MiniSpark data={p.symbol.spark} up={p.symbol.up} w={74} h={22}/>
                   <span className={'pill-soft ' + (p.symbol.up ? 'up' : 'down')}
-                        style={{ marginLeft: 'auto', fontSize: 11 }}>
+                        style={{ marginLeft: 'auto', fontSize: 'var(--t-caption)' }}>
                     {(p.symbol.pct >= 0 ? '+' : '') + p.symbol.pct.toFixed(2)}%
                   </span>
                 </div>
@@ -1002,28 +1006,28 @@ function MacPortfolioActivity({ tweaks }) {
           <div style={{ display: 'flex', gap: 8 }}>
             {['All', 'Buys', 'Sells', 'Dividends', 'Fees'].map((c, i) => (
               <span key={c} style={{
-                padding: '6px 12px', borderRadius: 999, fontSize: 12.5, fontWeight: 600,
+                padding: '6px 12px', borderRadius: 999, fontSize: 'var(--t-chip)', fontWeight: 'var(--weight-semi)',
                 background: i === 0 ? 'rgb(var(--surface-3))' : 'rgb(var(--surface-1))',
                 color: i === 0 ? 'rgb(var(--text))' : 'rgb(var(--text-2) / 0.62)',
                 boxShadow: i === 0 ? 'var(--hairline-top)' : 'none',
               }}>{c}</span>
             ))}
-            <span style={{ padding: '6px 12px', borderRadius: 999, fontSize: 12.5, fontWeight: 600,
+            <span style={{ padding: '6px 12px', borderRadius: 999, fontSize: 'var(--t-chip)', fontWeight: 'var(--weight-semi)',
                             background: 'rgb(var(--surface-1))', color: 'rgb(var(--text-2) / 0.62)',
                             display: 'inline-flex', alignItems: 'center', gap: 5 }}>
               <Icon name="calendar" size={11}/> Last 12 mo
             </span>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
-            <span style={{ padding: '6px 12px', borderRadius: 8, fontSize: 12.5, fontWeight: 600,
+            <span style={{ padding: '6px 12px', borderRadius: 8, fontSize: 'var(--t-chip)', fontWeight: 'var(--weight-semi)',
                             background: 'rgb(var(--surface-1))', boxShadow: 'var(--hairline-top)',
                             display: 'inline-flex', alignItems: 'center', gap: 6 }}>
               <Icon name="arrow-u" size={11}/> Import CSV
             </span>
-            <span style={{ padding: '6px 12px', borderRadius: 8, fontSize: 12.5, fontWeight: 700,
-                            background: 'rgb(var(--mint))', color: '#07120D',
+            <span style={{ padding: '6px 12px', borderRadius: 8, fontSize: 'var(--t-chip)', fontWeight: 'var(--weight-bold)',
+                            background: 'rgb(var(--mint))', color: 'rgb(var(--on-mint))',
                             display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-              <Icon name="plus" size={11} color="#07120D"/> Record trade
+              <Icon name="plus" size={11} color="rgb(var(--on-mint))"/> Record trade
             </span>
           </div>
         </div>
@@ -1040,7 +1044,7 @@ function MacPortfolioActivity({ tweaks }) {
               display: 'grid',
               gridTemplateColumns: '80px 70px 80px 1fr 100px 120px 130px 110px',
               padding: '10px 16px',
-              fontSize: 11, fontWeight: 700, letterSpacing: '0.04em',
+              fontSize: 'var(--t-caption)', fontWeight: 'var(--weight-bold)', letterSpacing: '0.04em',
               textTransform: 'uppercase', color: 'rgb(var(--text-3) / 0.38)',
               borderBottom: '.5px solid var(--separator-strong)',
             }}>
@@ -1056,26 +1060,26 @@ function MacPortfolioActivity({ tweaks }) {
                 gridTemplateColumns: '80px 70px 80px 1fr 100px 120px 130px 110px',
                 padding: '10px 16px', alignItems: 'center',
                 borderBottom: i === tx.length - 1 ? 'none' : '.5px solid var(--separator)',
-                fontSize: 13,
+                fontSize: 'var(--t-stat)',
               }}>
-                <span className="tnum" style={{ fontWeight: 600,
+                <span className="tnum" style={{ fontWeight: 'var(--weight-semi)',
                                                   color: 'rgb(var(--text-2) / 0.62)' }}>{r.dy}</span>
                 <span><KindPill kind={r.kind}/></span>
-                <span style={{ fontWeight: 700 }}>{r.sym}</span>
+                <span style={{ fontWeight: 'var(--weight-bold)' }}>{r.sym}</span>
                 <span className="t-aux">{r.acc}</span>
-                <span className="tnum" style={{ textAlign: 'right', fontWeight: 600 }}>{r.qty}</span>
-                <span className="tnum" style={{ textAlign: 'right', fontWeight: 600,
+                <span className="tnum" style={{ textAlign: 'right', fontWeight: 'var(--weight-semi)' }}>{r.qty}</span>
+                <span className="tnum" style={{ textAlign: 'right', fontWeight: 'var(--weight-semi)',
                                                 color: 'rgb(var(--text-2) / 0.62)' }}>
                   ${r.price.toFixed(2)}
                 </span>
                 <span className="tnum" style={{
-                  textAlign: 'right', fontWeight: 700,
+                  textAlign: 'right', fontWeight: 'var(--weight-bold)',
                   color: r.kind === 'SELL' || r.kind === 'DIV' ? 'rgb(var(--up))' :
                          r.kind === 'FEE' ? 'rgb(var(--down))' : 'rgb(var(--text))',
                 }}>
                   {r.kind === 'BUY' ? '−' : '+'}{fmtMoney(r.tot)}
                 </span>
-                <span className="tnum" style={{ textAlign: 'right', fontWeight: 700,
+                <span className="tnum" style={{ textAlign: 'right', fontWeight: 'var(--weight-bold)',
                                                   color: r.run.startsWith('+') ? 'rgb(var(--up))' : 'rgb(var(--down))' }}>
                   {r.run}
                 </span>
@@ -1126,7 +1130,7 @@ function MacPortfolioBalances({ tweaks }) {
               padding: '16px 18px',
             }}>
               <div className="t-meta">{k.lbl}</div>
-              <div className="tnum" style={{ fontSize: 28, fontWeight: 800,
+              <div className="tnum" style={{ fontSize: 'var(--t-h-3)', fontWeight: 'var(--weight-black)',
                                                 letterSpacing: '-0.025em',
                                                 color: k.c, marginTop: 8 }}>
                 {hide ? '••••' : fmtMoney(k.v, { cents: false })}
@@ -1148,10 +1152,10 @@ function MacPortfolioBalances({ tweaks }) {
               <div style={{ padding: '16px 22px 8px',
                               display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div>
-                  <div style={{ fontSize: 16, fontWeight: 700 }}>{a.broker} · {a.name}</div>
+                  <div style={{ fontSize: 'var(--t-row-strong)', fontWeight: 'var(--weight-bold)' }}>{a.broker} · {a.name}</div>
                   <div className="t-meta" style={{ marginTop: 3 }}>•••• {a.last4}</div>
                 </div>
-                <div className="tnum" style={{ fontSize: 18, fontWeight: 800 }}>
+                <div className="tnum" style={{ fontSize: 'var(--t-h-sub)', fontWeight: 'var(--weight-black)' }}>
                   {hide ? '••••' : fmtMoney(a.mv + a.cash, { cents: false })}
                 </div>
               </div>
@@ -1168,11 +1172,11 @@ function MacPortfolioBalances({ tweaks }) {
                     borderTop: i === 0 ? 'none' : '.5px solid var(--separator)',
                   }}>
                     <div>
-                      <div style={{ fontSize: 13.5, fontWeight: 600 }}>{r.l}</div>
+                      <div style={{ fontSize: 'var(--t-body)', fontWeight: 'var(--weight-semi)' }}>{r.l}</div>
                       <div className="t-aux" style={{ marginTop: 2 }}>{r.sub}</div>
                     </div>
                     <span/>
-                    <div className="tnum" style={{ fontSize: 14.5, fontWeight: 700,
+                    <div className="tnum" style={{ fontSize: 'var(--t-stat-mac)', fontWeight: 'var(--weight-bold)',
                                                       textAlign: 'right',
                                                       color: r.v === 0 ? 'rgb(var(--text-3) / 0.38)' : 'rgb(var(--text))' }}>
                       {hide ? '••••' : (r.v === 0 ? '—' : fmtMoney(r.v))}
@@ -1206,7 +1210,7 @@ function IOSMarketTrending({ tweaks, height = 1480 }) {
             <div style={{ flex: 1, background: 'rgb(var(--surface-1))',
                             borderRadius: 999, padding: '10px 14px',
                             display: 'flex', alignItems: 'center', gap: 8,
-                            fontSize: 13, color: 'rgb(var(--text-3) / 0.38)' }}>
+                            fontSize: 'var(--t-stat)', color: 'rgb(var(--text-3) / 0.38)' }}>
               <Icon name="search" size={14} color="rgb(var(--text-3) / 0.38)"/>
               Search for news or tickers
             </div>
@@ -1222,9 +1226,9 @@ function IOSMarketTrending({ tweaks, height = 1480 }) {
             {['Trending', 'Most active', 'Day gainers', 'Day losers', 'Undervalued growth', 'High dividend'].map((c, i) => (
               <span key={c} style={{
                 padding: '7px 14px', borderRadius: 999,
-                fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap',
+                fontSize: 'var(--t-stat)', fontWeight: 'var(--weight-semi)', whiteSpace: 'nowrap',
                 background: i === 0 ? 'rgb(var(--mint))' : 'rgb(var(--surface-1))',
-                color:      i === 0 ? '#07120D'         : 'rgb(var(--text-2) / 0.62)',
+                color:      i === 0 ? 'rgb(var(--on-mint))'         : 'rgb(var(--text-2) / 0.62)',
                 boxShadow:  i === 0 ? 'none'            : 'var(--hairline-top)',
               }}>{c}</span>
             ))}
@@ -1327,7 +1331,7 @@ function IOSMarketETF({ tweaks, height = 1480 }) {
             <div style={{ flex: 1, background: 'rgb(var(--surface-1))',
                             borderRadius: 999, padding: '10px 14px',
                             display: 'flex', alignItems: 'center', gap: 8,
-                            fontSize: 13, color: 'rgb(var(--text-3) / 0.38)' }}>
+                            fontSize: 'var(--t-stat)', color: 'rgb(var(--text-3) / 0.38)' }}>
               <Icon name="search" size={14} color="rgb(var(--text-3) / 0.38)"/>
               Search ETFs
             </div>
@@ -1353,7 +1357,7 @@ function IOSMarketETF({ tweaks, height = 1480 }) {
             <div style={{ display: 'flex', gap: 8, padding: '4px 4px 10px' }}>
               {['Trending ETFs', 'Most actives'].map((c, i) => (
                 <span key={c} style={{
-                  padding: '7px 14px', borderRadius: 999, fontSize: 13, fontWeight: 600,
+                  padding: '7px 14px', borderRadius: 999, fontSize: 'var(--t-stat)', fontWeight: 'var(--weight-semi)',
                   background: i === 0 ? 'rgb(var(--surface-3))' : 'rgb(var(--surface-1))',
                   color:      i === 0 ? 'rgb(var(--text))'     : 'rgb(var(--text-2) / 0.62)',
                   boxShadow:  i === 0 ? 'var(--hairline-top)'  : 'none',
@@ -1374,13 +1378,13 @@ function IOSMarketETF({ tweaks, height = 1480 }) {
                     borderBottom: i === trending.length - 1 ? 'none' : '.5px solid var(--separator)',
                   }}>
                     <div>
-                      <div style={{ fontSize: 15, fontWeight: 700 }}>{e.sym}</div>
+                      <div style={{ fontSize: 'var(--t-base)', fontWeight: 'var(--weight-bold)' }}>{e.sym}</div>
                       <div className="t-meta" style={{ marginTop: 2 }}>${e.aum} AUM</div>
                     </div>
                     <div className="t-aux" style={{ color: 'rgb(var(--text-2) / 0.62)' }}>{e.name}</div>
                     <MiniSpark data={data} up={e.pct >= 0} w={86} h={26}/>
                     <span className={'pill ' + (e.pct >= 0 ? 'up' : 'down')}
-                          style={{ marginLeft: 'auto', minWidth: 68, fontSize: 13 }}>
+                          style={{ marginLeft: 'auto', minWidth: 68, fontSize: 'var(--t-stat)' }}>
                       {(e.pct >= 0 ? '+' : '') + e.pct.toFixed(2)}%
                     </span>
                   </div>
@@ -1403,7 +1407,7 @@ function IOSMarketETF({ tweaks, height = 1480 }) {
             <div style={{ display: 'flex', gap: 8, padding: '4px 4px 10px' }}>
               {['Day gainers', 'Day losers'].map((c, i) => (
                 <span key={c} style={{
-                  padding: '7px 14px', borderRadius: 999, fontSize: 13, fontWeight: 600,
+                  padding: '7px 14px', borderRadius: 999, fontSize: 'var(--t-stat)', fontWeight: 'var(--weight-semi)',
                   background: i === 0 ? 'rgb(var(--surface-3))' : 'rgb(var(--surface-1))',
                   color:      i === 0 ? 'rgb(var(--text))'     : 'rgb(var(--text-2) / 0.62)',
                   boxShadow:  i === 0 ? 'var(--hairline-top)'  : 'none',
@@ -1422,11 +1426,11 @@ function IOSMarketETF({ tweaks, height = 1480 }) {
                     alignItems: 'center', gap: 10, padding: '12px 16px',
                     borderBottom: i === movers.length - 1 ? 'none' : '.5px solid var(--separator)',
                   }}>
-                    <div style={{ fontSize: 15, fontWeight: 700 }}>{e.sym}</div>
+                    <div style={{ fontSize: 'var(--t-base)', fontWeight: 'var(--weight-bold)' }}>{e.sym}</div>
                     <div className="t-aux" style={{ color: 'rgb(var(--text-2) / 0.62)' }}>{e.name}</div>
                     <MiniSpark data={data} up={e.pct >= 0} w={86} h={26}/>
                     <span className={'pill ' + (e.pct >= 0 ? 'up' : 'down')}
-                          style={{ marginLeft: 'auto', minWidth: 68, fontSize: 13 }}>
+                          style={{ marginLeft: 'auto', minWidth: 68, fontSize: 'var(--t-stat)' }}>
                       {(e.pct >= 0 ? '+' : '') + e.pct.toFixed(2)}%
                     </span>
                   </div>
@@ -1470,7 +1474,7 @@ function IOSMarketNews({ tweaks, height = 1480 }) {
             <div style={{ flex: 1, background: 'rgb(var(--surface-1))',
                             borderRadius: 999, padding: '10px 14px',
                             display: 'flex', alignItems: 'center', gap: 8,
-                            fontSize: 13, color: 'rgb(var(--text-3) / 0.38)' }}>
+                            fontSize: 'var(--t-stat)', color: 'rgb(var(--text-3) / 0.38)' }}>
               <Icon name="search" size={14} color="rgb(var(--text-3) / 0.38)"/>
               Search news
             </div>
@@ -1486,9 +1490,9 @@ function IOSMarketNews({ tweaks, height = 1480 }) {
             {['For you','Top stories','Your holdings','Watchlist','Earnings','Macro','Crypto'].map((c, i) => (
               <span key={c} style={{
                 padding: '7px 14px', borderRadius: 999,
-                fontSize: 13, fontWeight: 600, whiteSpace: 'nowrap',
+                fontSize: 'var(--t-stat)', fontWeight: 'var(--weight-semi)', whiteSpace: 'nowrap',
                 background: i === 0 ? 'rgb(var(--mint))' : 'rgb(var(--surface-1))',
-                color:      i === 0 ? '#07120D'         : 'rgb(var(--text-2) / 0.62)',
+                color:      i === 0 ? 'rgb(var(--on-mint))'         : 'rgb(var(--text-2) / 0.62)',
                 boxShadow:  i === 0 ? 'none'            : 'var(--hairline-top)',
               }}>{c}</span>
             ))}
@@ -1510,24 +1514,24 @@ function IOSMarketNews({ tweaks, height = 1480 }) {
                   position: 'absolute', top: 12, left: 12,
                   padding: '4px 10px', borderRadius: 999,
                   background: 'rgb(0 0 0 / 0.55)',
-                  fontSize: 11, fontWeight: 700, letterSpacing: '0.05em',
+                  fontSize: 'var(--t-caption)', fontWeight: 'var(--weight-bold)', letterSpacing: '0.05em',
                   textTransform: 'uppercase', color: 'rgb(var(--mint))',
                   backdropFilter: 'blur(6px)',
                 }}>For you · Hot</span>
                 <span style={{
                   position: 'absolute', bottom: 14, left: 14, right: 14,
-                  fontSize: 18, fontWeight: 800, lineHeight: 1.25,
+                  fontSize: 'var(--t-h-sub)', fontWeight: 'var(--weight-black)', lineHeight: 1.25,
                   letterSpacing: '-0.015em',
                 }}>{stories[0].head}</span>
               </div>
               <div style={{ padding: '12px 14px', display: 'flex', alignItems: 'center',
-                              justifyContent: 'space-between', fontSize: 12, fontWeight: 600,
+                              justifyContent: 'space-between', fontSize: 'var(--t-aux)', fontWeight: 'var(--weight-semi)',
                               color: 'rgb(var(--text-2) / 0.62)' }}>
                 <span>{stories[0].pub} · {stories[0].ago} ago</span>
                 <span style={{ display: 'inline-flex', gap: 6 }}>
                   {stories[0].tickers.map((t) => (
                     <span key={t} style={{
-                      padding: '3px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700,
+                      padding: '3px 8px', borderRadius: 6, fontSize: 'var(--t-caption)', fontWeight: 'var(--weight-bold)',
                       background: 'rgb(var(--mint) / 0.16)', color: 'rgb(var(--mint))',
                     }}>{t}</span>
                   ))}
@@ -1548,10 +1552,10 @@ function IOSMarketNews({ tweaks, height = 1480 }) {
               {/* fake thumb */}
               <div style={{
                 width: 64, height: 64, borderRadius: 10,
-                background: st.tag === 'Earnings' ? 'linear-gradient(135deg, #FFC176, #F2B45C)'
-                          : st.tag === 'You hold' ? 'linear-gradient(135deg, #6BE8B8, #34D399)'
-                          : st.tag === 'Macro'    ? 'linear-gradient(135deg, #7AB6FF, #5AA9FF)'
-                          : 'linear-gradient(135deg, #C9B6FF, #B98CFF)',
+                background: st.tag === 'Earnings' ? 'linear-gradient(135deg, rgb(var(--sec-activity)), rgb(var(--gics-financials)))'
+                          : st.tag === 'You hold' ? 'linear-gradient(135deg, rgb(var(--mint)), rgb(var(--up)))'
+                          : st.tag === 'Macro'    ? 'linear-gradient(135deg, rgb(var(--gics-tech)), rgb(var(--gics-comm)))'
+                          : 'linear-gradient(135deg, rgb(var(--gics-semis)), rgb(var(--gics-realestate)))',
               }}/>
               <div>
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
@@ -1562,12 +1566,12 @@ function IOSMarketNews({ tweaks, height = 1480 }) {
                   }}>{st.tag}</span>
                   {st.tickers.map((t) => (
                     <span key={t} style={{
-                      padding: '1px 6px', borderRadius: 4, fontSize: 10.5, fontWeight: 700,
+                      padding: '1px 6px', borderRadius: 4, fontSize: 'var(--t-meta)', fontWeight: 'var(--weight-bold)',
                       background: 'rgb(var(--surface-2))', color: 'rgb(var(--text-2) / 0.62)',
                     }}>{t}</span>
                   ))}
                 </div>
-                <div style={{ fontSize: 14, fontWeight: 700, lineHeight: 1.32,
+                <div style={{ fontSize: 'var(--t-row)', fontWeight: 'var(--weight-bold)', lineHeight: 1.32,
                                 letterSpacing: '-0.005em', textWrap: 'pretty' }}>{st.head}</div>
                 <div className="t-aux" style={{ marginTop: 4 }}>
                   {st.pub} · {st.ago} ago
@@ -1620,7 +1624,7 @@ function MacMarketSectorsHeatmap({ tweaks }) {
                         display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <ProfileChip size={28}/>
-            <div className="t-h" style={{ fontSize: 22 }}>Market</div>
+            <div className="t-h" style={{ fontSize: 'var(--t-h)' }}>Market</div>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
             <span className="kbd"><Icon name="cmd" size={11}/> K</span>
@@ -1637,7 +1641,7 @@ function MacMarketSectorsHeatmap({ tweaks }) {
             return (
               <div key={t} style={{
                 position: 'relative', padding: '10px 0 14px',
-                fontSize: 14, fontWeight: a ? 700 : 500,
+                fontSize: 'var(--t-row)', fontWeight: a ? 700 : 500,
                 color: a ? 'rgb(var(--text))' : 'rgb(var(--text-2) / 0.62)',
               }}>
                 {t}
@@ -1656,7 +1660,7 @@ function MacMarketSectorsHeatmap({ tweaks }) {
             <span className="t-aux">11 sectors · 1D · S&amp;P 500 constituents</span>
           </div>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8,
-                          fontSize: 11.5, fontWeight: 600, color: 'rgb(var(--text-2) / 0.62)' }}>
+                          fontSize: 'var(--t-eyebrow)', fontWeight: 'var(--weight-semi)', color: 'rgb(var(--text-2) / 0.62)' }}>
             <span>−2%</span>
             <span style={{
               width: 220, height: 10, borderRadius: 5,
@@ -1680,12 +1684,12 @@ function MacMarketSectorsHeatmap({ tweaks }) {
             }}>
               <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                 <div>
-                  <div style={{ fontSize: 15, fontWeight: 800,
+                  <div style={{ fontSize: 'var(--t-base)', fontWeight: 'var(--weight-black)',
                                   letterSpacing: '-0.01em' }}>{s.name}</div>
                   <div className="t-aux" style={{ marginTop: 3 }}>${s.mc} mkt cap</div>
                 </div>
                 <div className="tnum" style={{
-                  fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em',
+                  fontSize: 'var(--t-h)', fontWeight: 'var(--weight-black)', letterSpacing: '-0.02em',
                   color: s.pct >= 0 ? 'rgb(var(--up))' : 'rgb(var(--down))',
                 }}>
                   {(s.pct >= 0 ? '+' : '') + s.pct.toFixed(2)}%
@@ -1698,7 +1702,7 @@ function MacMarketSectorsHeatmap({ tweaks }) {
                 {s.top.map((t) => (
                   <span key={t} style={{
                     padding: '3px 8px', borderRadius: 5,
-                    fontSize: 11, fontWeight: 700,
+                    fontSize: 'var(--t-caption)', fontWeight: 'var(--weight-bold)',
                     background: 'rgb(0 0 0 / 0.30)', backdropFilter: 'blur(8px)',
                     color: 'rgb(255 255 255 / 0.92)',
                   }}>{t}</span>
@@ -1710,7 +1714,7 @@ function MacMarketSectorsHeatmap({ tweaks }) {
           <div style={{
             borderRadius: 14, border: '.5px dashed rgb(255 255 255 / 0.10)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: 'rgb(var(--text-3) / 0.38)', fontSize: 12, fontWeight: 600,
+            color: 'rgb(var(--text-3) / 0.38)', fontSize: 'var(--t-aux)', fontWeight: 'var(--weight-semi)',
             gap: 6,
           }}>
             <Icon name="plus" size={13}/> Crypto · v2

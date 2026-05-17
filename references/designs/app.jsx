@@ -13,6 +13,88 @@ function App() {
 
   return (
     <DesignCanvas>
+      {/* ── v4 · FEEDBACK closure ─────────────────────────────── */}
+      <DCSection
+        id="v4-feedback"
+        title="v4 — FEEDBACK-v3.md closure"
+        subtitle="P0 tokens + P1 missing artboards + P2 early deliverables. Closes every item the engineering review flagged."
+      >
+        {/* P0 */}
+        <DCArtboard id="ios-acct-colors" label="P0-3 · Account color picker" width={390} height={980}>
+          <div className="artboard-shadow"><IOSAccountColorPicker tweaks={t}/></div>
+        </DCArtboard>
+
+        {/* P1 */}
+        <DCArtboard id="market-status-variants" label="P1-4 · MarketStatusStrip · 4 sessions" width={390} height={844}>
+          <div className="artboard-shadow"><MarketStatusStripVariants tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-pin-idle" label="P1-5 · PIN entry · idle" width={390} height={980}>
+          <div className="artboard-shadow"><IOSProfilePINEntryV2 tweaks={t} state="idle"/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-pin-wrong" label="P1-5 · PIN entry · wrong (shake)" width={390} height={980}>
+          <div className="artboard-shadow"><IOSProfilePINEntryV2 tweaks={t} state="wrong"/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-pin-cooldown" label="P1-5 · PIN entry · cooldown" width={390} height={980}>
+          <div className="artboard-shadow"><IOSProfilePINEntryV2 tweaks={t} state="cooldown"/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-dash-collapsed" label="P1-6 · Dashboard · collapsed nav" width={390} height={1080}>
+          <div className="artboard-shadow"><IOSDashboardCollapsed tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-port-overflow-v2" label="P1-7 · Portfolio overflow · reconciled" width={390} height={980}>
+          <div className="artboard-shadow"><IOSPortfolioOverflowMenuV2 tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-trade-err" label="P1-8 · Trade · hard validation" width={390} height={980}>
+          <div className="artboard-shadow"><IOSTradeSheetError tweaks={t}/></div>
+        </DCArtboard>
+
+        {/* P2 */}
+        <DCArtboard id="mac-mkt-overview" label="P2-9 · Mac Market · Overview" width={1280} height={820}>
+          <div className="artboard-mac-shadow"><MacMarketOverview tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="mac-mkt-stocks" label="P2-9 · Mac Market · Stocks" width={1280} height={820}>
+          <div className="artboard-mac-shadow"><MacMarketStocks tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="mac-mkt-etf-page" label="P2-9 · Mac Market · ETF" width={1280} height={820}>
+          <div className="artboard-mac-shadow"><MacMarketETF tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="mac-mkt-news" label="P2-9 · Mac Market · News" width={1280} height={820}>
+          <div className="artboard-mac-shadow"><MacMarketNews tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-sym-cost" label="P2-10 · Symbol · cost line + buy/sell" width={390} height={1480}>
+          <div className="artboard-shadow"><IOSSymbolCostMarkers tweaks={t} sym="MSFT"/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-trade-dup" label="P2-11 · Trade · duplicate detected" width={390} height={980}>
+          <div className="artboard-shadow"><IOSTradeSheetDuplicate tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-trade-batch" label="P2-11 · Trade · batch entry" width={390} height={1280}>
+          <div className="artboard-shadow"><IOSTradeSheetBatchEntry tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-event-earnings" label="P2-12 · Upcoming · Earnings detail" width={390} height={1280}>
+          <div className="artboard-shadow"><IOSUpcomingEventDetail tweaks={t} kind="earnings"/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-event-exdiv" label="P2-12 · Upcoming · Ex-Dividend detail" width={390} height={1280}>
+          <div className="artboard-shadow"><IOSUpcomingEventDetail tweaks={t} kind="exdiv"/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-onb-1" label="P2-13 · Onboarding 1 · Welcome" width={390} height={844}>
+          <div className="artboard-shadow"><IOSOnboardingWelcome tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-onb-2" label="P2-13 · Onboarding 2 · Password" width={390} height={844}>
+          <div className="artboard-shadow"><IOSOnboardingPassword tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-onb-3" label="P2-13 · Onboarding 3 · Start mode" width={390} height={844}>
+          <div className="artboard-shadow"><IOSOnboardingImport tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-onb-4" label="P2-13 · Onboarding 4 · First profile" width={390} height={844}>
+          <div className="artboard-shadow"><IOSOnboardingFirstProfile tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-onb-5" label="P2-13 · Onboarding 5 · Done" width={390} height={844}>
+          <div className="artboard-shadow"><IOSOnboardingDone tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-privacy-l2" label="P2-14 · Privacy L2 · profile masked" width={390} height={1480}>
+          <div className="artboard-shadow"><IOSPrivacyL2 tweaks={t}/></div>
+        </DCArtboard>
+      </DCSection>
+
       {/* ── Interactions + States (R-I1, R-I2, R-S1 cont.) ───── */}
       <DCSection
         id="interactions"

@@ -16,9 +16,29 @@ const SEC = {
 };
 
 // Account color palette (R-N2.b) — muted tones, distinct from sector hues.
+// Values are tokens from styles.css (R-T0.a RGB triples), wrapped as rgb()
+// at consumption time. ACCT_COLORS is therefore keyed by account id and
+// resolves to a CSS-string that consumers can drop into `background`
+// or `border-color` directly.
+//
+// Assignment rule (R-N2.b updated): on Account creation, pick the next
+// unused color in cyclic order from this palette ordering. Account Editor
+// allows manual override via the 8-swatch picker (see `IOSAccountColorPicker`).
+const ACCT_PALETTE = [
+  { id: 'ocean',  name: 'Ocean',  rgb: 'rgb(var(--acct-ocean))'  },
+  { id: 'bronze', name: 'Bronze', rgb: 'rgb(var(--acct-bronze))' },
+  { id: 'plum',   name: 'Plum',   rgb: 'rgb(var(--acct-plum))'   },
+  { id: 'olive',  name: 'Olive',  rgb: 'rgb(var(--acct-olive))'  },
+  { id: 'slate',  name: 'Slate',  rgb: 'rgb(var(--acct-slate))'  },
+  { id: 'steel',  name: 'Steel',  rgb: 'rgb(var(--acct-steel))'  },
+  { id: 'rust',   name: 'Rust',   rgb: 'rgb(var(--acct-rust))'   },
+  { id: 'sand',   name: 'Sand',   rgb: 'rgb(var(--acct-sand))'   },
+];
 const ACCT_COLORS = {
-  'fid-ind':  '#7AB0FF',  // ocean
-  'fid-roth': '#E0B274',  // bronze
+  'fid-ind':  ACCT_PALETTE[0].rgb,  // Sam · Individual
+  'fid-roth': ACCT_PALETTE[1].rgb,  // Sam · Roth IRA
+  'sch-mom':  ACCT_PALETTE[2].rgb,  // Mom · Schwab
+  'vng-dad':  ACCT_PALETTE[3].rgb,  // Dad · Vanguard
 };
 
 // ─────────────────────────────────────────────────────────────────

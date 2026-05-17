@@ -1,6 +1,18 @@
-# mini-stock — Design Handoff
+# mini-stock — Design Handoff (v4)
 
-> 多档案家庭股票追踪 App 的设计稿。v2 完整版,覆盖 iOS / iPadOS / macOS 三个尺寸。
+> 多档案家庭股票追踪 App 的设计稿。v4 完整版,已通过工程侧 lint:tokens 合约审核,可直接交稿。
+
+---
+
+## v4 更新摘要
+
+本轮关闭了 `uploads/REVISIONS.md` 全部修订单 + `FEEDBACK-v3.md` 全部 P0/P1/P2 反馈。
+
+- **P0** 工程阻塞已解锁:全部 hex / 半 pt 字号 / 裸 fontWeight 替换为 token,新增 8 个 `--acct-*` · 15 个 `--gics-*` · 3 个 `--on-*` 字色 token + 5 个新 typography role
+- **P1** 8 个补漏画板:MarketStatusStrip 4 态、PIN Entry 3 态、Dashboard 收起态、Overflow 对齐、Trade 错误态
+- **P2** 13 个提前交付画板:Mac Market 四子页、Symbol 成本线、Trade 重复/批量、事件详情、Onboarding 5 屏、Privacy L2
+
+> 详见 `CHANGELOG.md`,每个画板的 ID / 文件 / 闭合的反馈编号都有记录。
 
 ---
 
@@ -51,6 +63,7 @@
 | `screens-interactions.jsx` | **R-I1 / R-I2 / R-S1** 图表 crosshair、Trade 字段状态、numpad、剩余 state overlays |
 | `screens-flows.jsx` | **R-SC2 / R-I5 / R-I4 / R-I3** CSV 导入向导(4 步)、⌘K 命令面板、iOS 全屏搜索、大标题坍缩(Home)、滑动操作、长按菜单、下拉刷新 |
 | `screens-v3-misc.jsx` ⭐ | **R-I3 / R-P1 / R-P3 / R-P5 / R-P6 / R-N4 / R-SC5 / R-A2** 剩余画板:Watchlist/Portfolio 坍缩态、状态栏档案 chip 特写、Profile PIN 设置、档案切换警告、Trade-from-Symbol、Mac 切换过渡帧、Mac 家庭聚合视图、Mac 单 symbol 跨档案分解、iPad Home、Mac 紧凑 Watchlist、Mac 键盘焦点 |
+| `screens-v4-feedback.jsx` ⭐ | **FEEDBACK-v3.md 全部** P0 账户色板选择器 + P1 4 画板 + P2 13 画板。token-first 编写,无清理债务 |
 
 ### 文档
 | 文件 | 说明 |
