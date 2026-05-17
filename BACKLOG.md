@@ -1,91 +1,104 @@
 # BACKLOG
 
-> Prioritized open work, distilled from `INTERACTION_SPEC.md §18`, `DATABASE_SPEC.md §12`, `references/designs/REVISIONS.md` priority order. Update whenever a spec changes or a sprint completes.
+> Prioritized open work, organized around [`MVP_PLAN.md`](MVP_PLAN.md) milestones. Update whenever a spec changes or a sprint completes.
 
 ## priority encoding
 
-`P0` = blocks subsequent work · `P1` = next sprint · `P2` = within phase · `P3` = nice-to-have · `❓` = open question requiring human decision
+`P0` = current milestone · `P1` = next milestone · `P2` = within MVP · `P3` = v1.5+ · `❓` = open question requiring human decision
 
 ---
 
-## P0 — sprint 0 / 1 prerequisites
+## P0 — M1 "See a stock" (current sprint, see MVP_PLAN §2)
 
-- [x] root scaffolding (this commit)
-- [x] `pnpm install` + `pnpm dev` proof-of-bootability (cab2658)
-- [ ] Neon project provisioned via MCP; `DATABASE_URL` in `.env.local`
-- [ ] initial Drizzle migration applied (`0000_init.sql` per DATABASE_SPEC §8.2)
-- [ ] seed `app_settings` singleton with bcrypt-hashed operator password
-- [ ] login screen + session cookie + middleware route guard
-- [ ] profile CRUD + switch (R-P1 + R-P3)
-- [ ] `styles.css` from design canvas imported into `app/globals.css`
-- [ ] Tailwind v4 `@theme inline` mapping for tokens
+- [ ] `lib/market/yahoo.ts` adapter + Vitest unit tests (probe rules from `logs/probes/ANALYSIS.md`: `adjclose → adj_close`, ETF module subset, rename detection)
+- [ ] `app/api/quote/[symbol]/route.ts` — yahoo adapter call + quote_cache write-through (30s TTL)
+- [ ] `app/api/history/[symbol]/route.ts` — yahoo chart() call + prices_daily backfill
+- [ ] `lib/auth/session.ts` — bcrypt verify + jose cookie sign
+- [ ] `app/api/auth/login/route.ts` + `middleware.ts`
+- [ ] `app/(auth)/login/page.tsx` — form UI
+- [ ] `scripts/seed.ts` for-real — bootstrap `app_settings` row from env (idempotent)
+- [ ] `app/(app)/s/[symbol]/page.tsx` — Hero + lightweight-charts area + range chips
+- [ ] Vercel project linked from GitHub
+- [ ] Neon prod project created (separate from dev `proud-pine-87759784`)
+- [ ] First Vercel prod deploy + iPhone/macOS sanity check
+- [ ] Playwright e2e: login → /s/AAPL → chart visible
 
-## P1 — sprint 2 (data layer + Home)
+## P1 — M2 "Record my first trade" (next, see MVP_PLAN §3)
 
-- [ ] `lib/market/finnhub.ts` quote + search + profile endpoints
-- [ ] `lib/market/yahoo.ts` history + dividends + splits + earnings
-- [ ] `quote_cache` + `prices_daily` write-through pattern
-- [ ] `useProfileScopedQuery` wrapper + query-key factory
-- [ ] `useApiMutation` wrapper with declarative invalidation manifest (INTERACTION_SPEC §7.5)
-- [ ] Home page sections: NavHeader, MarketStatusStrip, NetWorthHero, AccountsRibbon, WatchlistStrip, TodayMovers, AllocationDonut, RecentActivity (skip UpcomingEvents + HouseholdSwitchHint until designs are complete)
-- [ ] Portfolio.Summary + Portfolio.Positions
-- [ ] Symbol detail with TradingView lightweight-charts integration
-- [ ] TradeSheet with React Hook Form + Zod
-- [ ] PWA manifest + service worker (next-pwa)
+- [ ] Auto-create default "Me" profile on first login if none exists
+- [ ] Settings sub-page for account create (no full Profile editor yet)
+- [ ] `lib/portfolio/positions.ts` — TS wrappers around `get_positions` / `get_my_position` / `get_net_worth`
+- [ ] `app/api/transactions/route.ts` (POST/GET) + `lib/api/mutations/transactions.ts`
+- [ ] TradeSheet component (BUY/SELL only)
+- [ ] MyPosition aggregated card on SymbolDetail (U-1)
+- [ ] Minimal Home tab at `/` (net worth hero + positions table)
+- [ ] 2-tab TabBar (Home + Settings)
+- [ ] Toast + Undo for trade delete (sonner)
+- [ ] Playwright e2e: buy → see position with correct math
 
-## P2 — sprint 3 (market + completeness)
+## P1 — M3 "Watchlist + family" (see MVP_PLAN §4)
 
-- [ ] Market tab Overview + Stocks + ETF
-- [ ] MultiLineComparisonChart component
-- [ ] CSV import 4-step flow (R-SC2)
-- [ ] Onboarding flow (U-7)
-- [ ] Privacy mode L0/L1/L2 (U-8)
-- [ ] Wash sale detection function (`get_wash_sale_candidates`, DATABASE_SPEC §7.3)
-- [ ] Holding period LT/ST badge
-- [ ] Multi-account aggregated MyPosition card (U-1)
-- [ ] Per-symbol earnings + ex-div line (U-6 inline)
-- [ ] State scaffolding `<Surface fallback>` per INTERACTION_SPEC §9
-- [ ] Pull-to-refresh on all main lists
+- [ ] Multi-profile UI (R-P0..P3 minus PIN): ProfilesList in Settings · Add/Edit/Delete · ProfileSwitcher (mac sidebar chip + ios sheet) · profile color chrome
+- [ ] Trade Sheet profile-attributed header (R-P3)
+- [ ] Watchlist CRUD: create/rename/delete lists; add/remove items; reorder via dnd-kit
+- [ ] Home WatchlistStrip (R-N1 #5)
+- [ ] WatchlistFull page at `/watchlists/[id]`
+- [ ] MarketStatusStrip on Home (R-N1 #2) — fully closes U-2
+- [ ] ⌘K search palette (R-I5; holdings + market sections)
+
+## P2 — M4 "Complete v1" (see MVP_PLAN §5)
+
+- [ ] Market tab 4 sub-tabs: Overview · Stocks · ETF · News (Sectors+Movers placeholders)
+- [ ] MultiLineComparisonChart (R-N3)
+- [ ] Portfolio sub-tabs: Activity · Balances (Summary+Positions land in M2)
+- [ ] `/portfolio/dividends` + `/portfolio/performance` detail pages
+- [ ] CSV import 4-step flow (R-SC2) for Fidelity / Schwab / Vanguard / Custom
+- [ ] Onboarding wizard (U-7)
+- [ ] Privacy mode L0/L1/L2 (R-P7 / U-8)
+- [ ] Alerts list page (no triggers yet)
+- [ ] UpcomingEvents card on Home (R-N1 #8) reading dividends + earnings
 
 ## P3 — v1.5 / post-launch
 
-- [ ] FIFO positions function + tax lot report
-- [ ] Alerts (UI + cron + Web Push)
+- [ ] Alerts trigger + Web Push delivery
+- [ ] FIFO `get_positions_fifo` + `get_realized_pl_lots` (DATABASE_SPEC §6.1 future)
+- [ ] Wash sale detection UI (function `get_wash_sale_candidates` already in DB)
+- [ ] Holding period LT/ST badge on positions
 - [ ] Offline write queue (`outbox_mutations` table)
+- [ ] Per-profile PIN (R-P6)
 - [ ] Sectors + Movers tabs in Market
-- [ ] Pre/post-market quote display (yahoo-finance2)
 - [ ] On-chart cost-line + buy/sell markers (U-3)
-- [ ] Trade entry UX micro-improvements (U-4: default price, last-date default, dup detect, batch mode)
+- [ ] Trade entry UX micro-improvements (U-4: default price, dup detect, batch mode)
 - [ ] Cross-profile aggregate view (R-P5 `__all__`)
-- [ ] i18n with `next-intl` (U-9)
+- [ ] i18n with `next-intl` (U-9) — already installed, scaffold strings now
+- [ ] Soft-delete cleanup Vercel cron (DATABASE_SPEC §12 #4)
+- [ ] `audit_log` triggers (gated by `app_settings.audit_enabled`)
 
 ---
 
-## ❓ open questions (need human decision before relevant sprint)
+## ❓ open questions (status updates from prior list)
 
-From `INTERACTION_SPEC.md §18`:
+Decisions made during Sprint 0 → moved out of "open" into MVP_PLAN/specs:
 
-- ❓ **push notifications scope** — iOS PWA push (16.4+). Defer to v1.5? Recommendation: yes.
-- ❓ **offline write queue** — v1.5? Recommendation: yes; v1 just disables mutations offline.
-- ❓ **real-time WebSocket vs polling** — Finnhub free has WS. Recommendation: polling for v1.
-- ❓ **multi-operator** — out of scope v1; confirm.
-- ❓ **i18n switch on day 1** — extract strings via `next-intl` even if only EN ships?
-- ❓ **service worker scope** — assets only (v1) vs API GET cache (v1.5)?
+- ~~uuid_v7 source~~ → **app-generated** via `uuidv7` npm; 0001 migration adds `gen_random_uuid()` DB-level fallback for raw SQL inserts (logged 2026-05-17 in ledger)
+- ~~trigger updated_at vs app-set~~ → **trigger** (`set_updated_at` function generated)
+- ~~real-time WebSocket vs polling~~ → **polling 30s** in v1 (yahoo-finance2 covers); WS deferred
+- ~~design canvas round-2 timing~~ → **defer to post-M1 feedback** (locked 2026-05-17)
+- ~~push notifications~~ → **v1.5** (MVP_PLAN §5 non-goals)
+- ~~offline write queue~~ → **v1.5** (MVP_PLAN §5 non-goals)
+- ~~multi-operator~~ → **out of v1** (DATABASE_SPEC §11 lists migration path)
+- ~~audit log default on/off~~ → **off** in v1 (DATABASE_SPEC §3.16)
+- ~~cash modeling polymorphism~~ → **accept** (DATABASE_SPEC §12.6)
 
-From `DATABASE_SPEC.md §12`:
+Still open:
 
-- ❓ **uuid_v7 source** — Postgres extension vs app-generated. Recommendation: app-generated (`uuidv7` npm).
-- ❓ **trigger `updated_at` vs app-set**. Recommendation: trigger.
-- ❓ **audit log default on or off** in v1? Recommendation: off.
-- ❓ **cash modeling polymorphism** — accept `quantity`-as-amount for CASH_* kinds? Recommendation: accept v1.
-
-From design v2 audit (REVISIONS.md round 1):
-
-- ❓ Settle remaining ~20% of design canvas (UpcomingEvents, HouseholdSwitchHint, ProfileSwitchTransition, DeleteProfileConfirm, ProfilePINSetup, Stale state, U-7 onboarding, 4 missing `design-spec.html` sections).
+- ❓ **i18n on day 1** — `next-intl` is installed; extract strings via dictionary even if only EN ships v1? Recommendation: yes, takes ~1 day, saves a refactor later.
+- ❓ **service worker scope** — assets only (M1-M4) vs API GET cache (v1.5)? Recommendation: assets only for MVP.
+- ❓ **custom domain** for Vercel — use `mini-mint-XXX.vercel.app` for v0 (decided) or buy a domain? Defer to post-M2 if v1 sticks.
 
 ## decision-log conventions
 
 Once an open question is decided:
-1. Move it from "❓ open questions" to "decisions made" (a section to be added when first decision lands).
-2. Append a JSON line to `logs/ledger/decisions.ndjson`.
-3. If architectural, also write an ADR under `docs/adr/`.
+1. Strike it through here with the date
+2. Append a JSON line to `logs/ledger/decisions.ndjson`
+3. If architectural, also write an ADR under `docs/adr/`
