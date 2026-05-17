@@ -540,6 +540,13 @@ CREATE OR REPLACE FUNCTION get_positions(
   first_buy_at   timestamptz,
   last_txn_at    timestamptz
 ) LANGUAGE sql STABLE AS $$
+  -- v1 AVG-cost positions. realized_pl uses portfolio-average cost basis
+  -- (proceeds − qty_sold × current_avg_cost) — a useful proxy for v1 but
+  -- NOT IRS-correct for tax reporting; v1.5 ships get_positions_fifo with
+  -- per-lot accounting for accurate ST/LT split.
+  --
+  -- Implemented as 4 CTEs (rather than aggregates-in-window) so it works
+  -- under Postgres planner: buys + sells summarized separately, then joined.
   WITH adjusted AS (
     SELECT
       t.account_id, t.symbol, t.kind, t.executed_at,
@@ -552,41 +559,55 @@ CREATE OR REPLACE FUNCTION get_positions(
       AND (p_account_id IS NULL OR t.account_id = p_account_id)
       AND t.kind IN ('BUY','SELL','TRANSFER_IN','TRANSFER_OUT','SPLIT')
   ),
-  rolled AS (
+  buys AS (
     SELECT
       account_id, symbol,
-      SUM(CASE WHEN kind IN ('BUY','TRANSFER_IN')  THEN  adj_qty
-               WHEN kind IN ('SELL','TRANSFER_OUT') THEN -adj_qty
-               ELSE 0 END)                                                 AS quantity,
-      SUM(CASE WHEN kind IN ('BUY','TRANSFER_IN')  THEN adj_qty * adj_price + fees
-               ELSE 0 END)                                                 AS gross_cost_buys,
-      SUM(CASE WHEN kind IN ('BUY','TRANSFER_IN')  THEN adj_qty
-               ELSE 0 END)                                                 AS gross_qty_buys,
-      SUM(CASE WHEN kind = 'SELL'                  THEN adj_qty * adj_price - fees
-               ELSE 0 END)                                                 AS gross_proceeds_sells,
-      SUM(CASE WHEN kind = 'SELL'                  THEN adj_qty * (
-            (SUM(adj_qty*adj_price + fees) FILTER (WHERE kind='BUY')
-             / NULLIF(SUM(adj_qty) FILTER (WHERE kind='BUY'), 0))
-          ) ELSE 0 END) OVER (PARTITION BY account_id, symbol)              AS approx_cost_of_sales,
-      MIN(CASE WHEN kind = 'BUY' THEN executed_at END)                     AS first_buy_at,
-      MAX(executed_at)                                                     AS last_txn_at
+      SUM(adj_qty)                            AS qty,
+      SUM(adj_qty * adj_price + fees)         AS cost,
+      MIN(executed_at)                        AS first_at,
+      MAX(executed_at)                        AS last_at
     FROM adjusted
+    WHERE kind IN ('BUY','TRANSFER_IN')
     GROUP BY account_id, symbol
+  ),
+  sells AS (
+    SELECT
+      account_id, symbol,
+      SUM(adj_qty)                            AS qty,
+      SUM(adj_qty * adj_price - fees)         AS proceeds,
+      MAX(executed_at)                        AS last_at
+    FROM adjusted
+    WHERE kind IN ('SELL','TRANSFER_OUT')
+    GROUP BY account_id, symbol
+  ),
+  joined AS (
+    SELECT
+      COALESCE(b.account_id, s.account_id)              AS account_id,
+      COALESCE(b.symbol,     s.symbol)                  AS symbol,
+      COALESCE(b.qty,      0) - COALESCE(s.qty,     0)  AS quantity,
+      COALESCE(b.qty,      0)                           AS buy_qty,
+      COALESCE(b.cost,     0)                           AS buy_cost,
+      COALESCE(s.qty,      0)                           AS sell_qty,
+      COALESCE(s.proceeds, 0)                           AS sell_proceeds,
+      b.first_at                                        AS first_buy_at,
+      GREATEST(COALESCE(b.last_at, '-infinity'::timestamptz),
+               COALESCE(s.last_at, '-infinity'::timestamptz)) AS last_txn_at
+    FROM buys b FULL OUTER JOIN sells s USING (account_id, symbol)
   )
   SELECT
-    account_id, symbol,
+    account_id,
+    symbol,
     quantity,
-    CASE WHEN gross_qty_buys = 0 THEN 0
-         ELSE gross_cost_buys / gross_qty_buys END                         AS avg_cost,
+    CASE WHEN buy_qty = 0 THEN 0 ELSE buy_cost / buy_qty END           AS avg_cost,
     CASE WHEN quantity = 0 THEN 0
-         ELSE quantity * (gross_cost_buys / NULLIF(gross_qty_buys, 0)) END AS total_cost,
-    gross_proceeds_sells - approx_cost_of_sales                            AS realized_pl,
+         ELSE quantity * (buy_cost / NULLIF(buy_qty, 0)) END           AS total_cost,
+    sell_proceeds - (sell_qty * (buy_cost / NULLIF(buy_qty, 0)))       AS realized_pl,
     first_buy_at,
-    last_txn_at
-  FROM rolled
+    NULLIF(last_txn_at, '-infinity'::timestamptz)                      AS last_txn_at
+  FROM joined
   WHERE
     (p_status = 'open'   AND quantity > 0)
-    OR (p_status = 'closed' AND quantity = 0)
+    OR (p_status = 'closed' AND quantity = 0 AND sell_qty > 0)
     OR (p_status = 'all');
 $$;
 --> statement-breakpoint
