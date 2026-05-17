@@ -8,22 +8,12 @@
 
 ---
 
-## P0 — M1 "See a stock" (current sprint, see MVP_PLAN §2)
+## ✓ Done — M1 "See a stock" (closed 2026-05-17, tag `v0.M1`)
 
-- [ ] `lib/market/yahoo.ts` adapter + Vitest unit tests (probe rules from `logs/probes/ANALYSIS.md`: `adjclose → adj_close`, ETF module subset, rename detection)
-- [ ] `app/api/quote/[symbol]/route.ts` — yahoo adapter call + quote_cache write-through (30s TTL)
-- [ ] `app/api/history/[symbol]/route.ts` — yahoo chart() call + prices_daily backfill
-- [ ] `lib/auth/session.ts` — bcrypt verify + jose cookie sign
-- [ ] `app/api/auth/login/route.ts` + `middleware.ts`
-- [ ] `app/(auth)/login/page.tsx` — form UI
-- [ ] `scripts/seed.ts` for-real — bootstrap `app_settings` row from env (idempotent)
-- [ ] `app/(app)/s/[symbol]/page.tsx` — Hero + lightweight-charts area + range chips
-- [ ] Vercel project linked from GitHub
-- [ ] Neon prod project created (separate from dev `proud-pine-87759784`)
-- [ ] First Vercel prod deploy + iPhone/macOS sanity check
-- [ ] Playwright e2e: login → /s/AAPL → chart visible
+All 12 deliverables shipped and verified in prod on operator's real device.
+See [`STATUS.md`](STATUS.md) for the closing checklist.
 
-## P1 — M2 "Record my first trade" (next, see MVP_PLAN §3)
+## P0 — M2 "Record my first trade" (current sprint, see MVP_PLAN §3)
 
 - [ ] Auto-create default "Me" profile on first login if none exists
 - [ ] Settings sub-page for account create (no full Profile editor yet)
@@ -36,7 +26,7 @@
 - [ ] Toast + Undo for trade delete (sonner)
 - [ ] Playwright e2e: buy → see position with correct math
 
-## P1 — M3 "Watchlist + family" (see MVP_PLAN §4)
+## P1 — M3 "Watchlist + family" (next, see MVP_PLAN §4)
 
 - [ ] Multi-profile UI (R-P0..P3 minus PIN): ProfilesList in Settings · Add/Edit/Delete · ProfileSwitcher (mac sidebar chip + ios sheet) · profile color chrome
 - [ ] Trade Sheet profile-attributed header (R-P3)

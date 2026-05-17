@@ -4,51 +4,48 @@
 
 ## current sprint
 
-**Sprint 0 · Framework Scaffolding** — **DONE** (closed 2026-05-17)
+**Sprint 1 · M1 "See a stock"** — **DONE** (closed 2026-05-17 · tag `v0.M1`)
 
-- [x] `INTERACTION_SPEC.md`, `DATABASE_SPEC.md` finalized
-- [x] Design canvas v2 ~80% (round-2 deferred to post-M1 feedback per MVP_PLAN §0)
-- [x] Root directory structure + AI framework
-- [x] `pnpm install` + `pnpm dev` proof (cab2658)
-- [x] Yahoo-finance2 probe validated 23/23 endpoints (5f558e3 · `logs/probes/ANALYSIS.md`)
-- [x] v1 schema authored + 0000 migration generated (8e62c08)
-- [x] Neon dev project provisioned (`proud-pine-87759784`)
-- [x] 0000 migration applied to dev DB · 3 stored functions smoke-tested with correct arithmetic
-- [x] 0001 migration: DB-level `gen_random_uuid()` defaults on UUID PK columns (so raw SQL inserts work)
+Operator confirmed prod working: login → home (search box + Open button + 6 featured tickers) → symbol detail (price, day change, post-market price+change, range-switchable chart). Real Yahoo data, real Neon prod, tested on real device.
 
-## current sprint (active)
-
-**Sprint 1 · M1 "See a stock"** — starting
-
-See [`MVP_PLAN.md` §2](MVP_PLAN.md) for full M1 brief. Vertical slice; ship to Vercel; operator tests on phone + desktop.
-
-- **goal**: operator logs in on phone or desktop → enters `/s/AAPL` → sees live price + 1Y chart
-- **owner**: AI agents (design-implementer + claude + test-writer) with operator gating
-- **deliverables**:
-  - [ ] `lib/market/yahoo.ts` adapter (Vitest unit-tested)
-  - [ ] `/api/quote/[symbol]` + `/api/history/[symbol]` Route Handlers (writes through quote_cache + prices_daily)
-  - [ ] Single-password auth (`lib/auth/session.ts` + `/api/auth/login` + middleware)
-  - [ ] `/login` UI
-  - [ ] `scripts/seed.ts` bootstraps `app_settings` row from env (real impl, no longer stub)
-  - [ ] `app/(app)/s/[symbol]/page.tsx` — Hero + lightweight-charts area chart with range chips
-  - [ ] Vercel project + Neon prod project + first deploy
-  - [ ] Playwright e2e for login → quote round-trip
-- **exit criteria**: see [`MVP_PLAN.md` §2 acceptance criteria](MVP_PLAN.md)
-- **blockers**: none
-- **target**: in operator's hand by 2026-05-22
+- [x] `lib/market/yahoo.ts` adapter + 21 Vitest unit tests
+- [x] `/api/quote/[symbol]` + `/api/history/[symbol]` with cache write-through
+- [x] Single-password auth (bcrypt + jose + middleware gate)
+- [x] `/login` UI (server page + client form, error states)
+- [x] `scripts/seed.ts` real impl — bootstraps `app_settings` from env
+- [x] `/s/[symbol]` Hero + lightweight-charts area + 6 range chips
+- [x] Neon prod (`flat-bonus-47972630`) provisioned + 0000+0001 migrations applied + app_settings seeded
+- [x] Vercel project linked + 4 prod env vars set + initial deploy
+- [x] Playwright e2e × 6 specs × 2 projects (chromium + iPhone-13 mobile-safari) = 12/12 green
+- [x] Real-device verified on operator's phone + desktop
 
 ## next sprint
 
-**Sprint 2 · M2 "Record my first trade"** (planned, see [`MVP_PLAN.md` §3](MVP_PLAN.md))
+**Sprint 2 · M2 "Record my first trade"** — ready to start when operator gives the word
 
-Starts only after M1 acceptance + operator feedback.
+See [`MVP_PLAN.md` §3](MVP_PLAN.md). Vertical slice continues:
 
-## what's NOT in scope right now
+- Auto-create default "Me" profile on first post-M2 login
+- Single AccountCreate flow (inline on empty home)
+- TradeSheet (BUY/SELL kinds only; DIV/SPLIT defer)
+- MyPosition aggregated card on SymbolDetail (U-1)
+- Minimal Home tab — net worth hero + positions list (replaces M1's ticker grid)
+- 2-tab TabBar (Home + Settings); Portfolio/Market/Me defer to M3-M4
+- Toast + Undo for trade delete (sonner)
+- `lib/portfolio/positions.ts` TS wrappers around the existing get_positions / get_my_position / get_net_worth Postgres functions
 
-- Market tab, watchlists, multi-profile UI — M3+
-- CSV import, dividends UI, onboarding wizard — M4
-- Alert push triggers, FIFO tax, offline write queue, per-profile PIN — v1.5
-- Design canvas round-2 — deferred until M1 user feedback
+**Exit criteria**: operator records a real buy → MyPosition shows correct avg cost + today P/L matching `qty × (price − prev_close)`.
+
+## post-M1 follow-ups (queued for separate work)
+
+- Design canvas round-2: complete the remaining ~20% (R-N1 UpcomingEvents+HouseholdSwitchHint, R-P PIN-Setup+SwitchTransition+DeleteConfirm, R-S1 stale state, U-7 onboarding, 4 missing design-spec.html sections)
+- Component-locality fixes in design canvas per `references/designs/REVISIONS.md` audit
+
+## what's NOT in scope for M2
+
+- Watchlists, multi-profile UI (M3)
+- Market tab, CSV import, dividends UI, onboarding wizard (M4)
+- Alert push triggers, FIFO tax, offline write queue, per-profile PIN (v1.5)
 
 ## decision log pointer
 
