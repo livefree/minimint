@@ -80,6 +80,12 @@ function App() {
         <DCArtboard id="ios-home-collapsed" label="Home · large-title collapsed (frame 2)" width={390} height={1080}>
           <div className="artboard-shadow"><IOSHomeCollapsed tweaks={t}/></div>
         </DCArtboard>
+        <DCArtboard id="ios-watch-collapsed" label="Watchlist · large-title collapsed" width={390} height={1080}>
+          <div className="artboard-shadow"><IOSWatchlistCollapsed tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-acct-collapsed" label="Portfolio · large-title collapsed" width={390} height={1080}>
+          <div className="artboard-shadow"><IOSAccountsCollapsed tweaks={t}/></div>
+        </DCArtboard>
         <DCArtboard id="ios-swipe" label="Watchlist · row mid-swipe" width={390} height={844}>
           <div className="artboard-shadow"><IOSWatchlistSwipeAction tweaks={t}/></div>
         </DCArtboard>
@@ -127,6 +133,46 @@ function App() {
         <DCArtboard id="ios-pin-entry" label="iOS · PIN entry" width={390} height={844}>
           <div className="artboard-shadow"><IOSProfilePINEntry tweaks={t}/></div>
         </DCArtboard>
+        <DCArtboard id="ios-pin-setup" label="iOS · PIN setup (in editor)" width={390} height={980}>
+          <div className="artboard-shadow"><IOSProfilePINSetup tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-statusbar-chip" label="iOS · Status-bar chip · 3 states" width={390} height={844}>
+          <div className="artboard-shadow"><IOSStatusBarProfileChip tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-acct-switch-warn" label="iOS · Profile-switch warning" width={390} height={844}>
+          <div className="artboard-shadow"><IOSAccountSwitchWarning tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-trade-from-sym" label="iOS · Trade sheet (from Symbol)" width={390} height={980}>
+          <div className="artboard-shadow"><IOSTradeSheetFromSymbol tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="mac-switch-transition" label="Mac · Profile-switch transition" width={1280} height={820}>
+          <div className="artboard-mac-shadow"><MacProfileSwitchTransition tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="mac-all-profiles" label="Mac · Home · All profiles (household)" width={1280} height={900}>
+          <div className="artboard-mac-shadow"><MacDashboardAllProfiles tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="mac-sym-all-profiles" label="Mac · AAPL · per-profile breakdown" width={1280} height={900}>
+          <div className="artboard-mac-shadow"><MacSymbolDetailAllProfiles tweaks={t} sym="AAPL"/></div>
+        </DCArtboard>
+      </DCSection>
+
+      {/* ── Responsive (R-SC5) + a11y (R-A2) ──────────────────── */}
+      <DCSection
+        id="responsive"
+        title="Responsive · Accessibility (R-SC5 / R-A2)"
+        subtitle="iPad mid-tier (1024×768) keeps the iOS TabBar but reflows to 2 columns. Mac at <1024 collapses sidebar to a 64px rail. Keyboard focus uses the global mint outline."
+      >
+        <DCArtboard id="ipad-dash" label="iPad · Home" width={1024} height={1366}>
+          <div className="artboard-shadow" style={{ borderRadius: 28 }}>
+            <IPadDashboard tweaks={t}/>
+          </div>
+        </DCArtboard>
+        <DCArtboard id="mac-watch-compact" label="Mac · Watchlist compact (900px)" width={900} height={700}>
+          <div className="artboard-mac-shadow"><MacWatchlistCompact tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="mac-watch-kbfocus" label="Mac · Watchlist · keyboard focus" width={1280} height={820}>
+          <div className="artboard-mac-shadow"><MacWatchlistKeyboardFocus tweaks={t}/></div>
+        </DCArtboard>
       </DCSection>
 
       {/* ── Home v2 — Consolidated (Yahoo-style) ──────────────── */}
@@ -149,11 +195,35 @@ function App() {
         title="Portfolio — Fidelity-style (v2)"
         subtitle="4 sub-tabs · grouped by account with left-edge color stripes · dense positions table · Trade from context, not a global FAB."
       >
+        <DCArtboard id="ios-port-summary" label="iOS · Portfolio · Summary" width={390} height={1480}>
+          <div className="artboard-shadow"><IOSPortfolioSummary tweaks={t}/></div>
+        </DCArtboard>
         <DCArtboard id="ios-port-v2" label="iOS · Portfolio · Positions" width={390} height={1280}>
           <div className="artboard-shadow"><IOSPortfolio tweaks={t}/></div>
         </DCArtboard>
+        <DCArtboard id="ios-port-activity" label="iOS · Portfolio · Activity" width={390} height={1280}>
+          <div className="artboard-shadow"><IOSPortfolioActivity tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-port-balances" label="iOS · Portfolio · Balances" width={390} height={1080}>
+          <div className="artboard-shadow"><IOSPortfolioBalances tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-acct-selector" label="iOS · Account selector sheet" width={390} height={844}>
+          <div className="artboard-shadow"><IOSAccountSelectorSheet tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-port-overflow" label="iOS · Portfolio overflow menu" width={390} height={844}>
+          <div className="artboard-shadow"><IOSPortfolioOverflowMenu tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="mac-port-summary" label="macOS · Portfolio · Summary" width={1280} height={900}>
+          <div className="artboard-mac-shadow"><MacPortfolioSummary tweaks={t}/></div>
+        </DCArtboard>
         <DCArtboard id="mac-port-v2" label="macOS · Portfolio · Positions" width={1280} height={820}>
           <div className="artboard-mac-shadow"><MacPortfolio tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="mac-port-activity" label="macOS · Portfolio · Activity" width={1280} height={900}>
+          <div className="artboard-mac-shadow"><MacPortfolioActivity tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="mac-port-balances" label="macOS · Portfolio · Balances" width={1280} height={820}>
+          <div className="artboard-mac-shadow"><MacPortfolioBalances tweaks={t}/></div>
         </DCArtboard>
       </DCSection>
 
@@ -166,8 +236,20 @@ function App() {
         <DCArtboard id="ios-mkt-v2" label="iOS · Market · Overview" width={390} height={1820}>
           <div className="artboard-shadow"><IOSMarket tweaks={t}/></div>
         </DCArtboard>
+        <DCArtboard id="ios-mkt-trending" label="iOS · Market · Stocks · Trending" width={390} height={1480}>
+          <div className="artboard-shadow"><IOSMarketTrending tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-mkt-etf" label="iOS · Market · ETF" width={390} height={1480}>
+          <div className="artboard-shadow"><IOSMarketETF tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="ios-mkt-news" label="iOS · Market · News" width={390} height={1480}>
+          <div className="artboard-shadow"><IOSMarketNews tweaks={t}/></div>
+        </DCArtboard>
         <DCArtboard id="mac-mkt-v2" label="macOS · Market · Overview" width={1280} height={820}>
           <div className="artboard-mac-shadow"><MacMarket tweaks={t}/></div>
+        </DCArtboard>
+        <DCArtboard id="mac-mkt-heatmap" label="macOS · Market · Sectors heatmap" width={1280} height={820}>
+          <div className="artboard-mac-shadow"><MacMarketSectorsHeatmap tweaks={t}/></div>
         </DCArtboard>
       </DCSection>
 
