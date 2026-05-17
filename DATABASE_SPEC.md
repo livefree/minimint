@@ -325,21 +325,23 @@ Undo = `DELETE FROM transactions WHERE source_import_id = $1`. Subsequent invali
 
 ### 3.8 securities
 
-Symbol catalog. Populated lazily — when the app encounters a symbol it doesn't know (e.g., via CSV import), it fetches profile from Finnhub and inserts.
+Symbol catalog. Populated lazily — when the app encounters a symbol it doesn't know (e.g., via CSV import), it fetches profile from yahoo-finance2 (`assetProfile` module) and inserts.
 
 ```sql
 CREATE TABLE securities (
   symbol        text PRIMARY KEY CHECK (symbol ~ '^[A-Z0-9.\^\-]{1,16}$'),
   name          text NOT NULL,
-  exchange      text,
+  exchange      text,                                     -- e.g. "NMS" (short code from quote().exchange)
+  full_exchange text,                                     -- e.g. "NasdaqGS" (from quote().fullExchangeName)
   asset_type    asset_type NOT NULL DEFAULT 'EQUITY',
   currency      char(3) NOT NULL DEFAULT 'USD',
   sector        text,
   industry      text,
-  country       char(2),
-  cik           text,                                     -- SEC CIK if applicable
+  industry_key  text,                                     -- yahoo's slug form, e.g. "consumer-electronics"
+  country       text,                                     -- yahoo returns full name ("United States"); convert to ISO2 in app layer if needed
+  timezone      text,                                     -- e.g. "America/New_York" (from chart().meta)
   delisted_at   date,
-  renamed_to    text REFERENCES securities(symbol),       -- FB → META; chain via repeated lookup
+  renamed_to    text REFERENCES securities(symbol),       -- FB → META; app-layer detects via returned-symbol-mismatch
   search_text   text GENERATED ALWAYS AS (lower(symbol || ' ' || name)) STORED,
   refreshed_at  timestamptz NOT NULL DEFAULT now(),
   created_at    timestamptz NOT NULL DEFAULT now()
@@ -348,30 +350,110 @@ CREATE INDEX idx_securities_search ON securities USING gin (search_text gin_trgm
 CREATE INDEX idx_securities_active ON securities (asset_type) WHERE delisted_at IS NULL;
 ```
 
-`renamed_to` handles symbol changes: positions for old symbol auto-resolve to new (app-layer follows the pointer). UX still shows old symbol on historical txns but aggregates under new.
+`renamed_to` handles symbol changes. yahoo silently auto-redirects (querying `FB` returns META data); the adapter compares `result.symbol !== queriedSymbol` to detect and writes the pointer.
 
 `search_text` + trigram GIN supports the `⌘K` Market search section with sub-50ms fuzzy match up to 100k symbols.
 
+**Removed columns from earlier draft**: `cik` (not provided by yahoo — would need SEC EDGAR backfill, out of v1 scope). See `logs/probes/ANALYSIS.md` §3.4.
+
 ### 3.9 quote_cache
 
-Hot cache of last quote per symbol. Updated by the quote-fetch route (Finnhub primary, yahoo-finance2 fallback). TTL enforced at read time (30s during hours, 5 min after).
+Hot cache of last quote per symbol. Updated by the quote-fetch route (yahoo-finance2 primary per `logs/probes/ANALYSIS.md`; Finnhub fallback for v1.5 WebSocket). TTL enforced at read time (30s during hours, 5 min after).
 
 ```sql
 CREATE TABLE quote_cache (
-  symbol       text PRIMARY KEY REFERENCES securities(symbol) ON DELETE CASCADE,
-  price        numeric(20,6) NOT NULL,
-  prev_close   numeric(20,6),
-  day_high     numeric(20,6),
-  day_low      numeric(20,6),
-  open_price   numeric(20,6),
-  volume       bigint,
-  source       text NOT NULL,                            -- 'finnhub' | 'yahoo'
-  fetched_at   timestamptz NOT NULL DEFAULT now()
+  symbol             text PRIMARY KEY REFERENCES securities(symbol) ON DELETE CASCADE,
+
+  -- regular session
+  price              numeric(20,6) NOT NULL,             -- regularMarketPrice
+  prev_close         numeric(20,6),
+  day_high           numeric(20,6),
+  day_low            numeric(20,6),
+  open_price         numeric(20,6),
+  volume             bigint,
+
+  -- live order book (only meaningful during market hours)
+  bid                numeric(20,6),
+  ask                numeric(20,6),
+  bid_size           integer,
+  ask_size           integer,
+
+  -- extended hours (U-2: pre/post market on Home + SymbolDetail)
+  pre_market_price   numeric(20,6),
+  pre_market_change  numeric(20,6),
+  pre_market_at      timestamptz,
+  post_market_price  numeric(20,6),
+  post_market_change numeric(20,6),
+  post_market_at     timestamptz,
+
+  -- session context
+  market_state       text,                               -- 'REGULAR' | 'PRE' | 'POST' | 'CLOSED' | 'PREPRE' | 'POSTPOST'
+  market_time        timestamptz,                        -- yahoo's regularMarketTime (real exchange time)
+
+  -- bookkeeping
+  source             text NOT NULL,                      -- 'yahoo' | 'finnhub'
+  fetched_at         timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX idx_quote_cache_freshness ON quote_cache (fetched_at);
 ```
 
 Read pattern: `SELECT * FROM quote_cache WHERE symbol = ANY($1) AND fetched_at > now() - interval '30 seconds'`. Misses trigger an upstream fetch + UPSERT.
+
+**Why 14 added columns**: cache rewritten every 30s for ~30 active symbols × 24h = ~90k writes/day total, ~10 KB total payload. Trivial. Avoids needing a separate "extended-quote" table for the SymbolDetail hero (R-SC3) which renders all this data inline.
+
+### 3.9.1 securities_meta (slow-changing snapshot)
+
+Many useful quote fields (PE / EPS / 52w / MA / market cap / next earnings / dividend yield / analyst rating) change at most daily and don't belong in the hot 30s-rewrite cache. Separate table refreshed once per day per symbol.
+
+```sql
+CREATE TABLE securities_meta (
+  symbol                  text PRIMARY KEY REFERENCES securities(symbol) ON DELETE CASCADE,
+
+  -- size / shares
+  market_cap              numeric(24,0),                  -- AAPL ~4.4T fits comfortably
+  shares_outstanding      bigint,
+  float_shares            bigint,
+
+  -- valuation
+  trailing_pe             numeric(10,4),
+  forward_pe              numeric(10,4),
+  price_to_book           numeric(10,4),
+  eps_trailing            numeric(10,4),
+  eps_forward             numeric(10,4),
+  book_value              numeric(20,6),
+
+  -- 52-week range
+  fifty_two_week_high     numeric(20,6),
+  fifty_two_week_low      numeric(20,6),
+
+  -- moving averages (for R-I1 chart overlay toggle)
+  fifty_day_average       numeric(20,6),
+  two_hundred_day_average numeric(20,6),
+
+  -- dividends (next event; history goes to dividends_announced)
+  dividend_rate           numeric(20,6),
+  dividend_yield          numeric(10,4),
+  next_dividend_date      date,
+  next_ex_dividend_date   date,
+
+  -- next earnings
+  next_earnings_at        timestamptz,
+  next_earnings_is_est    boolean,
+
+  -- analyst consensus (1.0 strong buy → 5.0 strong sell)
+  analyst_rating_mean     numeric(10,4),
+  analyst_target_mean     numeric(20,6),
+  analyst_target_high     numeric(20,6),
+  analyst_target_low      numeric(20,6),
+  analyst_recommendation  text,                           -- 'BUY' | 'HOLD' | 'SELL' (yahoo recommendationKey)
+
+  refreshed_at            timestamptz NOT NULL DEFAULT now(),
+  created_at              timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX idx_securities_meta_freshness ON securities_meta (refreshed_at);
+```
+
+For ETFs (e.g. SPY), most fields are NULL — yahoo's quoteSummary returns a strict subset of modules. Adapter must branch on `securities.asset_type`.
 
 ### 3.10 prices_daily
 
@@ -398,26 +480,28 @@ Storage estimate: row width ~120 bytes; 180k × 120 = 22 MB. Compress with table
 
 ### 3.11 dividends_announced
 
-Global corporate dividend declarations.
+Global corporate dividend declarations. yahoo's chart() events feed only returns `{amount, date}` per occurrence (see `logs/probes/ANALYSIS.md` §F8) — `pay_date`, `record_date`, and explicit `frequency` are not available historically.
 
 ```sql
 CREATE TABLE dividends_announced (
   symbol       text NOT NULL REFERENCES securities(symbol) ON DELETE CASCADE,
   ex_date      date NOT NULL,
-  pay_date     date,
-  record_date  date,
   amount       numeric(20,6) NOT NULL,
   currency     char(3) NOT NULL DEFAULT 'USD',
-  frequency    text,                                      -- 'QUARTERLY' | 'SEMI_ANNUAL' | 'ANNUAL' | 'SPECIAL'
+  frequency    text,                                      -- nullable; computed by app heuristic on inter-date spacing
   PRIMARY KEY (symbol, ex_date)
 );
 CREATE INDEX idx_dividends_announced_ex ON dividends_announced (ex_date);
 ```
 
+For the **next** ex/pay date specifically, use `securities_meta.next_ex_dividend_date` + `next_dividend_date` — those ARE returned by quoteSummary's `calendarEvents` module.
+
 Used by:
-- Symbol detail Dividend History card
-- Home UpcomingEvents (next 7 days)
+- Symbol detail Dividend History card (historical)
+- Home UpcomingEvents (next 7 days — joins `securities_meta` for "next" + this table for inferring schedule)
 - Auto-suggest DIV transactions on ex-date for held positions (v1.5)
+
+**Removed columns from earlier draft**: `pay_date`, `record_date` (not in yahoo events feed for history; next-only pay date moved to `securities_meta`). See `logs/probes/ANALYSIS.md` §3.3.
 
 ### 3.12 splits
 
@@ -864,7 +948,7 @@ In order:
 6. `accounts`
 7. `watchlists`, `watchlist_items`
 8. `securities`
-9. `quote_cache`, `prices_daily`, `dividends_announced`, `splits`, `earnings_calendar`, `news_cache`
+9. `quote_cache`, `securities_meta`, `prices_daily`, `dividends_announced`, `splits`, `earnings_calendar`, `news_cache`
 10. `csv_imports`
 11. `transactions` (depends on accounts + csv_imports for FK)
 12. `alerts`
