@@ -1,0 +1,614 @@
+/* mini-stock — v2 styles.css (R-T0 token export contract)
+   Full token rewrite for Tailwind v4 + shadcn/ui parity.
+
+   Color tokens are RGB triples (channels only, no rgb() wrapper).
+   Consumption: `color: rgb(var(--text))` or with alpha
+   `rgb(var(--text-2) / 0.62)` — required for Tailwind v4 `<alpha-value>`
+   expansion (e.g. `bg-up/40`).
+
+   Typography is role-based (--t-meta, --t-eyebrow, --t-display, …)
+   so engineers cannot pick a wrong size for a given semantic role.
+
+   Hairline material via inset box-shadow (`--hairline-top`,
+   `--hairline-bottom`) gives every elevated surface a 1px lit edge
+   without diffused shadow. Apply to every card with radius ≥12. */
+
+:root {
+  /* ── Surfaces (R-T0.a + R-T1) ─────────────────────────────
+     Wider L* deltas with a subtle cool tint applied via
+     --surface-tint for cards so micro-hue feels stacked. */
+  --bg:              7   7   10;
+  --bg-elev:         17  17  24;
+  --surface-1:       27  27  35;
+  --surface-2:       38  38  48;
+  --surface-3:       51  51  63;
+  --surface-tint:    rgb(122 134 255 / 0.04);
+
+  /* ── Text (R-T0.a) ────────────────────────────────────────
+     text-2 / text-3 are SAME source RGB (235 235 245);
+     alpha applied at consumption per the contract. */
+  --text:            255 255 255;
+  --text-2:          235 235 245;   /* consumed at /0.62 */
+  --text-3:          235 235 245;   /* consumed at /0.38 */
+  --text-4:          235 235 245;   /* consumed at /0.20 (legacy) */
+
+  /* ── Brand ────────────────────────────────────────────── */
+  --mint:            107 232 184;
+  --mint-2:          61  217 160;
+  --accent:          var(--mint);
+
+  /* ── Semantic (never overridden by profile chrome) ────── */
+  --up:              52  211 153;
+  --down:            251 113 133;
+
+  /* ── Section accents (R-T3) ──────────────────────────────
+     Used ONLY on section eyebrows + 24×1px header bars.
+     Body / data never colorize with these. */
+  --sec-portfolio:   107 232 184;   /* mint */
+  --sec-watchlist:   122 182 255;   /* sky */
+  --sec-symbol:      201 182 255;   /* lavender */
+  --sec-activity:    255 193 118;   /* amber */
+
+  /* ── Profile accents (R-P2) ──────────────────────────────
+     Eight distinct profile colors. The active profile binds
+     --current-profile = var(--p-N) at app root on switch.
+     Precedence: semantic (up/down) > profile (chrome+CTAs) > section. */
+  --p-1: 107 232 184;   /* mint    */
+  --p-2: 122 182 255;   /* sky     */
+  --p-3: 201 182 255;   /* lavender*/
+  --p-4: 255 193 118;   /* amber   */
+  --p-5: 244 114 182;   /* pink    */
+  --p-6: 110 231 183;   /* teal    */
+  --p-7: 253 164 175;   /* coral   */
+  --p-8: 165 180 252;   /* indigo  */
+  /* Default to Sam (color 1). Per-artboard override sets this. */
+  --current-profile: var(--p-1);
+
+  /* ── Separators (alpha-only tokens, consumed against white) ── */
+  --separator-alpha:        0.10;
+  --separator-strong-alpha: 0.14;
+  /* convenience aliases — full rgb() expression of the above */
+  --separator:        rgb(255 255 255 / 0.10);
+  --separator-strong: rgb(255 255 255 / 0.14);
+
+  /* ── Composite semantic aliases (R-T0.a) ─────────────────
+     Expressed in terms of the triples — hot-path readability. */
+  --up-bg:        rgb(var(--up) / 0.18);
+  --up-line:      rgb(var(--up) / 0.55);
+  --up-area-0:    rgb(var(--up) / 0.42);
+  --up-area-1:    rgb(var(--up) / 0);
+  --down-bg:      rgb(var(--down) / 0.20);
+  --down-line:    rgb(var(--down) / 0.55);
+  --down-area-0:  rgb(var(--down) / 0.42);
+  --down-area-1:  rgb(var(--down) / 0);
+  --mint-soft:    rgb(var(--mint) / 0.16);
+
+  /* ── Hero ambient gradients (R-T2) ───────────────────────
+     Direction picked by today's net P/L sign on consumption. */
+  --hero-grad-up:      radial-gradient(140% 90% at 0% 0%, rgb(var(--up) / 0.16) 0%, transparent 55%);
+  --hero-grad-down:    radial-gradient(140% 90% at 0% 0%, rgb(var(--down) / 0.14) 0%, transparent 55%);
+  --hero-grad-neutral: radial-gradient(140% 90% at 0% 0%, rgb(122 134 255 / 0.08) 0%, transparent 55%);
+
+  /* ── Hairline materials (R-T0.d + R-T1) ──────────────────
+     Apply --hairline-top on every default card (radius ≥12). */
+  --hairline-top:    inset 0 1px 0 rgb(255 255 255 / 0.045);
+  --hairline-bottom: inset 0 -1px 0 rgb(0 0 0 / 0.35);
+
+  /* ── Radii ──────────────────────────────────────────────── */
+  --r-sm:  8px;
+  --r-md:  12px;
+  --r-lg:  16px;
+  --r-xl:  22px;
+  --r-pill: 999px;
+
+  /* ── Typography roles (R-T0.b) ──────────────────────────── */
+  --t-meta:          10.5px;
+  --t-caption:       11px;
+  --t-eyebrow:       11.5px;
+  --t-aux:           12px;
+  --t-stat:          13px;
+  --t-stat-mac:      14.5px;
+  --t-body:          13.5px;
+  --t-row:           14px;
+  --t-base:          15px;
+  --t-row-strong:    16px;
+  --t-row-strong-2:  17px;
+  --t-h-sub:         18px;
+  --t-h:             22px;
+  --t-h-2:           26px;
+  --t-h-3:           28px;
+  --t-display:       32px;
+  --t-display-2:     34px;
+  --t-display-3:     40px;
+  --t-display-4:     42px;
+  --t-display-5:     46px;
+
+  /* ── Letter-spacing roles (R-T0.c) ──────────────────────── */
+  --tracking-display:  -0.025em;
+  --tracking-title:    -0.022em;
+  --tracking-tight:    -0.01em;
+  --tracking-normal:    0;
+  --tracking-data:      0.01em;
+  --tracking-caption:   0.04em;
+  --tracking-eyebrow:   0.06em;
+  --tracking-meta:      0.08em;
+
+  /* ── Font-weight roles (R-T0.c) ─────────────────────────── */
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semi:    600;
+  --weight-bold:    700;
+  --weight-black:   800;
+
+  /* ── Fonts ──────────────────────────────────────────────── */
+  --font-ui:  -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+              "Inter Variable", "Inter", system-ui, sans-serif;
+  --font-num: ui-rounded, -apple-system, "SF Pro Rounded", "SF Pro Display",
+              "Inter Variable", system-ui, sans-serif;
+}
+
+/* ── Inter Variable @font-face (R-T0.e) ──────────────────────
+   Self-hosted variable font for non-Apple platforms; falls back
+   to system stack on Apple where SF Pro is preferred. */
+@font-face {
+  font-family: "Inter Variable";
+  src: url("https://cdn.jsdelivr.net/npm/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Non-Apple platforms: ramp display weight 800 → 750 to compensate
+   Inter's heavier optical body (R-T0.e). */
+@supports not (font: -apple-system-body) {
+  .t-display, .t-display-2, .t-display-3, .t-display-4, .t-display-5 {
+    font-weight: 750;
+  }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-ui);
+  font-synthesis-weight: none;        /* avoid faux-bold on Inter fallback */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  color: rgb(var(--text));
+  background: rgb(var(--bg));
+}
+
+/* ── Tabular numbers (R-T0.d) — opt in explicitly ──────────── */
+.tnum, .tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1, "cv11" 1;   /* cv11 = single-story 4 */
+}
+
+/* ── Role-based type utilities (R-T0.d) ────────────────────── */
+.t-meta {
+  font-size: var(--t-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  font-weight: var(--weight-semi);
+  color: rgb(var(--text-3) / 0.38);
+}
+.t-caption    { font-size: var(--t-caption);  font-weight: var(--weight-medium); color: rgb(var(--text-3) / 0.38); }
+.t-eyebrow    { font-size: var(--t-eyebrow);  letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; font-weight: var(--weight-bold); }
+.t-aux        { font-size: var(--t-aux);      font-weight: var(--weight-medium); color: rgb(var(--text-2) / 0.62); }
+.t-stat       { font-size: var(--t-stat);     font-weight: var(--weight-bold); }
+.t-stat-mac   { font-size: var(--t-stat-mac); font-weight: var(--weight-bold); }
+.t-body       { font-size: var(--t-body); }
+.t-row        { font-size: var(--t-row);      font-weight: var(--weight-semi); }
+.t-base       { font-size: var(--t-base); }
+.t-row-strong { font-size: var(--t-row-strong);   font-weight: var(--weight-bold); }
+.t-row-strong-2 { font-size: var(--t-row-strong-2); font-weight: var(--weight-bold); }
+.t-h-sub      { font-size: var(--t-h-sub);    font-weight: var(--weight-bold); letter-spacing: var(--tracking-tight); }
+.t-h          { font-size: var(--t-h);        font-weight: var(--weight-black); letter-spacing: var(--tracking-tight); }
+.t-h-2        { font-size: var(--t-h-2);      font-weight: var(--weight-black); letter-spacing: var(--tracking-title); }
+.t-h-3        { font-size: var(--t-h-3);      font-weight: var(--weight-black); letter-spacing: var(--tracking-title); }
+.t-display    { font-size: var(--t-display);   letter-spacing: var(--tracking-display); font-weight: var(--weight-black); }
+.t-display-2  { font-size: var(--t-display-2); letter-spacing: var(--tracking-display); font-weight: var(--weight-black); }
+.t-display-3  { font-size: var(--t-display-3); letter-spacing: var(--tracking-display); font-weight: var(--weight-black); }
+.t-display-4  { font-size: var(--t-display-4); letter-spacing: var(--tracking-display); font-weight: var(--weight-black); }
+.t-display-5  { font-size: var(--t-display-5); letter-spacing: var(--tracking-display); font-weight: var(--weight-black); }
+
+/* Tracking utility shorthands */
+.tracking-display { letter-spacing: var(--tracking-display); }
+.tracking-title   { letter-spacing: var(--tracking-title); }
+.tracking-tight   { letter-spacing: var(--tracking-tight); }
+.tracking-data    { letter-spacing: var(--tracking-data); }
+.tracking-caption { letter-spacing: var(--tracking-caption); }
+.tracking-eyebrow { letter-spacing: var(--tracking-eyebrow); }
+.tracking-meta    { letter-spacing: var(--tracking-meta); }
+
+/* ── Hairline materials (R-T0.d + R-T1) ────────────────────── */
+.hairline-top    { box-shadow: var(--hairline-top); }
+.hairline-bottom { box-shadow: var(--hairline-bottom); }
+
+/* ── Focus rings (R-A2) ────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid rgb(var(--mint));
+  outline-offset: 2px;
+  border-radius: inherit;
+}
+
+/* ── iOS screen shell ──────────────────────────────────────── */
+.ios {
+  width: 390px;
+  height: 844px;
+  background: rgb(var(--bg));
+  color: rgb(var(--text));
+  font-family: var(--font-ui);
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+}
+.ios-statusbar {
+  height: 54px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 24px 8px;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: rgb(var(--text));
+  flex: 0 0 auto;
+}
+.ios-statusbar .battery {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-weight: 500;
+}
+.ios-statusbar .bars { display: inline-flex; gap: 2px; align-items: flex-end; }
+.ios-statusbar .bars i {
+  display: inline-block; width: 3px; background: rgb(var(--text)); border-radius: 1px;
+}
+.ios-statusbar .bars i:nth-child(1){height:4px}
+.ios-statusbar .bars i:nth-child(2){height:6px}
+.ios-statusbar .bars i:nth-child(3){height:8px}
+.ios-statusbar .bars i:nth-child(4){height:10px}
+
+.ios-screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+}
+.ios-body {
+  flex: 1 1 auto; min-height: 0;
+  overflow: hidden;
+  padding: 0 0 0;
+}
+.ios-tabbar {
+  flex: 0 0 auto;
+  height: 84px;
+  background: rgb(7 7 10 / 0.72);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+  border-top: .5px solid var(--separator);
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  padding-bottom: 22px;
+}
+.ios-tabbar .tab {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px;
+  color: rgb(var(--text-2) / 0.62);
+  font-size: 10px;
+  font-weight: 500;
+}
+.ios-tabbar .tab svg { width: 24px; height: 24px; }
+.ios-tabbar .tab.active { color: rgb(var(--mint)); }
+.ios-tabbar .tab.fab svg { width: 30px; height: 30px; }
+
+/* ── macOS shell ───────────────────────────────────────────── */
+.mac {
+  width: 1280px;
+  height: 820px;
+  background: rgb(var(--bg));
+  color: rgb(var(--text));
+  font-family: var(--font-ui);
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 224px 1fr;
+}
+.mac-titlebar {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 36px;
+  display: flex; align-items: center; gap: 8px;
+  padding: 0 14px;
+  z-index: 5;
+  pointer-events: none;
+}
+.mac-titlebar .lights { display: flex; gap: 8px; }
+.mac-titlebar .lights i {
+  display: inline-block; width: 12px; height: 12px; border-radius: 50%;
+}
+.mac-sidebar {
+  background: rgb(var(--bg-elev));
+  border-right: .5px solid var(--separator);
+  padding: 48px 12px 16px;
+  display: flex; flex-direction: column;
+  gap: 2px;
+  position: relative;
+}
+.mac-sidebar .brand {
+  display: flex; align-items: center; gap: 10px;
+  padding: 4px 10px 22px;
+  font-size: 15px; font-weight: 700; letter-spacing: -0.01em;
+}
+.mac-sidebar .brand .dot {
+  width: 18px; height: 18px; border-radius: 5px;
+  background: linear-gradient(135deg, rgb(var(--mint)), rgb(var(--mint-2)));
+  box-shadow: 0 0 0 .5px rgb(255 255 255 / 0.12) inset;
+}
+.mac-sidebar .navitem {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  color: rgb(var(--text-2) / 0.62);
+  font-weight: 500;
+  cursor: default;
+}
+.mac-sidebar .navitem.active {
+  background: rgb(var(--surface-2));
+  color: rgb(var(--text));
+}
+.mac-sidebar .navitem.active svg { color: rgb(var(--mint)); }
+.mac-sidebar .navitem svg { width: 16px; height: 16px; color: rgb(var(--text-3) / 0.38); }
+.mac-sidebar .group-label {
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: rgb(var(--text-3) / 0.38); padding: 16px 10px 6px;
+}
+
+.mac-main {
+  position: relative;
+  padding: 48px 32px 24px;
+  overflow: hidden;
+}
+
+/* ── Reusable bits ─────────────────────────────────────────── */
+.pill {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 76px;
+  padding: 5px 10px;
+  border-radius: 7px;
+  font-size: 14px; font-weight: 600;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.005em;
+}
+.pill.up   { background: rgb(var(--up)); }
+.pill.down { background: rgb(var(--down)); }
+
+.pill-soft {
+  display: inline-flex; align-items: center;
+  padding: 3px 7px;
+  border-radius: 5px;
+  font-size: 12px; font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.pill-soft.up   { color: rgb(var(--up));   background: var(--up-bg); }
+.pill-soft.down { color: rgb(var(--down)); background: var(--down-bg); }
+
+.kindpill {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 10.5px; font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.kindpill.buy  { color: rgb(var(--up));   background: var(--up-bg); }
+.kindpill.sell { color: rgb(var(--down)); background: var(--down-bg); }
+.kindpill.div  { color: rgb(var(--mint)); background: var(--mint-soft); }
+
+/* Yahoo-style overnight indicator chip */
+.overnight {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: rgb(var(--text-2) / 0.62);
+}
+.overnight .sun {
+  width: 16px; height: 16px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 999px;
+  background: rgb(242 180 92 / 0.18);
+  color: #F2B45C;
+}
+.overnight.up   { color: rgb(var(--up)); }
+.overnight.down { color: rgb(var(--down)); }
+
+/* ── Unified popover (menu) — Apple-style ────────────────── */
+.menu-pop {
+  background: rgb(50 50 55 / 0.92);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  backdrop-filter: blur(40px) saturate(180%);
+  border: .5px solid rgb(255 255 255 / 0.10);
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.45),
+              0 0 0 .5px rgb(0 0 0 / 0.5);
+  padding: 6px 0;
+  min-width: 264px;
+  color: rgb(var(--text));
+  overflow: hidden;
+}
+.menu-pop .menu-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 16px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: default;
+}
+.menu-pop .menu-row .lead-icon {
+  width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center;
+  color: rgb(var(--text));
+}
+.menu-pop .menu-row .label { flex: 1; }
+.menu-pop .menu-row .sub   { font-size: 12px; color: rgb(var(--text-3) / 0.38); font-weight: 500; }
+.menu-pop .menu-row .trail-icon {
+  color: rgb(var(--text-2) / 0.62);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.menu-pop .menu-row.destructive .label,
+.menu-pop .menu-row.destructive .lead-icon,
+.menu-pop .menu-row.destructive .trail-icon { color: rgb(var(--down)); }
+.menu-pop .menu-row.checked .check { color: rgb(var(--mint)); }
+.menu-pop .menu-sep {
+  height: .5px;
+  background: rgb(255 255 255 / 0.08);
+  margin: 4px 0;
+}
+
+/* Form-style row used in sheets/settings */
+.form-card {
+  background: rgb(var(--surface-1));
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--hairline-top);
+}
+.form-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px;
+  border-bottom: .5px solid var(--separator);
+  font-size: 15px;
+}
+.form-row:last-child { border-bottom: none; }
+.form-row .form-label { flex: 1; color: rgb(var(--text)); font-weight: 500; }
+.form-row .form-value { color: rgb(var(--text-3) / 0.38); font-weight: 500; }
+
+/* iOS switch */
+.ios-switch {
+  position: relative;
+  width: 51px; height: 31px; border-radius: 999px;
+  background: rgb(120 120 128 / 0.32);
+}
+.ios-switch.on { background: rgb(var(--mint)); }
+.ios-switch::after {
+  content: ''; position: absolute;
+  top: 2px; left: 2px;
+  width: 27px; height: 27px; border-radius: 50%;
+  background: white;
+  box-shadow: 0 3px 8px rgb(0 0 0 / 0.18);
+  transition: left .15s;
+}
+.ios-switch.on::after { left: 22px; }
+
+.card {
+  background: rgb(var(--surface-1));
+  border-radius: var(--r-lg);
+  box-shadow: var(--hairline-top);
+}
+
+.sep { height: .5px; background: var(--separator); }
+
+.row-press:hover { background: rgb(255 255 255 / 0.02); }
+
+.chip {
+  display: inline-flex; align-items: center;
+  padding: 5px 11px;
+  border-radius: var(--r-pill);
+  font-size: 13px; font-weight: 600;
+  color: rgb(var(--text-2) / 0.62);
+  background: transparent;
+}
+.chip.active { color: rgb(var(--text)); background: rgb(var(--surface-2)); }
+.chip.brand  { color: #07120D; background: rgb(var(--mint)); }
+
+.kbd {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-num);
+  font-size: 11px;
+  background: rgb(var(--surface-2));
+  color: rgb(var(--text-2) / 0.62);
+}
+
+/* number-pad in trade sheet */
+.numpad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.numpad button {
+  appearance: none; border: 0;
+  background: rgb(var(--surface-2));
+  color: rgb(var(--text));
+  font-size: 24px;
+  font-family: var(--font-ui);
+  font-weight: 500;
+  height: 46px;
+  border-radius: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* App-wide stage background = warm grey from design_canvas */
+.app-stage {
+  background: #f0eee9;
+  min-height: 100vh;
+}
+
+/* artboard chrome */
+.artboard-shadow {
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.04) inset,
+              0 30px 80px -30px rgb(0 0 0 / 0.45),
+              0 8px 24px -12px rgb(0 0 0 / 0.35);
+  border-radius: 40px;
+  overflow: hidden;
+}
+.artboard-mac-shadow {
+  box-shadow: 0 30px 80px -30px rgb(0 0 0 / 0.45),
+              0 8px 24px -12px rgb(0 0 0 / 0.35),
+              0 0 0 .5px rgb(255 255 255 / 0.04) inset;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* ── Privacy mask (R-A1) ─────────────────────────────────── */
+.masked {
+  position: relative;
+  color: transparent !important;
+}
+.masked::after {
+  content: '••••';
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  transform: translateY(-50%);
+  color: rgb(var(--text-2) / 0.62);
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  text-align: inherit;
+}
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* small chrome */
+.iconbtn {
+  width: 32px; height: 32px; border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: rgb(var(--text));
+  background: rgb(var(--surface-2));
+}
+.iconbtn svg { width: 16px; height: 16px; }
+
+/* Heading shorthands — kept for legacy code; new code prefers .t-* roles */
+.h-large {
+  font-size: var(--t-display-2); font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-title);
+  line-height: 1.05;
+}
+.h-section {
+  font-size: 20px; font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+}
+.h-eyebrow {
+  font-size: var(--t-caption); font-weight: var(--weight-semi);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  color: rgb(var(--text-3) / 0.38);
+}

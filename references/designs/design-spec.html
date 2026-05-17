@@ -1,0 +1,931 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>mini-stock — Design Spec v1.0</title>
+<link rel="stylesheet" href="styles.css"/>
+<style>
+  :root {
+    --paper:        #FAF8F4;
+    --paper-2:      #F2EFE8;
+    --ink:          #1A1814;
+    --ink-2:        #4A463E;
+    --ink-3:        #8A8378;
+    --rule:         #E3DED4;
+    --accent-doc:   #2A6E4F;
+    --code-bg:      #F5F2EB;
+  }
+  html, body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Inter", "SF Pro Text", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    margin: 0; padding: 0;
+  }
+  .doc {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 64px 48px 120px;
+  }
+  .eyebrow {
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--accent-doc);
+  }
+  h1 {
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -0.022em;
+    margin: 8px 0 8px;
+    line-height: 1.05;
+  }
+  .subtitle { color: var(--ink-2); font-size: 17px; max-width: 640px; }
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    margin-top: 18px; padding: 14px 18px;
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    font-size: 13px;
+    color: var(--ink-2);
+  }
+  .meta b { color: var(--ink); font-weight: 700; }
+  .meta > span { display: inline-flex; align-items: center; gap: 6px; }
+  .meta .pip { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-doc); }
+
+  h2 {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.012em;
+    margin: 64px 0 4px;
+    padding-top: 28px;
+    border-top: 1px solid var(--rule);
+  }
+  h2 .num { color: var(--ink-3); font-weight: 500; margin-right: 14px; font-variant-numeric: tabular-nums; }
+  h3 {
+    font-size: 17px; font-weight: 700; letter-spacing: -0.005em;
+    margin: 32px 0 8px;
+  }
+  p { margin: 0 0 12px; max-width: 720px; }
+  ul { margin: 6px 0 12px; padding-left: 22px; max-width: 720px; }
+  ul li { margin-bottom: 4px; }
+
+  /* Token tables */
+  table.tokens {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 24px;
+    font-size: 13.5px;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--rule);
+  }
+  table.tokens th {
+    text-align: left;
+    padding: 10px 14px;
+    background: var(--paper-2);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-3);
+    border-bottom: 1px solid var(--rule);
+  }
+  table.tokens td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: middle;
+  }
+  table.tokens tr:last-child td { border-bottom: 0; }
+  table.tokens td.swatch-cell { width: 64px; }
+  .swatch {
+    display: inline-block;
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06);
+  }
+  .swatch.has-grid {
+    background-image:
+      linear-gradient(45deg, #ddd 25%, transparent 25%),
+      linear-gradient(-45deg, #ddd 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #ddd 75%),
+      linear-gradient(-45deg, transparent 75%, #ddd 75%);
+    background-size: 8px 8px;
+    background-position: 0 0, 0 4px, 4px -4px, -4px 0;
+  }
+  code, .mono {
+    font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+    font-size: 12.5px;
+    background: var(--code-bg);
+    padding: 1.5px 6px;
+    border-radius: 4px;
+    color: #2C2A24;
+  }
+  pre {
+    background: #1F1D18;
+    color: #E8E4D6;
+    border-radius: 10px;
+    padding: 16px 18px;
+    font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+    font-size: 12.5px;
+    line-height: 1.55;
+    overflow-x: auto;
+    margin: 8px 0 20px;
+  }
+  pre .k { color: #C8B6FF; }
+  pre .s { color: #A8E6BF; }
+  pre .n { color: #FFCB6B; }
+  pre .c { color: #8E8775; font-style: italic; }
+  pre .t { color: #6BE8B8; }
+
+  /* Dark UI sample blocks — show actual rendered minimint UI in context */
+  .ui-block {
+    background: var(--bg);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 8px 0 20px;
+    border: 1px solid var(--rule);
+  }
+  .ui-block.row-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 12px;
+  }
+  .ui-tile {
+    background: var(--bg);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 14px;
+    font-family: var(--font-ui);
+  }
+  .ui-caption {
+    font-size: 11px;
+    color: var(--ink-3);
+    margin-top: 4px;
+    font-family: -apple-system, system-ui, sans-serif;
+  }
+
+  /* Two-col side-by-side */
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 760px) {
+    .row2, .row3 { grid-template-columns: 1fr; }
+    .doc { padding: 32px 20px 80px; }
+  }
+
+  /* Screen card */
+  .screen-card {
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin: 10px 0 16px;
+  }
+  .screen-card h4 {
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .screen-card .purpose {
+    color: var(--ink-2);
+    font-size: 13.5px;
+    margin-bottom: 12px;
+  }
+  .screen-card dl { margin: 0; font-size: 13.5px; }
+  .screen-card dt {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--ink-3);
+    margin-top: 10px;
+  }
+  .screen-card dd { margin: 2px 0 0; color: var(--ink-2); }
+  .screen-card dd ul { margin-top: 4px; }
+
+  /* Anchor nav */
+  .nav {
+    position: sticky; top: 16px; align-self: flex-start;
+    background: white;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 14px 18px;
+    font-size: 13px;
+    min-width: 200px;
+  }
+  .nav-grid {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 32px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+  @media (max-width: 900px) {
+    .nav-grid { grid-template-columns: 1fr; }
+    .nav { position: static; }
+  }
+  .nav h5 {
+    margin: 0 0 6px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+  }
+  .nav a {
+    display: block;
+    padding: 5px 0;
+    color: var(--ink-2);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .nav a:hover { color: var(--accent-doc); }
+
+  /* Inline tokens */
+  .kbd-d {
+    background: white; border: 1px solid var(--rule);
+    padding: 1px 5px; border-radius: 4px;
+    font-family: ui-monospace, monospace;
+    font-size: 11.5px;
+    color: var(--ink);
+  }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(42,110,79,0.10);
+    color: var(--accent-doc);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin-right: 4px;
+  }
+  .tag.alt { background: rgba(199,113,49,0.10); color: #C77131; }
+  .tag.red { background: rgba(190,55,55,0.10); color: #BE3737; }
+
+  .hr-soft { border: 0; border-top: 1px solid var(--rule); margin: 28px 0; }
+
+  /* Inline minimint mini-mark dot */
+  .brand-dot {
+    display: inline-block; width: 14px; height: 14px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, #6BE8B8, #3DD9A0);
+    vertical-align: -2px; margin-right: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="doc">
+  <div class="eyebrow"><span class="brand-dot"></span>mini-stock · DESIGN SPEC</div>
+  <h1>Design handoff, v1.0</h1>
+  <p class="subtitle">Visual system, component inventory, screen specs and data shapes needed to ship the iOS PWA + macOS web build of mini-stock. Source of truth for visuals is the canvas at <code>index.html</code>; source of truth for tokens is <code>styles.css</code>.</p>
+  <div class="meta">
+    <span><span class="pip"></span> <b>Version</b> 1.0</span>
+    <span><span class="pip"></span> <b>Date</b> May 15, 2026</span>
+    <span><span class="pip"></span> <b>Status</b> Ready for v1 implementation</span>
+    <span><span class="pip"></span> <b>Mocks</b> <a href="index.html" style="color:var(--accent-doc); font-weight:600; text-decoration:none;">index.html</a> · 13 artboards</span>
+    <span><span class="pip"></span> <b>Plan</b> stock-app-1-2-moonlit-dawn.md</span>
+  </div>
+</div>
+
+<div class="nav-grid">
+
+<aside class="nav">
+  <h5>Contents</h5>
+  <a href="#tokens">1 · Design tokens</a>
+  <a href="#type">2 · Typography</a>
+  <a href="#layout">3 · Layout grid</a>
+  <a href="#components">4 · Components</a>
+  <a href="#screens">5 · Screens</a>
+  <a href="#surfaces">6 · Sheets &amp; menus</a>
+  <a href="#variations">7 · Variations</a>
+  <a href="#states">8 · States &amp; empty</a>
+  <a href="#data">9 · Data shapes</a>
+  <a href="#api">10 · API mapping</a>
+  <a href="#a11y">11 · Accessibility</a>
+  <a href="#files">12 · File map</a>
+  <a href="#open">13 · Open issues</a>
+</aside>
+
+<div>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<h2 id="tokens"><span class="num">01</span>Design tokens <span style="font-size:13px;font-weight:500;color:var(--ink-3);letter-spacing:0">· v2 (R-T0)</span></h2>
+<p><b>Contract:</b> every color token is an RGB triple (channels only, no <code>rgb()</code> wrapper, no commas). Consumption: <code>color: rgb(var(--text))</code> or with alpha <code>rgb(var(--text-2) / 0.62)</code>. This is required for Tailwind v4's <code>&lt;alpha-value&gt;</code> expansion (<code>bg-up/40</code>) and matches shadcn/ui's color contract.</p>
+
+<p><b>Tailwind v4 hookup</b> (engineering wires; designer just guarantees the triples):</p>
+<pre>@theme inline {
+  --color-bg:         <span class="s">rgb(var(--bg))</span>;
+  --color-surface-1:  <span class="s">rgb(var(--surface-1))</span>;
+  --color-text:       <span class="s">rgb(var(--text))</span>;
+  --color-text-2:     <span class="s">rgb(var(--text-2))</span>;   /* alpha applied at site */
+  --color-up:         <span class="s">rgb(var(--up))</span>;
+  --color-down:       <span class="s">rgb(var(--down))</span>;
+  --color-mint:       <span class="s">rgb(var(--mint))</span>;
+}</pre>
+<p>Generates utilities <code>bg-bg</code>, <code>bg-surface-1</code>, <code>text-text</code>, <code>text-text-2/[0.62]</code>, <code>bg-up/40</code>, etc.</p>
+
+<h3>Color · Surfaces (R-T0.a + R-T1 widened ladder)</h3>
+<table class="tokens">
+  <thead><tr><th></th><th>Token</th><th>Triple</th><th>Hex</th><th>Usage</th></tr></thead>
+  <tbody>
+    <tr><td class="swatch-cell"><span class="swatch" style="background:rgb(7 7 10);"></span></td><td><code>--bg</code></td><td><code>7 7 10</code></td><td>#07070A</td><td>Page background, full-bleed.</td></tr>
+    <tr><td class="swatch-cell"><span class="swatch" style="background:rgb(17 17 24);"></span></td><td><code>--bg-elev</code></td><td><code>17 17 24</code></td><td>#111118</td><td>Sidebar, nav strip, status/tab bars.</td></tr>
+    <tr><td class="swatch-cell"><span class="swatch" style="background:rgb(27 27 35);"></span></td><td><code>--surface-1</code></td><td><code>27 27 35</code></td><td>#1B1B23</td><td>Default card. Add <code>--hairline-top</code>.</td></tr>
+    <tr><td class="swatch-cell"><span class="swatch" style="background:rgb(38 38 48);"></span></td><td><code>--surface-2</code></td><td><code>38 38 48</code></td><td>#262630</td><td>Inset: field, segmented track, chip.</td></tr>
+    <tr><td class="swatch-cell"><span class="swatch" style="background:rgb(51 51 63);"></span></td><td><code>--surface-3</code></td><td><code>33333F</code></td><td>#33333F</td><td>Active segmented item, hover row.</td></tr>
+    <tr><td class="swatch-cell"><span class="swatch has-grid"></span></td><td><code>--separator</code></td><td>rgb 255 255 255 / 0.10</td><td>—</td><td>Row hairline.</td></tr>
+    <tr><td class="swatch-cell"><span class="swatch has-grid"></span></td><td><code>--separator-strong</code></td><td>rgb 255 255 255 / 0.14</td><td>—</td><td>Group dividers (between major card groups).</td></tr>
+  </tbody>
+</table>
+
+<h3>Color · Text (single source RGB; alpha at consumption)</h3>
+<table class="tokens">
+  <thead><tr><th></th><th>Token</th><th>Triple</th><th>Consumption</th><th>Usage</th></tr></thead>
+  <tbody>
+    <tr><td class="swatch-cell"><span class="swatch" style="background:#fff;"></span></td><td><code>--text</code></td><td><code>255 255 255</code></td><td><code>rgb(var(--text))</code></td><td>Primary text, numbers.</td></tr>
+    <tr><td class="swatch-cell"><span class="swatch" style="background:rgba(235,235,245,0.62);"></span></td><td><code>--text-2</code></td><td><code>235 235 245</code></td><td><code>rgb(var(--text-2) / 0.62)</code></td><td>Secondary labels.</td></tr>
+    <tr><td class="swatch-cell"><span class="swatch" style="background:rgba(235,235,245,0.38);"></span></td><td><code>--text-3</code></td><td><code>235 235 245</code></td><td><code>rgb(var(--text-3) / 0.38)</code></td><td>Tertiary / metadata.</td></tr>
+    <tr><td class="swatch-cell"><span class="swatch" style="background:rgba(235,235,245,0.20);"></span></td><td><code>--text-4</code></td><td><code>235 235 245</code></td><td><code>rgb(var(--text-4) / 0.20)</code></td><td>Disabled / placeholder (legacy).</td></tr>
+  </tbody>
+</table>
+
+<h3>Color · Brand &amp; semantic (R-T0.a)</h3>
+<table class="tokens">
+  <thead><tr><th></th><th>Token</th><th>Triple</th><th>Usage</th></tr></thead>
+  <tbody>
+    <tr><td class="swatch-cell"><span class="swatch" style="background:#6BE8B8;"></span></td><td><code>--mint</code></td><td><code>107 232 184</code></td><td>Brand accent. CTAs, active tab, links.</td></tr>
+    <tr><td class="swatch-cell"><span class="swatch" style="background:#3DD9A0;"></span></td><td><code>--mint-2</code></td><td><code>61 217 160</code></td><td>Brand gradient end-stop.</td></tr>
+    <tr><td class="swatch-cell"><span class="swatch" style="background:#34D399;"></span></td><td><code>--up</code></td><td><code>52 211 153</code></td><td>Positive values, up pills, area-chart up. <b>Never overridden by profile chrome.</b></td></tr>
+    <tr><td class="swatch-cell"><span class="swatch" style="background:#FB7185;"></span></td><td><code>--down</code></td><td><code>251 113 133</code></td><td>Negative values, down pills.</td></tr>
+  </tbody>
+</table>
+<p><b>Composite aliases</b> (kept as full <code>rgb(... / α)</code> for hot-path readability — values expressed in terms of the triple):</p>
+<pre>--up-bg:     <span class="s">rgb(var(--up) / 0.18)</span>;
+--down-bg:   <span class="s">rgb(var(--down) / 0.20)</span>;
+--mint-soft: <span class="s">rgb(var(--mint) / 0.16)</span>;</pre>
+
+<h3>Color · Section accents (R-T3)</h3>
+<p>Used <b>only</b> on section eyebrow labels + 24×1px header underlines. Body / data never colorize with these. Cap usage to 1 accent per surface.</p>
+<table class="tokens">
+  <thead><tr><th></th><th>Token</th><th>Triple</th><th>Used on</th></tr></thead>
+  <tbody>
+    <tr><td class="swatch-cell"><span class="swatch" style="background:#6BE8B8;"></span></td><td><code>--sec-portfolio</code></td><td><code>107 232 184</code></td><td>Home, Portfolio (mint).</td></tr>
+    <tr><td class="swatch-cell"><span class="swatch" style="background:#7AB6FF;"></span></td><td><code>--sec-watchlist</code></td><td><code>122 182 255</code></td><td>Watchlists, indices (sky).</td></tr>
+    <tr><td class="swatch-cell"><span class="swatch" style="background:#C9B6FF;"></span></td><td><code>--sec-symbol</code></td><td><code>201 182 255</code></td><td>Symbol detail, Allocation (lavender).</td></tr>
+    <tr><td class="swatch-cell"><span class="swatch" style="background:#FFC176;"></span></td><td><code>--sec-activity</code></td><td><code>255 193 118</code></td><td>Activity, News, Movers (amber).</td></tr>
+  </tbody>
+</table>
+
+<h3>Hairlines &amp; hero gradients (R-T1 / R-T2)</h3>
+<table class="tokens">
+  <tbody>
+    <tr><td><code>--hairline-top</code></td><td><code>inset 0 1px 0 rgb(255 255 255 / 0.045)</code></td><td>Mandatory on every default card (radius ≥12).</td></tr>
+    <tr><td><code>--hairline-bottom</code></td><td><code>inset 0 -1px 0 rgb(0 0 0 / 0.35)</code></td><td>Input fields (depression edge).</td></tr>
+    <tr><td><code>--hero-grad-up</code></td><td>radial 0% 0% · <code>rgb(var(--up) / 0.16)</code> → transparent</td><td>NetWorth, Symbol hero · sign-up day.</td></tr>
+    <tr><td><code>--hero-grad-down</code></td><td>radial 0% 0% · <code>rgb(var(--down) / 0.14)</code> → transparent</td><td>NetWorth, Symbol hero · sign-down day.</td></tr>
+    <tr><td><code>--surface-tint</code></td><td><code>rgb(122 134 255 / 0.04)</code></td><td>Optional cool micro-tint on default cards.</td></tr>
+  </tbody>
+</table>
+
+<h3>Radii</h3>
+<table class="tokens">
+  <tbody>
+    <tr><td><code>--r-sm</code></td><td>8px</td><td>Inputs, segmented-track items.</td></tr>
+    <tr><td><code>--r-md</code></td><td>12px</td><td>Field cards, chips.</td></tr>
+    <tr><td><code>--r-lg</code></td><td>16px</td><td>Default card.</td></tr>
+    <tr><td><code>--r-xl</code></td><td>22px</td><td>Bottom sheet, large modal.</td></tr>
+    <tr><td><code>--r-pill</code></td><td>999px</td><td>Pills, switches, range chips.</td></tr>
+  </tbody>
+</table>
+
+<h3>Spacing scale</h3>
+<p>Use the 4-multiple scale: <b>4 · 8 · 12 · 16 · 24 · 32 · 48</b>. Two non-scale exceptions: the 6px gap inside compact lists (Apple Stocks-style) and the 84px iOS tab bar height (Apple-spec).</p>
+
+<h3>Motion</h3>
+<table class="tokens">
+  <tbody>
+    <tr><td>Fast</td><td>150ms</td><td>Hover / press feedback.</td></tr>
+    <tr><td>Base</td><td>220ms</td><td>Sheet open, tab change, popover.</td></tr>
+    <tr><td>Slow</td><td>320ms</td><td>Route transition, chart range swap.</td></tr>
+  </tbody>
+</table>
+<p>All easing <code>cubic-bezier(.2,.7,.3,1)</code> ("ease-out"). Reduce to 0ms when <code>prefers-reduced-motion</code>.</p>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<h2 id="type"><span class="num">02</span>Typography <span style="font-size:13px;font-weight:500;color:var(--ink-3);letter-spacing:0">· v2 (R-T0.b/c/e)</span></h2>
+<p>Type is exposed by <b>role</b>, not by raw size. Engineers reach for <code>.t-stat</code> / <code>.t-row</code> / <code>.t-display</code>, never <code>text-[13.5px]</code>.</p>
+
+<pre>font-family: <span class="s">-apple-system</span>, <span class="s">BlinkMacSystemFont</span>, <span class="s">"SF Pro Display"</span>,
+             <span class="s">"SF Pro Text"</span>, <span class="s">"Inter Variable"</span>, <span class="s">"Inter"</span>,
+             <span class="s">system-ui</span>, sans-serif;</pre>
+
+<h3>Role → size table (R-T0.b)</h3>
+<table class="tokens">
+  <thead><tr><th>Role</th><th>Token</th><th>px</th><th>Designed usage</th></tr></thead>
+  <tbody>
+    <tr><td>Meta</td><td><code>--t-meta</code></td><td>10.5</td><td>Uppercase metadata, table headers.</td></tr>
+    <tr><td>Caption</td><td><code>--t-caption</code></td><td>11</td><td>Secondary captions.</td></tr>
+    <tr><td>Eyebrow</td><td><code>--t-eyebrow</code></td><td>11.5</td><td>Section eyebrow labels.</td></tr>
+    <tr><td>Aux</td><td><code>--t-aux</code></td><td>12</td><td>Sublabels, footer text.</td></tr>
+    <tr><td>Stat (mobile)</td><td><code>--t-stat</code></td><td>13</td><td>StatTile value (iOS).</td></tr>
+    <tr><td>Stat (mac)</td><td><code>--t-stat-mac</code></td><td>14.5</td><td>StatTile value (Mac).</td></tr>
+    <tr><td>Body</td><td><code>--t-body</code></td><td>13.5</td><td>Default body, list-row primary.</td></tr>
+    <tr><td>Row</td><td><code>--t-row</code></td><td>14</td><td>Table row body.</td></tr>
+    <tr><td>Base</td><td><code>--t-base</code></td><td>15</td><td>Form field value.</td></tr>
+    <tr><td>Row strong</td><td><code>--t-row-strong</code></td><td>16</td><td>StockRow symbol.</td></tr>
+    <tr><td>Row strong 2</td><td><code>--t-row-strong-2</code></td><td>17</td><td>Nav title, dashboard row price.</td></tr>
+    <tr><td>H sub</td><td><code>--t-h-sub</code></td><td>18</td><td>—</td></tr>
+    <tr><td>H</td><td><code>--t-h</code></td><td>22</td><td>Small hero, broker total.</td></tr>
+    <tr><td>H 2</td><td><code>--t-h-2</code></td><td>26</td><td>Symbol detail header.</td></tr>
+    <tr><td>H 3</td><td><code>--t-h-3</code></td><td>28</td><td>—</td></tr>
+    <tr><td>Display</td><td><code>--t-display</code></td><td>32</td><td>—</td></tr>
+    <tr><td>Display 2</td><td><code>--t-display-2</code></td><td>34</td><td>iOS large title.</td></tr>
+    <tr><td>Display 3</td><td><code>--t-display-3</code></td><td>40</td><td>Symbol price (iOS).</td></tr>
+    <tr><td>Display 4</td><td><code>--t-display-4</code></td><td>42</td><td>Symbol price (Mac).</td></tr>
+    <tr><td>Display 5</td><td><code>--t-display-5</code></td><td>46</td><td>Dashboard net worth (Mac).</td></tr>
+  </tbody>
+</table>
+
+<h3>Letter-spacing &amp; weight roles (R-T0.c)</h3>
+<table class="tokens">
+  <tbody>
+    <tr><td><code>--tracking-display</code></td><td>−0.025em</td><td>≥32px headlines, net worth.</td></tr>
+    <tr><td><code>--tracking-title</code></td><td>−0.022em</td><td>26–30px titles.</td></tr>
+    <tr><td><code>--tracking-tight</code></td><td>−0.01em</td><td>18–22px.</td></tr>
+    <tr><td><code>--tracking-data</code></td><td>0.01em</td><td>Mono digits inside rows.</td></tr>
+    <tr><td><code>--tracking-caption</code></td><td>0.04em</td><td>Uppercase metadata.</td></tr>
+    <tr><td><code>--tracking-eyebrow</code></td><td>0.06em</td><td>Uppercase eyebrows.</td></tr>
+    <tr><td><code>--tracking-meta</code></td><td>0.08em</td><td>Sector eyebrows.</td></tr>
+    <tr><td><code>--weight-regular</code> … <code>--weight-black</code></td><td>400 · 500 · 600 · 700 · 800</td><td>Inter ramps to 750 at display sizes on non-Apple (see below).</td></tr>
+  </tbody>
+</table>
+
+<h3>Inter Variable web font (R-T0.e)</h3>
+<p>Self-hosted variable font for non-Apple platforms. Apple users land on SF Pro via the system stack. <b>Engineering deliverable:</b> ship <code>/public/fonts/InterVariable.woff2</code> (latin subset). At display sizes, Inter's optical body is heavier than SF Pro 800 — we ramp 800 → 750 on non-Apple to compensate:</p>
+<pre>@supports not (font: -apple-system-body) {
+  .t-display, .t-display-2, .t-display-3, .t-display-4, .t-display-5 {
+    font-weight: 750;
+  }
+}</pre>
+
+<h3>Tabular numbers — opt in</h3>
+<p>SF Pro and Inter both default to proportional figures. Numbers must opt in with the <code>.tnum</code> / <code>.tabular</code> class (defined in <code>styles.css</code>):</p>
+<pre>.tnum, .tabular {
+  <span class="s">font-variant-numeric: tabular-nums;</span>
+  <span class="s">font-feature-settings: "tnum" 1, "cv11" 1;</span>   /* cv11 = single-story 4 */
+}</pre>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<h2 id="engcontract"><span class="num">02b</span>Engineering contract <span style="font-size:13px;font-weight:500;color:var(--ink-3);letter-spacing:0">· R-T0.g</span></h2>
+<p>Wire these lint rules at scaffold time. They prevent ad-hoc "近似" values that leak past the design system.</p>
+<table class="tokens">
+  <thead><tr><th>Rule</th><th>Target</th><th>Rationale</th></tr></thead>
+  <tbody>
+    <tr><td><code>no-restricted-syntax</code> on inline <code>style.fontSize | color | backgroundColor | padding | margin | gap | letterSpacing | fontWeight</code></td><td>.tsx</td><td>Force token-based utilities; no inline numeric literals.</td></tr>
+    <tr><td>Tailwind <code>safelist: false</code> for arbitrary <code>text-[…px]</code> / <code>tracking-[…]</code> / <code>bg-[#…]</code></td><td>tailwind config</td><td>Block ad-hoc near-values.</td></tr>
+    <tr><td>stylelint <code>color-no-hex</code> + <code>color-named: never</code></td><td>.css</td><td>Tokens only outside <code>styles.css</code>.</td></tr>
+    <tr><td>stylelint <code>unit-allowed-list: ['px','rem','em','%','vh','vw','deg','ms','s']</code></td><td>.css</td><td>Catch typos.</td></tr>
+    <tr><td>Custom rule: ban <code>Math.random</code> in <code>components/</code>; allow only in <code>app/</code> and <code>lib/random</code></td><td>.tsx</td><td>Catch SSR-unsafe IDs (R-T0.f).</td></tr>
+    <tr><td>Typography allowlist: only <code>t-{meta|caption|eyebrow|aux|stat|stat-mac|body|row|base|row-strong|row-strong-2|h-sub|h|h-2|h-3|display|display-2..5}</code> accepted</td><td>tailwind plugin</td><td>Force role-based type usage.</td></tr>
+  </tbody>
+</table>
+
+<h3>SSR-safe SVG IDs (R-T0.f)</h3>
+<p>Sparkline + PriceChart use <code>React.useId()</code> for gradient IDs. Never <code>Math.random()</code> — under Next.js App Router, server and client produce different IDs → hydration mismatch + missing gradients.</p>
+<pre>function Sparkline({ data, up, … }) {
+  const reactId = React.useId();
+  const gradId = `spk-${reactId.replace(/:/g, '')}-${up ? 'u' : 'd'}`;
+  …
+}</pre>
+
+<h3>Known incompatible (R-T0.h) — design accepts these limitations</h3>
+<table class="tokens">
+  <tbody>
+    <tr><td><b>iOS continuous corner (squircle)</b></td><td>CSS <code>border-radius</code> is quarter-circle. Web has no native superellipse. Negligible ≤16px, visible at 22+px. Acceptable drift documented here.</td></tr>
+    <tr><td><b>Dynamic system colors</b> (Apple accent that follows OS setting)</td><td>Static tokens only on web. System-blue rendered as our <code>--mint</code> brand accent regardless of user OS setting.</td></tr>
+    <tr><td><b>iOS haptics</b> (<code>navigator.vibrate</code>)</td><td>Silently no-op on iOS Safari; works on Android Chrome. Haptic spec is aspirational; iOS PWA gets no haptic feedback today.</td></tr>
+  </tbody>
+</table>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<h2 id="layout"><span class="num">03</span>Layout grid</h2>
+
+<div class="row2">
+  <div class="screen-card">
+    <h4>iOS · iPhone 15</h4>
+    <p class="purpose">390 × 844pt. Safe-area aware.</p>
+    <dl>
+      <dt>Side gutter</dt><dd>20pt (page) / 16pt (cards)</dd>
+      <dt>Status bar</dt><dd>54pt at top</dd>
+      <dt>Tab bar</dt><dd>84pt (incl. 22pt home-indicator inset)</dd>
+      <dt>Hit target</dt><dd>44 × 44pt min on all touch elements</dd>
+      <dt>List row</dt><dd>64pt (Apple), 72pt (Yahoo, with overnight chip)</dd>
+    </dl>
+  </div>
+  <div class="screen-card">
+    <h4>macOS · Desktop</h4>
+    <p class="purpose">1280 × 820 design size. Min 1024 to maintain sidebar.</p>
+    <dl>
+      <dt>Sidebar</dt><dd>224px fixed</dd>
+      <dt>Main padding</dt><dd>48 top · 32 sides · 24 bottom</dd>
+      <dt>Card radius</dt><dd>16–18px</dd>
+      <dt>Table row</dt><dd>44px (compact), 52px (with sparkline)</dd>
+      <dt>Traffic-light inset</dt><dd>top:0, left:14px, 12px circles</dd>
+    </dl>
+  </div>
+</div>
+
+<p><b>Breakpoints</b>: ≤768 = TabBar layout (iOS spec). 769–1023 = icon-only rail (use sidebar but collapse labels). ≥1024 = full sidebar layout (macOS spec).</p>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<h2 id="components"><span class="num">04</span>Components</h2>
+<p>Components live in <code>components.jsx</code> + <code>surfaces.jsx</code>. Reuse before authoring new ones. Props listed match the React implementation in mocks; engineers can translate to their framework.</p>
+
+<h3>PercentPill</h3>
+<div class="ui-block row-grid" style="background: var(--bg);">
+  <div class="ui-tile"><span class="pill up">+1.23%</span><div class="ui-caption" style="color:var(--text-3);">size="lg"</div></div>
+  <div class="ui-tile"><span class="pill down">−4.42%</span><div class="ui-caption" style="color:var(--text-3);">size="lg"</div></div>
+  <div class="ui-tile"><span class="pill-soft up">+0.68%</span><div class="ui-caption" style="color:var(--text-3);">size="sm"</div></div>
+  <div class="ui-tile"><span class="pill-soft down">−1.24%</span><div class="ui-caption" style="color:var(--text-3);">size="sm"</div></div>
+</div>
+<pre><span class="t">&lt;PercentPill</span> <span class="n">pct</span>=<span class="s">{1.23}</span> <span class="n">size</span>=<span class="s">"lg"</span> <span class="t">/&gt;</span>   <span class="c">// filled, white text — list rows / hero</span>
+<span class="t">&lt;PercentPill</span> <span class="n">pct</span>=<span class="s">{-4.42}</span> <span class="n">size</span>=<span class="s">"sm"</span> <span class="t">/&gt;</span>  <span class="c">// soft, semantic-colored text — chips</span></pre>
+
+<h3>KindPill</h3>
+<div class="ui-block row-grid" style="background: var(--bg);">
+  <div class="ui-tile"><span class="kindpill buy">BUY</span> <span class="kindpill sell" style="margin-left:6px">SELL</span> <span class="kindpill div" style="margin-left:6px">DIV</span></div>
+</div>
+<p>Used in transaction rows. Always uppercase, always 4-char tracking 0.04em. Use <code>kind="DIV"</code> for dividends, <code>"BUY"</code>, <code>"SELL"</code>, <code>"SPLIT"</code>.</p>
+
+<h3>Overnight chip</h3>
+<p>Yahoo-style sunrise icon + percentage. Indicates pre-market / overnight session movement separately from regular session.</p>
+<div class="ui-block" style="background: var(--bg); display: flex; gap: 16px;">
+  <span class="overnight up"><span class="sun"><svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M2 11h12" stroke="#F2B45C" stroke-width="1.4" stroke-linecap="round"/><path d="M4.5 11A3.5 3.5 0 018 7.5a3.5 3.5 0 013.5 3.5" stroke="#F2B45C" stroke-width="1.4" fill="#F2B45C" fill-opacity="0.55"/><path d="M8 3v1.6M3.6 5l1 1M12.4 5l-1 1" stroke="#F2B45C" stroke-width="1.4" stroke-linecap="round"/></svg></span>+0.50%</span>
+  <span class="overnight down"><span class="sun"><svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M2 11h12" stroke="#F2B45C" stroke-width="1.4" stroke-linecap="round"/><path d="M4.5 11A3.5 3.5 0 018 7.5a3.5 3.5 0 013.5 3.5" stroke="#F2B45C" stroke-width="1.4" fill="#F2B45C" fill-opacity="0.55"/><path d="M8 3v1.6M3.6 5l1 1M12.4 5l-1 1" stroke="#F2B45C" stroke-width="1.4" stroke-linecap="round"/></svg></span>−0.79%</span>
+</div>
+
+<h3>Sparkline</h3>
+<p>30-min bars by default, 48-point intraday line. Optional dashed prevClose horizontal reference. Red/green by direction (NOT by gradient — strictly monochrome line). Width 80–140 in lists, 26–36 tall.</p>
+<pre><span class="t">&lt;Sparkline</span> <span class="n">data</span>=<span class="s">{number[]}</span> <span class="n">up</span>=<span class="s">{boolean}</span>
+            <span class="n">prevClose</span>=<span class="s">{number?}</span> <span class="c">// dashed reference</span>
+            <span class="n">w</span>=<span class="s">{80}</span> <span class="n">h</span>=<span class="s">{32}</span> <span class="n">showDot</span>=<span class="s">{false}</span> <span class="t">/&gt;</span></pre>
+
+<h3>PriceChart</h3>
+<p>3 modes via <code>mode</code> prop. Internally renders <code>AreaChart</code> or <code>CandleChart</code>.</p>
+<table class="tokens">
+  <thead><tr><th>mode</th><th>Look</th><th>Default for</th></tr></thead>
+  <tbody>
+    <tr><td><code>area</code></td><td>Filled mountain w/ vertical gradient</td><td>Symbol detail · Dashboard equity curve</td></tr>
+    <tr><td><code>line</code></td><td>Just the stroke</td><td>Sparse data, reduced-motion mode</td></tr>
+    <tr><td><code>candle</code></td><td>OHLC bars w/ wicks</td><td>Trader view (opt-in)</td></tr>
+  </tbody>
+</table>
+<p>Chart pad: <code>{ l: 0, r: 32, t: 12, b: 18 }</code> for symbol-detail (right ticks). For hero net-worth: <code>{ l: 0, r: 0, t: 12, b: 18 }</code> (full-bleed).</p>
+
+<h3>AllocationDonut</h3>
+<p>Radial segments with center cap label. Pass <code>data</code> = <code>{ value, sector, pct }[]</code>, palette consumed in order from categorical scale. Default <code>thickness = size × 0.12</code>.</p>
+
+<h3>StockRow / PositionRow</h3>
+<p>The atomic list element. Two layout variants controlled by the <code>rowLayout</code> tweak:</p>
+<table class="tokens">
+  <thead><tr><th>Layout</th><th>Right column</th><th>Row height</th></tr></thead>
+  <tbody>
+    <tr><td><code>apple</code></td><td>Price + filled %-pill, 2 lines.</td><td>64pt</td></tr>
+    <tr><td><code>yahoo</code></td><td>Price + filled %-pill + sunrise O/N chip, 3 lines.</td><td>76pt</td></tr>
+  </tbody>
+</table>
+<p><code>PositionRow</code> additionally shows <code>qty sh · $avgCost</code> under the company name. Use it on Account screen, not Watchlist.</p>
+
+<h3>TabBar (iOS)</h3>
+<p>5 slots: Home · Watchlist · <b>+ (FAB)</b> · Accounts · Me. The center is a 44px mint FAB that opens the Trade Sheet. Active tab tinted mint, inactive at <code>--text-2</code>. Frosted backdrop (28px blur).</p>
+
+<h3>Sidebar (macOS)</h3>
+<p>224px. Items order: Search (⌘K) · Dashboard · Watchlists · Record Trade · Accounts · News · then accounts group, then user at bottom. Active row uses <code>--surface-2</code> bg + mint icon.</p>
+
+<h3>Popover &amp; MenuRow</h3>
+<p>Use for every context menu. Never reach for a different dropdown.</p>
+<pre><span class="t">&lt;Popover</span> <span class="n">width</span>=<span class="s">{272}</span><span class="t">&gt;</span>
+  <span class="t">&lt;MenuRow</span> <span class="n">icon</span>=<span class="s">"edit"</span> <span class="n">label</span>=<span class="s">"Edit Watchlist"</span><span class="t">/&gt;</span>
+  <span class="t">&lt;MenuSeparator/&gt;</span>
+  <span class="t">&lt;MenuRow</span> <span class="n">icon</span>=<span class="s">"arrow-ud"</span> <span class="n">label</span>=<span class="s">"Sort Watchlist By"</span>
+            <span class="n">sub</span>=<span class="s">"Manual"</span> <span class="n">submenu</span> <span class="t">/&gt;</span>
+  <span class="t">&lt;MenuRow</span> <span class="n">label</span>=<span class="s">"Manual"</span> <span class="n">checked</span> <span class="t">/&gt;</span>           <span class="c">// checkmark variant</span>
+  <span class="t">&lt;MenuRow</span> <span class="n">icon</span>=<span class="s">"trash"</span> <span class="n">label</span>=<span class="s">"Clear..."</span> <span class="n">destructive</span> <span class="t">/&gt;</span>
+<span class="t">&lt;/Popover&gt;</span></pre>
+<p>Variants on the row: <code>destructive</code> (red), <code>checked</code> (mint check icon left), <code>submenu</code> (right chevron + <code>sub</code> label for current value).</p>
+
+<h3>Form-card + Form-row + iOS-switch</h3>
+<p>Settings &amp; multi-field sheets. <code>.form-card</code> is the grouping container; each <code>.form-row</code> is 48pt tall with label-left, value/control-right. Use the <code>.ios-switch</code> element for booleans (51 × 31, mint when on).</p>
+
+<h3>Trade Sheet</h3>
+<p>Full structure of the modal:</p>
+<ul>
+  <li>Grabber (5 × 38, rounded, white at 22%) — iOS only</li>
+  <li>Title bar: <kbd class="kbd-d">Cancel</kbd> &nbsp; <b>New Trade</b> &nbsp; <kbd class="kbd-d">Save</kbd></li>
+  <li>Segmented control: <code>Buy / Sell / Dividend / Split / Cash</code></li>
+  <li>Symbol hero (logo + name + price + %-pill)</li>
+  <li>Fields, in order: Account · Quantity · Price · Date · Fees · Note</li>
+  <li>Estimated Total card (qty × price + fees)</li>
+  <li>Primary CTA: <code>Record {Buy|Sell} · {qty} {SYM} · ${total}</code></li>
+</ul>
+<p><b>Validation:</b> qty &gt; 0, price &gt; 0. When kind=SELL and account holds &lt; qty, show inline red helper but DO NOT block save (lets users back-fill historical trades).</p>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<h2 id="screens"><span class="num">05</span>Screens</h2>
+<p>Each screen has a fixed identity. When designing additional views, find the closest existing screen first and ask whether you need a new one.</p>
+
+<div class="screen-card">
+<h4>Dashboard · <code>/</code></h4>
+<div class="purpose">"What happened today" view. 30-sec read.</div>
+<dl>
+  <dt>Sections, top-to-bottom (iOS)</dt><dd>
+    <ul>
+      <li>Greeting header + bell + privacy toggle</li>
+      <li>NetWorthCard: total · today · 6M chart · range chips</li>
+      <li>Movers strip (4 of user's holdings sorted by |%|)</li>
+      <li>Allocation donut + 5-row sector legend</li>
+    </ul>
+  </dd>
+  <dt>macOS additions</dt><dd>Compact positions preview (5 rows) · Dividends YTD bar chart · Recent activity sidebar (5 transactions)</dd>
+  <dt>Data dependencies</dt><dd><code>GET /api/portfolio/summary</code>, <code>GET /api/portfolio/history?range=6M</code>, <code>GET /api/transactions?limit=5</code></dd>
+  <dt>States</dt><dd>Loading: skeleton bars for numbers + chart shimmer. Empty (no accounts): SF-symbol illustration + "Add your first account" CTA → opens new-account sheet. Quote API failure: yellow banner "Real-time quotes unavailable · cached 10m ago".</dd>
+</dl>
+</div>
+
+<div class="screen-card">
+<h4>Watchlist · <code>/watchlists</code></h4>
+<div class="purpose">Track market movement of arbitrary symbols.</div>
+<dl>
+  <dt>IA (iOS)</dt><dd>Large-title header ("Stocks / May 15") · list switcher chip ("My Symbols ▾") · sort chip · 7+ rows · TabBar</dd>
+  <dt>macOS additions</dt><dd>Top tabs: My Symbols · Mega Cap Tech · Semis · ETFs · Dividends. 7-column table with 52w range bar or O/N % col (per <code>rowLayout</code>).</dd>
+  <dt>Interactions</dt><dd>Tap row → Symbol Detail. Long-press → action sheet (Add to Position · Set Alert · Move to List · Remove). Left-swipe → quick actions. Tap "…" → <a href="#surfaces">Watchlist menu</a>.</dd>
+  <dt>Real-time</dt><dd>Polling. <code>staleTime: 30s</code> in market hours, <code>5min</code> after close. Detect close via US/Eastern timezone vs known holiday list.</dd>
+</dl>
+</div>
+
+<div class="screen-card">
+<h4>Symbol detail · <code>/s/[symbol]</code></h4>
+<div class="purpose">Inspect a single security; decide whether to act.</div>
+<dl>
+  <dt>Sections</dt><dd>Hero (logo + sym + name + exch · price · % · chip) → Range chips → Chart (area/line/candle) → 8-tile stat grid → My Position card (only if holdings &gt; 0) → Dividend history (only if symbol pays) → About</dd>
+  <dt>Chart contract</dt><dd>For range=1D: 1-min bars · 6h prevClose dashed line · session hours x-axis. For 1W/1M/3M/6M: daily candles. For 1Y/5Y: weekly bars. For ALL: monthly bars. Server should serve from <code>prices_daily</code> + a separate intraday store.</dd>
+  <dt>States</dt><dd>Symbol unknown → 404. History API failed but quote OK → keep header live, replace chart with "No history available" + retry link.</dd>
+</dl>
+</div>
+
+<div class="screen-card">
+<h4>Accounts · <code>/accounts</code></h4>
+<div class="purpose">Brokerage-grouped holdings list (Yahoo Finance shape).</div>
+<dl>
+  <dt>Layout (iOS)</dt><dd>Title row · Broker card (expanded by default if 1, else first) with 4 holdings preview + "View details →" footer · Second broker card collapsed.</dd>
+  <dt>Layout (macOS)</dt><dd>4-tile summary strip (Total · Today · P/L · Div YTD) · Per-broker section: logo header + value/today on right · 7-column holdings table + cost-basis footer.</dd>
+  <dt>Aggregation</dt><dd>Holdings are <i>derived</i> from <code>transactions</code> using weighted-average cost. Never persist position snapshots. See <code>lib/portfolio.ts</code> in the implementation plan.</dd>
+  <dt>Interactions</dt><dd>Tap broker header → expand/collapse (animate to height auto, 220ms). "+ Add ticker" → trade sheet with account preselected. "…" → <a href="#surfaces">Portfolio menu</a> (Unlink broker is destructive).</dd>
+</dl>
+</div>
+
+<div class="screen-card">
+<h4>Settings · <code>/settings</code></h4>
+<div class="purpose">User preferences. Reached from "Me" tab on iOS or sidebar user-row on macOS.</div>
+<dl>
+  <dt>Sections</dt><dd>
+    <ul>
+      <li><b>Profile</b> — avatar · name · email · plan</li>
+      <li><b>Appearance</b> — Theme (System/Light/Dark) · Accent (mint/blue/amber/violet) · Compact rows</li>
+      <li><b>Privacy</b> — Privacy mode by default · Require Face ID</li>
+      <li><b>Data</b> — Quote refresh frequency · Export transactions · <span class="tag red">Clear all local data</span></li>
+    </ul>
+  </dd>
+</dl>
+</div>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<h2 id="surfaces"><span class="num">06</span>Sheets &amp; menus — unified surface language</h2>
+<p>Every transient surface in the app uses the same primitives. If a flow needs a new kind of surface, lift it into <code>surfaces.jsx</code> instead of forking.</p>
+
+<table class="tokens">
+  <thead><tr><th>Surface</th><th>Trigger</th><th>Anchoring</th><th>Dismiss</th></tr></thead>
+  <tbody>
+    <tr><td><b>Popover</b> (context menu)</td><td>Tap "…" button</td><td>Drops from anchor, 8pt offset, right-aligned</td><td>Tap outside · Esc · select item</td></tr>
+    <tr><td><b>Sub-popover</b></td><td>Tap submenu row</td><td>Slides over parent · parent fades to 0.42 opacity</td><td>Tap header row again · select item · Esc</td></tr>
+    <tr><td><b>Action sheet</b> (long-press)</td><td>0.5s long-press on row</td><td>Slides up · backdrop dim 0.4 + 2px blur</td><td>Tap outside · Cancel button · swipe down</td></tr>
+    <tr><td><b>Sheet</b> (Trade, New Account, Settings)</td><td>Tap CTA</td><td>Slides up from bottom · iOS supports detents (medium 0.5, large 0.9)</td><td>Grabber drag · Cancel · backdrop tap</td></tr>
+    <tr><td><b>Modal</b> (macOS Trade)</td><td>Tap CTA / ⌘N</td><td>Centered · backdrop dim 0.4</td><td>Esc · close button · backdrop tap</td></tr>
+    <tr><td><b>Toast</b></td><td>Save / undo</td><td>Bottom center · 16pt above tab bar · 3s auto-dismiss</td><td>Tap "Undo" within window · auto</td></tr>
+  </tbody>
+</table>
+
+<h3>Row anatomy (every surface uses this)</h3>
+<p>Icon (20) · Label (15/500) · Optional sub-label (12/500 · text-3) · Optional trailing chevron / current-value. Destructive rows tint everything <code>--down</code>. Selected rows show a mint check on the left instead of the icon.</p>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<h2 id="variations"><span class="num">07</span>Variations</h2>
+<p>Four global toggles live in the Tweaks panel; every screen must respect them.</p>
+
+<table class="tokens">
+  <thead><tr><th>Tweak</th><th>Values</th><th>Persisted?</th><th>Affects</th></tr></thead>
+  <tbody>
+    <tr><td><code>chartStyle</code></td><td>area · line · candle</td><td>localStorage · sync to user profile</td><td>Symbol Detail main chart, Dashboard net-worth curve (area only)</td></tr>
+    <tr><td><code>rowLayout</code></td><td>apple · yahoo</td><td>localStorage · sync</td><td>StockRow on Watchlist, PositionRow always renders Yahoo (has cost basis anyway)</td></tr>
+    <tr><td><code>sortMode</code></td><td>Manual · Price Change · Percentage Change · Market Cap · Symbol</td><td>Per-list · localStorage</td><td>Watchlist + Account holdings ordering</td></tr>
+    <tr><td><code>privacy</code></td><td>boolean</td><td>Session by default; sticky if Settings.privacyByDefault is on</td><td>All money + qty values mask to <code>••••</code></td></tr>
+  </tbody>
+</table>
+
+<h3>Privacy-mode rules</h3>
+<ul>
+  <li>Mask any element of class <code>.tnum</code> that represents currency or quantity.</li>
+  <li>Do NOT mask percentages (those are non-identifying).</li>
+  <li>Do NOT mask sparkline shapes (the curve is non-identifying).</li>
+  <li>Mask label width is consistent: <code>••••</code> (4 dots) — DO NOT pad to original length, that defeats the purpose.</li>
+  <li>Eye-toggle icon in top-right; persists until manually toggled off OR app re-launch if "Privacy by default" is off.</li>
+</ul>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<h2 id="states"><span class="num">08</span>States &amp; empty</h2>
+<table class="tokens">
+  <thead><tr><th>State</th><th>Treatment</th></tr></thead>
+  <tbody>
+    <tr><td>Loading (initial)</td><td>Skeleton bars where numbers will appear; chart area shimmers (gradient sweep 1.2s). NEVER spinners.</td></tr>
+    <tr><td>Loading (background refresh)</td><td>Show stale data with a 2px progress bar pinned to top of NavBar.</td></tr>
+    <tr><td>Empty</td><td>SF Symbol-style 64pt icon (line, 1.75 stroke) + title (17/700) + 1 line of 13/500 text-2 copy + 1 primary CTA.</td></tr>
+    <tr><td>Error</td><td>Yellow inline banner above content; keep last-known data visible.</td></tr>
+    <tr><td>Offline</td><td>Identical to "Error" with copy "You're offline · showing data from {relative time}".</td></tr>
+  </tbody>
+</table>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<h2 id="data"><span class="num">09</span>Data shapes</h2>
+<p>TypeScript interfaces matching what every screen consumes. Implement in <code>db/schema.ts</code> (Drizzle) per the v1 implementation plan; types should be inferred from Drizzle <code>$inferSelect</code>.</p>
+
+<pre><span class="c">// One quoted security</span>
+<span class="k">interface</span> <span class="t">Symbol</span> {
+  symbol:     <span class="t">string</span>;            <span class="c">// PK · uppercase ticker</span>
+  name:       <span class="t">string</span>;
+  exch:       <span class="t">string</span>;            <span class="c">// "NASDAQ" | "NYSE" | …</span>
+  sector:     <span class="t">string</span>;            <span class="c">// "Tech" | "Semis" | "ETF" | …</span>
+  currency:   <span class="t">string</span>;            <span class="c">// "USD" only in v1</span>
+  type:       <span class="s">"EQUITY"</span> | <span class="s">"ETF"</span>;
+}
+
+<span class="c">// Live quote (from quote_cache, 30s TTL)</span>
+<span class="k">interface</span> <span class="t">Quote</span> {
+  symbol:        <span class="t">string</span>;
+  price:         <span class="t">number</span>;
+  prevClose:     <span class="t">number</span>;
+  change:        <span class="t">number</span>;         <span class="c">// price - prevClose</span>
+  pct:           <span class="t">number</span>;         <span class="c">// (change/prevClose)*100</span>
+  dayHigh:       <span class="t">number</span>;
+  dayLow:        <span class="t">number</span>;
+  volume:        <span class="t">number</span>;
+  overnightPct?: <span class="t">number</span>;        <span class="c">// pre/post-mkt session, when available</span>
+  updatedAt:     <span class="t">Date</span>;
+  intraday:      <span class="t">number</span>[];       <span class="c">// 48 points, 30-min bars, for sparkline</span>
+}
+
+<span class="c">// User's brokerage account</span>
+<span class="k">interface</span> <span class="t">Account</span> {
+  id:        <span class="t">string</span>;
+  broker:    <span class="t">string</span>;             <span class="c">// "Fidelity" | "Schwab" | …</span>
+  name:      <span class="t">string</span>;             <span class="c">// "Individual" | "Roth IRA"</span>
+  last4:     <span class="t">string</span>;             <span class="c">// "2645"</span>
+  currency:  <span class="t">string</span>;
+  createdAt: <span class="t">Date</span>;
+}
+
+<span class="c">// A single recorded transaction</span>
+<span class="k">interface</span> <span class="t">Transaction</span> {
+  id:         <span class="t">string</span>;
+  accountId:  <span class="t">string</span>;
+  symbol:     <span class="t">string</span>;
+  kind:       <span class="s">"BUY"</span> | <span class="s">"SELL"</span> | <span class="s">"DIV"</span> | <span class="s">"SPLIT"</span> | <span class="s">"FEE"</span> | <span class="s">"CASH"</span>;
+  quantity:   <span class="t">number</span>;            <span class="c">// shares (or ratio numerator for SPLIT)</span>
+  price:      <span class="t">number</span>;            <span class="c">// per-share, or per-share div, or ratio denom</span>
+  fees:       <span class="t">number</span>;
+  executedAt: <span class="t">Date</span>;
+  note?:      <span class="t">string</span>;
+}
+
+<span class="c">// Derived position (NOT persisted — computed via lib/portfolio.ts)</span>
+<span class="k">interface</span> <span class="t">Position</span> {
+  symbol:        <span class="t">string</span>;
+  account:       <span class="t">Account</span>;
+  qty:           <span class="t">number</span>;
+  avgCost:       <span class="t">number</span>;         <span class="c">// weighted average</span>
+  marketValue:   <span class="t">number</span>;         <span class="c">// qty * quote.price</span>
+  cost:          <span class="t">number</span>;         <span class="c">// qty * avgCost</span>
+  unrealized:    <span class="t">number</span>;         <span class="c">// marketValue - cost</span>
+  unrealizedPct: <span class="t">number</span>;
+  todayPL:       <span class="t">number</span>;         <span class="c">// qty * quote.change</span>
+  pctOfPortfolio:<span class="t">number</span>;
+}
+
+<span class="c">// Historical OHLC point</span>
+<span class="k">interface</span> <span class="t">HistoryPoint</span> {
+  date:     <span class="t">Date</span>;
+  open:     <span class="t">number</span>;
+  high:     <span class="t">number</span>;
+  low:      <span class="t">number</span>;
+  close:    <span class="t">number</span>;
+  adjClose: <span class="t">number</span>;
+  volume:   <span class="t">number</span>;
+}
+
+<span class="c">// Dividend record (for the bar chart on Symbol Detail)</span>
+<span class="k">interface</span> <span class="t">Dividend</span> {
+  symbol: <span class="t">string</span>;
+  exDate: <span class="t">Date</span>;
+  amount: <span class="t">number</span>;             <span class="c">// per-share</span>
+}</pre>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<h2 id="api"><span class="num">10</span>API mapping</h2>
+<p>Every external request goes through a Next.js Route Handler; the client never holds Finnhub or Yahoo keys.</p>
+
+<table class="tokens">
+  <thead><tr><th>Endpoint</th><th>Returns</th><th>Upstream</th><th>Cache</th></tr></thead>
+  <tbody>
+    <tr><td><code>GET /api/quote/:symbol</code></td><td><code>Quote</code></td><td>Finnhub <code>/quote</code></td><td><code>quote_cache</code> 30s TTL</td></tr>
+    <tr><td><code>GET /api/history/:symbol?range=3M</code></td><td><code>HistoryPoint[]</code></td><td>yahoo-finance2 historical</td><td><code>prices_daily</code> table · backfill on miss</td></tr>
+    <tr><td><code>GET /api/profile/:symbol</code></td><td>name · sector · CEO · logo</td><td>Finnhub <code>/stock/profile2</code></td><td>7-day</td></tr>
+    <tr><td><code>GET /api/dividends/:symbol</code></td><td><code>Dividend[]</code></td><td>yahoo-finance2 dividends</td><td>Daily</td></tr>
+    <tr><td><code>GET /api/search?q=app</code></td><td><code>Symbol[]</code> (max 12)</td><td>Finnhub <code>/search</code></td><td>Memo 60s</td></tr>
+    <tr><td><code>GET /api/portfolio/summary</code></td><td>NetWorth · today · totalPL · allocation · movers</td><td>DB</td><td>React Query 30s</td></tr>
+    <tr><td><code>GET /api/portfolio/history?range=6M</code></td><td><code>{date,value}[]</code></td><td>Computed nightly · cache table</td><td>1d</td></tr>
+    <tr><td><code>POST /api/transactions</code></td><td>Saved tx</td><td>DB insert · invalidate portfolio</td><td>—</td></tr>
+    <tr><td><code>DELETE /api/transactions/:id</code></td><td>OK</td><td>DB delete · invalidate</td><td>—</td></tr>
+    <tr><td><code>GET/POST /api/watchlists</code></td><td><code>Watchlist[]</code></td><td>DB</td><td>—</td></tr>
+    <tr><td><code>POST/DELETE /api/watchlists/:id/items</code></td><td>Watchlist</td><td>DB</td><td>—</td></tr>
+    <tr><td><code>POST /api/auth/login</code></td><td>session cookie</td><td>bcrypt vs <code>APP_PASSWORD_HASH</code></td><td>—</td></tr>
+  </tbody>
+</table>
+
+<h3>Polling cadence</h3>
+<ul>
+  <li><b>Market hours (09:30–16:00 ET, weekdays, non-holiday)</b>: Watchlist + Dashboard refetch quotes every <b>30s</b>.</li>
+  <li><b>Pre/post-market</b>: every <b>2 min</b>.</li>
+  <li><b>Closed</b>: every <b>10 min</b> (just to surface late corrections).</li>
+  <li>Pause polling when tab is hidden (<code>document.visibilityState</code>).</li>
+</ul>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<h2 id="a11y"><span class="num">11</span>Accessibility</h2>
+<ul>
+  <li><b>Contrast</b> — all text passes AA at 4.5:1. The two semantic colors on dark have been chosen for ≥4.5: <code>--up</code> (#34D399 on #0A0A0C → 11.3:1), <code>--down</code> (#FB7185 on #0A0A0C → 6.4:1).</li>
+  <li><b>Color is never the only signal</b> — every +/− value carries an explicit sign (▲▼ or +/−) in addition to color. Required for color-blind users.</li>
+  <li><b>Hit targets</b> ≥ 44 × 44 px. The 32-px <code>.iconbtn</code> uses a 44-px tap area via padding-trick on the parent.</li>
+  <li><b>Tabular nums</b> on every price/quantity so screen-readers and side-by-side comparisons line up.</li>
+  <li><b>Reduced motion</b> — replace all transitions &gt; 100ms with instant; never animate route transitions.</li>
+  <li><b>VoiceOver labels</b> — every pill / sparkline / chart needs <code>aria-label</code> like "MSFT, $421.92, up 3.05% today, intraday chart".</li>
+</ul>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<h2 id="files"><span class="num">12</span>File map</h2>
+<table class="tokens">
+  <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td><code>index.html</code></td><td>Canvas entry. 13 artboards across iOS · Sheets &amp; Menus · macOS sections.</td></tr>
+    <tr><td><code>styles.css</code></td><td>Tokens + component utility classes. Source of truth for visual values.</td></tr>
+    <tr><td><code>data.jsx</code></td><td>Mock portfolio + symbol data + formatters. Replace with API queries before ship.</td></tr>
+    <tr><td><code>components.jsx</code></td><td>Reusable: Sparkline, PriceChart, AllocationDonut, PercentPill, KindPill, Icon, SymbolLogo, BrandMark, etc.</td></tr>
+    <tr><td><code>surfaces.jsx</code></td><td>Popover, MenuRow, MenuSeparator, Overnight, SunriseIcon, SectionLabel · plus 4 surface artboards.</td></tr>
+    <tr><td><code>screens-ios.jsx</code></td><td>IOSDashboard · IOSWatchlist · IOSSymbol · IOSAccount · IOSTrade · helpers (IOSStatusBar, IOSTabBar, RangeChips).</td></tr>
+    <tr><td><code>screens-mac.jsx</code></td><td>MacDashboard · MacWatchlist · MacSymbol · MacAccount · MacTrade · helpers (MacSidebar, MacTopBar, MacTitleBar).</td></tr>
+    <tr><td><code>app.jsx</code></td><td>Mounts everything onto the design canvas + Tweaks panel.</td></tr>
+    <tr><td><code>design-canvas.jsx</code></td><td>Starter component — pan/zoom canvas with sections + artboards. Don't modify.</td></tr>
+    <tr><td><code>tweaks-panel.jsx</code></td><td>Starter component — Tweaks panel chrome + form controls. Don't modify.</td></tr>
+  </tbody>
+</table>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<h2 id="open"><span class="num">13</span>Open issues &amp; v2 deferrals</h2>
+<table class="tokens">
+  <thead><tr><th>Item</th><th>Status</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Light theme</td><td><span class="tag alt">Deferred</span></td><td>Dark is default per the references; light tokens reserved in styles.css but no light mocks for v1.</td></tr>
+    <tr><td>Multi-currency</td><td><span class="tag alt">Deferred</span></td><td>USD only in v1. <code>Account.currency</code> kept in schema for v2 FX.</td></tr>
+    <tr><td>News rail</td><td><span class="tag alt">Deferred</span></td><td>Yahoo refs show news cards; spec'd as v2 — placeholder cards exist in plan.</td></tr>
+    <tr><td>Performance tab (TWR vs SPY)</td><td><span class="tag alt">Deferred</span></td><td>Mentioned in plan §5; build after v1 stabilizes.</td></tr>
+    <tr><td>Push notifications</td><td><span class="tag red">Blocked</span></td><td>iOS PWA push needs iOS 16.4+; gate behind capability check.</td></tr>
+    <tr><td>FIFO / LIFO cost basis</td><td><span class="tag">v1</span></td><td>Default WAC. Expose <code>kind: "FIFO" | "LIFO" | "WAC"</code> in Settings.Accounts later.</td></tr>
+    <tr><td>CSV import</td><td><span class="tag">v1</span></td><td>In Accounts → Transactions tab, top-right. Map columns to <code>Transaction</code> shape; preview 10 rows before commit.</td></tr>
+    <tr><td>Options / crypto / futures</td><td><span class="tag red">Not in scope</span></td><td>Per implementation plan §"不做的事".</td></tr>
+  </tbody>
+</table>
+
+<hr class="hr-soft"/>
+<p style="color: var(--ink-3); font-size: 12.5px; margin-top: 24px;">
+  Authoritative source: <code>index.html</code> renders the live mocks; this document describes them. When the two disagree, the canvas wins — file an issue and update this spec to match.
+</p>
+
+</div>
+</div>
+
+</body>
+</html>
