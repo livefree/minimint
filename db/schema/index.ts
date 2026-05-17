@@ -19,6 +19,9 @@
 // Files do not exist yet (sprint 1). Leave intentional empty barrel so Drizzle
 // imports succeed; uncomment as each domain file lands.
 
+// Explicit empty export so TypeScript treats this as a module (not a global script).
+export {};
+
 // export * from './enums';
 // export * from './app';
 // export * from './profiles';

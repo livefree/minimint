@@ -2,9 +2,7 @@ import type { NextConfig } from 'next';
 
 const config: NextConfig = {
   reactStrictMode: true,
-  experimental: {
-    typedRoutes: true,
-  },
+  typedRoutes: true,
   // PWA wiring lands in sprint 2 via next-pwa or workbox adapter; intentionally
   // omitted now to keep dev cycle fast.
   async headers() {

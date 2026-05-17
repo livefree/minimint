@@ -1,14 +1,30 @@
 // Flat config — enforces the R-T0.g engineering contracts from REVISIONS.md.
 // CI runs `pnpm lint` and fails on any of these. Do NOT disable rules to
 // ship faster; if a rule is wrong, change it here with reasoning.
+//
+// Note: we call `eslint .` directly (not `next lint`, which is deprecated
+// in Next.js 16). Next-specific rules are intentionally NOT enabled here;
+// re-evaluate when @next/eslint-plugin lands a stable flat-config export.
 
-import nextPlugin from 'eslint-config-next';
 import tsParser from '@typescript-eslint/parser';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
 
 export default [
   {
-    ignores: ['node_modules', '.next', 'public', 'tests/e2e/test-results'],
+    ignores: [
+      'node_modules/**',
+      '.next/**',
+      'public/**',
+      'tests/e2e/test-results/**',
+      'playwright-report/**',
+      'coverage/**',
+      'db/migrations/**',
+      'references/designs/**',
+      // ESLint doesn't parse CSS without a plugin; CSS is linted by stylelint
+      // in a future sprint and by our own lint-tokens scanner for hex tokens.
+      '**/*.css',
+      '**/*.md',
+    ],
   },
   {
     files: ['**/*.{ts,tsx}'],
@@ -18,15 +34,15 @@ export default [
     },
     plugins: { '@typescript-eslint': tsPlugin },
     rules: {
-      // contract 1: no raw color hex inside .tsx (CSS is fine)
+      // Engineering contracts (CLAUDE.md non-negotiables) — AST-level checks
+      // that ESLint catches reliably. Hex-literal enforcement is handled by
+      // scripts/lint-tokens.mjs instead, because lint-tokens supports the
+      // per-line `// lint-tokens-ok` pragma for narrow platform exceptions
+      // (e.g. Next.js viewport themeColor metadata). Two independent gates,
+      // each strong at what it does.
       'no-restricted-syntax': [
         'error',
-        {
-          selector: "Literal[value=/^#[0-9a-fA-F]{3,8}$/]",
-          message:
-            'Raw color hex forbidden in TS/TSX. Use `rgb(var(--token))` or Tailwind utility (`bg-mint` etc.). See CLAUDE.md non-negotiables.',
-        },
-        // contract 2: no raw fontSize literals
+        // contract 2: no raw fontSize / letterSpacing / fontWeight literals
         {
           selector:
             "Property[key.name='fontSize'][value.type='Literal'][value.value!=null]",

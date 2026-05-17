@@ -51,3 +51,4 @@ db/migrations/meta/
 *.log
 .pnpm-debug.log*
 .turbo/
+tsconfig.tsbuildinfo
