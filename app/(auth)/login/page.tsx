@@ -1,16 +1,30 @@
 /**
- * Login page — Sprint 1 implementation target.
- * Spec: INTERACTION_SPEC.md §3.1, §11.1
+ * Login page — sole entry surface for the un-authenticated operator.
  *
- * Current state: stub. Sprint 0 only proves bootability.
+ * Server component renders the layout shell; LoginForm is the client
+ * island that handles POST + redirect.
  */
 
-export default function LoginPage() {
+import { LoginForm } from './LoginForm';
+
+export const dynamic = 'force-dynamic';
+
+interface PageProps {
+  searchParams: Promise<{ next?: string }>;
+}
+
+export default async function LoginPage({
+  searchParams,
+}: PageProps): Promise<React.ReactElement> {
+  const { next } = await searchParams;
   return (
     <main className="grid min-h-screen place-items-center bg-bg text-text">
-      <div className="space-y-4 text-center">
-        <h1 className="t-h">mini-mint</h1>
-        <p className="t-aux">Login screen scaffolded — sprint 1 implements auth.</p>
+      <div className="w-full max-w-sm space-y-8 p-6">
+        <header className="space-y-2 text-center">
+          <h1 className="t-display-2">mini-mint</h1>
+          <p className="t-aux">Sign in to continue.</p>
+        </header>
+        <LoginForm next={next ?? '/'} />
       </div>
     </main>
   );
