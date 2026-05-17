@@ -62,3 +62,4 @@ logs/probes/*-SPY-*.json
 logs/probes/*-GOOGL-*.json
 logs/probes/*-SEARCH-*.json
 logs/probes/*_summary.json
+.vercel
