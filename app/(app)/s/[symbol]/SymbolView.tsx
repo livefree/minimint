@@ -9,6 +9,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import {
+  createChart,
   type IChartApi,
   type ISeriesApi,
   type UTCTimestamp,
@@ -55,63 +56,50 @@ export function SymbolView({ symbol, initialBars }: Props): React.ReactElement {
     const container = containerRef.current;
     if (!container) return;
 
-    let disposed = false;
-    let resizeObs: ResizeObserver | null = null;
+    const chart = createChart(container, {
+      height: 320,
+      layout: {
+        background: { color: 'rgb(27, 27, 35)' /* --surface-1 */ },
+        textColor: 'rgba(235, 235, 245, 0.62)',
+        fontFamily:
+          '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter Variable", system-ui, sans-serif',
+      },
+      grid: {
+        horzLines: { color: 'rgba(255, 255, 255, 0.04)' },
+        vertLines: { color: 'rgba(255, 255, 255, 0.04)' },
+      },
+      rightPriceScale: { borderVisible: false },
+      timeScale: {
+        borderVisible: false,
+        timeVisible: true,
+        secondsVisible: false,
+      },
+      crosshair: { mode: 1 }, // magnet
+      autoSize: true,
+    });
+    const series = chart.addAreaSeries({
+      lineColor: 'rgb(107, 232, 184)' /* --mint */,
+      topColor: 'rgba(107, 232, 184, 0.42)',
+      bottomColor: 'rgba(107, 232, 184, 0)',
+      priceLineVisible: false,
+      lastValueVisible: true,
+    });
+    chartRef.current = chart;
+    seriesRef.current = series;
+    applyBars(initialBars);
 
-    // Async-import lightweight-charts to keep server bundle clean
-    (async () => {
-      const lc = await import('lightweight-charts');
-      if (disposed || !containerRef.current) return;
-      const chart = lc.createChart(containerRef.current, {
-        height: 320,
-        layout: {
-          background: { color: 'rgb(27 27 35)' /* --surface-1 */ },
-          textColor: 'rgba(235 235 245 / 0.62)',
-          fontFamily:
-            '-apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter Variable", system-ui, sans-serif',
-        },
-        grid: {
-          horzLines: { color: 'rgb(255 255 255 / 0.04)' },
-          vertLines: { color: 'rgb(255 255 255 / 0.04)' },
-        },
-        rightPriceScale: {
-          borderVisible: false,
-        },
-        timeScale: {
-          borderVisible: false,
-          timeVisible: true,
-          secondsVisible: false,
-        },
-        crosshair: {
-          mode: 1, // magnet
-        },
-        autoSize: true,
-      });
-      const series = chart.addAreaSeries({
-        lineColor: 'rgb(107 232 184)' /* --mint */,
-        topColor: 'rgba(107 232 184 / 0.42)',
-        bottomColor: 'rgba(107 232 184 / 0)',
-        priceLineVisible: false,
-        lastValueVisible: true,
-      });
-      chartRef.current = chart;
-      seriesRef.current = series;
-      applyBars(initialBars);
-
-      resizeObs = new ResizeObserver(() => chart.timeScale().fitContent());
-      resizeObs.observe(containerRef.current);
-    })().catch((e) => console.error('chart init failed:', e));
+    const resizeObs = new ResizeObserver(() => chart.timeScale().fitContent());
+    resizeObs.observe(container);
 
     return () => {
-      disposed = true;
-      resizeObs?.disconnect();
-      chartRef.current?.remove();
+      resizeObs.disconnect();
+      chart.remove();
       chartRef.current = null;
       seriesRef.current = null;
     };
     // initialBars only used on first mount; range changes refetch in the
-    // sibling effect. react-hooks/exhaustive-deps plugin is not installed
-    // in our flat config yet (planned for M3 when we ship watchlist UX).
+    // sibling effect. eslint-plugin-react-hooks isn't installed in our flat
+    // config yet (planned for M3 when we ship watchlist UX).
   }, [applyBars, initialBars]);
 
   // Fetch + apply on range change (skip initial 1Y; we have it)
