@@ -78,10 +78,12 @@ function toAssetType(v: unknown): AssetType {
     case 'EQUITY':
     case 'ETF':
     case 'INDEX':
-    case 'MUTUALFUND':
-    case 'CRYPTOCURRENCY':
       return v;
+    case 'MUTUALFUND':
+      // yahoo uses no-underscore form; our enum (DB) has the underscore
+      return 'MUTUAL_FUND';
     default:
+      // Includes 'CRYPTOCURRENCY', 'FUTURE', 'CURRENCY', etc. — out of v1 scope
       return 'OTHER';
   }
 }

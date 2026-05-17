@@ -45,13 +45,10 @@ export type MarketState =
   | 'PREPRE'
   | 'POSTPOST';
 
-export type AssetType =
-  | 'EQUITY'
-  | 'ETF'
-  | 'INDEX'
-  | 'MUTUALFUND'
-  | 'CRYPTOCURRENCY'
-  | 'OTHER';
+// Aligned with the DB enum (db/schema/enums.ts asset_type).
+// Provider-specific values (e.g. yahoo's `MUTUALFUND` no-underscore, or
+// `CRYPTOCURRENCY`) are normalized to one of these at the adapter layer.
+export type AssetType = 'EQUITY' | 'ETF' | 'MUTUAL_FUND' | 'INDEX' | 'OTHER';
 
 export type QuoteSource = 'yahoo' | 'finnhub';
 
