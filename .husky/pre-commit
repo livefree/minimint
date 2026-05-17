@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+# Pre-commit gate. Three checks, fail fast.
+#
+#   1. lint-staged — eslint --fix + prettier --write on staged ts/tsx
+#   2. pnpm lint:tokens — full-tree scan for raw hex / arbitrary font sizes
+#   3. pnpm typecheck — full project tsc --noEmit
+#
+# Vitest + Playwright run in CI (slower; pre-push hook adds vitest locally).
+# To bypass in a genuine emergency (rare):  git commit --no-verify
+# but per CLAUDE.md we should fix root causes instead of bypassing.
+
+set -e
+
+echo "→ lint-staged (eslint --fix + prettier on staged files)"
+pnpm exec lint-staged
+
+echo "→ lint:tokens (hex + font-size discipline)"
+pnpm lint:tokens
+
+echo "→ typecheck (tsc --noEmit)"
+pnpm typecheck
+
+echo "✓ pre-commit gate passed"

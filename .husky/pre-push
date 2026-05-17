@@ -1,0 +1,19 @@
+#!/usr/bin/env sh
+# Pre-push gate. Last chance before public.
+#
+#   1. vitest (full suite) — catches what pre-commit skipped for speed
+#   2. lint full tree — pre-commit only lints staged; this catches lint
+#      regressions in unstaged files that the commit "moved past"
+#
+# Playwright e2e + next build still only run in CI (need real env vars).
+# To bypass: git push --no-verify  (don't.)
+
+set -e
+
+echo "→ vitest (full suite)"
+pnpm test -- --run
+
+echo "→ eslint (full tree)"
+pnpm lint --quiet
+
+echo "✓ pre-push gate passed"

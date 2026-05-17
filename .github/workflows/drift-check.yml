@@ -1,0 +1,125 @@
+name: drift-check
+
+# Nightly scan for documentation/code/spec drift.
+# Runs every weekday at 09:13 UTC (≈ 17:13 China Standard / 02:13 Pacific).
+# Opens an issue when drift is detected; nothing if clean.
+#
+# What "drift" means here:
+#   - STATUS.md `[x]` items have no commit since the previous nightly tag
+#   - BACKLOG.md ❓ open questions older than 7 days
+#   - lint:tokens violations (should be 0; defense-in-depth)
+#   - Untyped files in lib/ (sign of `any` creep)
+
+on:
+  schedule:
+    - cron: '13 9 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 30
+      - uses: pnpm/action-setup@v4
+        with: { version: 9 }
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Scan for drift
+        id: scan
+        run: |
+          set +e
+          echo "# Drift check — $(date -u +%Y-%m-%d)" > drift.md
+          echo "" >> drift.md
+          FAIL=0
+
+          # 1. Token discipline
+          echo "## Token discipline" >> drift.md
+          if pnpm lint:tokens 2>&1 | tee -a drift.md | grep -qE "error|violation"; then
+            FAIL=1
+            echo ":x: lint:tokens has violations" >> drift.md
+          else
+            echo ":white_check_mark: clean" >> drift.md
+          fi
+          echo "" >> drift.md
+
+          # 2. Stale ❓ open questions in BACKLOG
+          echo "## Stale open questions (>7d)" >> drift.md
+          STALE=$(awk '/❓ open questions/,/^---$/' BACKLOG.md | grep -cE '^- ❓' || true)
+          echo "Found $STALE open ❓ items (manual review needed)." >> drift.md
+          echo "" >> drift.md
+
+          # 3. STATUS vs git activity
+          echo "## STATUS freshness" >> drift.md
+          LAST_STATUS_TOUCH=$(git log -1 --format=%ct -- STATUS.md)
+          LAST_CODE_TOUCH=$(git log -1 --format=%ct -- 'app/**' 'lib/**' 'db/**' 'components/**' 2>/dev/null || echo 0)
+          if [ "$LAST_CODE_TOUCH" -gt "$LAST_STATUS_TOUCH" ]; then
+            DIFF_HOURS=$(( (LAST_CODE_TOUCH - LAST_STATUS_TOUCH) / 3600 ))
+            if [ "$DIFF_HOURS" -gt 48 ]; then
+              FAIL=1
+              echo ":x: Code changed ${DIFF_HOURS}h after last STATUS.md update — STATUS may be stale" >> drift.md
+            else
+              echo ":warning: Code changed ${DIFF_HOURS}h after STATUS — still inside 48h window" >> drift.md
+            fi
+          else
+            echo ":white_check_mark: STATUS.md ahead of code" >> drift.md
+          fi
+          echo "" >> drift.md
+
+          # 4. any-creep
+          echo "## any-creep in lib/" >> drift.md
+          ANY_COUNT=$(grep -rE ': any\b|<any>' lib/ app/ db/ 2>/dev/null | grep -v "// lint-tokens-ok\|node_modules" | wc -l || echo 0)
+          echo "Explicit \`any\` count: $ANY_COUNT (target: 0)" >> drift.md
+          if [ "$ANY_COUNT" -gt 5 ]; then
+            FAIL=1
+            echo ":x: any-count exceeds threshold" >> drift.md
+          fi
+          echo "" >> drift.md
+
+          echo "fail=$FAIL" >> $GITHUB_OUTPUT
+          cat drift.md
+
+      - name: Open drift issue if needed
+        if: steps.scan.outputs.fail == '1'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('drift.md', 'utf8');
+            const today = new Date().toISOString().slice(0, 10);
+            const title = `drift-check: action needed (${today})`;
+            // Don't duplicate — check for an open drift issue this week
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'drift-check',
+              per_page: 5,
+            });
+            if (issues.length > 0) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issues[0].number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ['drift-check'],
+              });
+            }
