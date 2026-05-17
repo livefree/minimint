@@ -1,0 +1,57 @@
+/* Imports the locked token contract from the design canvas verbatim.
+   styles.css IS the design system source; do not duplicate tokens here. */
+@import '../references/designs/styles.css';
+
+/* Tailwind v4 — expose CSS-var tokens as utility classes via @theme inline.
+   See REVISIONS.md R-T0.a (color tokens as RGB triples) + R-T0.b (role-based type). */
+@import 'tailwindcss';
+
+@theme inline {
+  /* surfaces */
+  --color-bg:           rgb(var(--bg));
+  --color-bg-elev:      rgb(var(--bg-elev));
+  --color-surface-1:    rgb(var(--surface-1));
+  --color-surface-2:    rgb(var(--surface-2));
+  --color-surface-3:    rgb(var(--surface-3));
+
+  /* text */
+  --color-text:         rgb(var(--text));
+  --color-text-2:       rgb(var(--text-2) / 0.62);
+  --color-text-3:       rgb(var(--text-3) / 0.38);
+
+  /* brand + semantic */
+  --color-mint:         rgb(var(--mint));
+  --color-mint-2:       rgb(var(--mint-2));
+  --color-up:           rgb(var(--up));
+  --color-down:         rgb(var(--down));
+
+  /* section accents */
+  --color-sec-portfolio: rgb(var(--sec-portfolio));
+  --color-sec-watchlist: rgb(var(--sec-watchlist));
+  --color-sec-symbol:    rgb(var(--sec-symbol));
+  --color-sec-activity:  rgb(var(--sec-activity));
+
+  /* current profile color (bound to --current-profile by ProfileProvider) */
+  --color-profile:       rgb(var(--current-profile));
+
+  /* radii */
+  --radius-sm:   var(--r-sm);
+  --radius-md:   var(--r-md);
+  --radius-lg:   var(--r-lg);
+  --radius-xl:   var(--r-xl);
+  --radius-pill: var(--r-pill);
+}
+
+/* App-level shells. Most styling is in styles.css; this file holds only
+   things genuinely scoped to the production app (not the design canvas). */
+
+html {
+  background: rgb(var(--bg));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
