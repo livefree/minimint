@@ -15,7 +15,7 @@ See [`STATUS.md`](STATUS.md) for the closing checklist.
 
 ## P0 — M2 "Record my first trade" (current sprint, see MVP_PLAN §3)
 
-- [ ] Auto-create default "Me" profile on first login if none exists
+- [x] Auto-create default "Me" profile on first login if none exists
 - [ ] Settings sub-page for account create (no full Profile editor yet)
 - [ ] `lib/portfolio/positions.ts` — TS wrappers around `get_positions` / `get_my_position` / `get_net_worth`
 - [ ] `app/api/transactions/route.ts` (POST/GET) + `lib/api/mutations/transactions.ts`
@@ -85,10 +85,12 @@ Still open:
 - ❓ **i18n on day 1** — `next-intl` is installed; extract strings via dictionary even if only EN ships v1? Recommendation: yes, takes ~1 day, saves a refactor later.
 - ❓ **service worker scope** — assets only (M1-M4) vs API GET cache (v1.5)? Recommendation: assets only for MVP.
 - ❓ **custom domain** for Vercel — use `mini-mint-XXX.vercel.app` for v0 (decided) or buy a domain? Defer to post-M2 if v1 sticks.
+- ❓ **bootstrap concurrency** (2026-05-17) — `ensureDefaultProfile` has a theoretical race: two concurrent first-login requests could both insert a "Me" profile. Practically impossible for a single-operator single-device app. Hardening options: advisory lock, partial unique index on `(true) WHERE relation='SELF'`, or `SELECT FOR UPDATE` on `app_settings`. Decision needed only if multi-device concurrent first-login becomes a real scenario. Defer to v1.5.
 
 ## decision-log conventions
 
 Once an open question is decided:
+
 1. Strike it through here with the date
 2. Append a JSON line to `logs/ledger/decisions.ndjson`
 3. If architectural, also write an ADR under `docs/adr/`

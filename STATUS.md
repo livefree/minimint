@@ -4,7 +4,25 @@
 
 ## current sprint
 
-**Sprint 1 · M1 "See a stock"** — **DONE** (closed 2026-05-17 · tag `v0.M1`)
+**Sprint 2 · M2 "Record my first trade"** — in progress (see [`MVP_PLAN.md` §3](MVP_PLAN.md))
+
+Vertical slice deliverables:
+
+- [x] Auto-create default "Me" profile on first login (`b1db5ba`)
+- [ ] Single AccountCreate flow (inline on empty home)
+- [ ] TradeSheet (BUY/SELL kinds only; DIV/SPLIT defer)
+- [ ] MyPosition aggregated card on SymbolDetail (U-1)
+- [ ] Minimal Home tab — net worth hero + positions list (replaces M1's ticker grid)
+- [ ] 2-tab TabBar (Home + Settings); Portfolio/Market/Me defer to M3-M4
+- [ ] Toast + Undo for trade delete (sonner)
+- [ ] `lib/portfolio/positions.ts` TS wrappers around the existing get_positions / get_my_position / get_net_worth Postgres functions
+- [ ] Playwright e2e: buy → see position with correct math
+
+**Exit criteria**: operator records a real buy → MyPosition shows correct avg cost + today P/L matching `qty × (price − prev_close)`.
+
+## past sprints
+
+**Sprint 1 · M1 "See a stock"** — DONE (closed 2026-05-17 · tag `v0.M1`)
 
 Operator confirmed prod working: login → home (search box + Open button + 6 featured tickers) → symbol detail (price, day change, post-market price+change, range-switchable chart). Real Yahoo data, real Neon prod, tested on real device.
 
@@ -18,23 +36,6 @@ Operator confirmed prod working: login → home (search box + Open button + 6 fe
 - [x] Vercel project linked + 4 prod env vars set + initial deploy
 - [x] Playwright e2e × 6 specs × 2 projects (chromium + iPhone-13 mobile-safari) = 12/12 green
 - [x] Real-device verified on operator's phone + desktop
-
-## next sprint
-
-**Sprint 2 · M2 "Record my first trade"** — ready to start when operator gives the word
-
-See [`MVP_PLAN.md` §3](MVP_PLAN.md). Vertical slice continues:
-
-- Auto-create default "Me" profile on first post-M2 login
-- Single AccountCreate flow (inline on empty home)
-- TradeSheet (BUY/SELL kinds only; DIV/SPLIT defer)
-- MyPosition aggregated card on SymbolDetail (U-1)
-- Minimal Home tab — net worth hero + positions list (replaces M1's ticker grid)
-- 2-tab TabBar (Home + Settings); Portfolio/Market/Me defer to M3-M4
-- Toast + Undo for trade delete (sonner)
-- `lib/portfolio/positions.ts` TS wrappers around the existing get_positions / get_my_position / get_net_worth Postgres functions
-
-**Exit criteria**: operator records a real buy → MyPosition shows correct avg cost + today P/L matching `qty × (price − prev_close)`.
 
 ## post-M1 follow-ups (queued for separate work)
 
