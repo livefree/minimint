@@ -8,14 +8,15 @@
 
 Vertical slice deliverables:
 
-- [x] Auto-create default "Me" profile on first login (`b1db5ba`)
-- [ ] Single AccountCreate flow (inline on empty home)
-- [ ] TradeSheet (BUY/SELL kinds only; DIV/SPLIT defer)
+- [x] Auto-create default "Me" profile on first login if none exists (`b1db5ba`)
+- [x] Settings sub-page for account create (no full Profile editor yet) (`b4b0d9f`)
+- [ ] `lib/portfolio/positions.ts` — TS wrappers around `get_positions` / `get_my_position` / `get_net_worth`
+- [ ] `app/api/transactions/route.ts` (POST/GET) + `lib/api/mutations/transactions.ts`
+- [ ] TradeSheet component (BUY/SELL only)
 - [ ] MyPosition aggregated card on SymbolDetail (U-1)
-- [ ] Minimal Home tab — net worth hero + positions list (replaces M1's ticker grid)
-- [ ] 2-tab TabBar (Home + Settings); Portfolio/Market/Me defer to M3-M4
+- [ ] Minimal Home tab at `/` (net worth hero + positions table)
+- [ ] 2-tab TabBar (Home + Settings)
 - [ ] Toast + Undo for trade delete (sonner)
-- [ ] `lib/portfolio/positions.ts` TS wrappers around the existing get_positions / get_my_position / get_net_worth Postgres functions
 - [ ] Playwright e2e: buy → see position with correct math
 
 **Exit criteria**: operator records a real buy → MyPosition shows correct avg cost + today P/L matching `qty × (price − prev_close)`.

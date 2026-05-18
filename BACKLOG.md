@@ -16,7 +16,7 @@ See [`STATUS.md`](STATUS.md) for the closing checklist.
 ## P0 — M2 "Record my first trade" (current sprint, see MVP_PLAN §3)
 
 - [x] Auto-create default "Me" profile on first login if none exists
-- [ ] Settings sub-page for account create (no full Profile editor yet)
+- [x] Settings sub-page for account create (no full Profile editor yet)
 - [ ] `lib/portfolio/positions.ts` — TS wrappers around `get_positions` / `get_my_position` / `get_net_worth`
 - [ ] `app/api/transactions/route.ts` (POST/GET) + `lib/api/mutations/transactions.ts`
 - [ ] TradeSheet component (BUY/SELL only)
