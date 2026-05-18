@@ -53,12 +53,31 @@ See [`STATUS.md`](STATUS.md) for the closing checklist.
 - [ ] Offline write queue (`outbox_mutations` table)
 - [ ] Per-profile PIN (R-P6)
 - [ ] Sectors + Movers tabs in Market
-- [ ] On-chart cost-line + buy/sell markers (U-3)
 - [ ] Trade entry UX micro-improvements (U-4: default price, dup detect, batch mode)
 - [ ] Cross-profile aggregate view (R-P5 `__all__`)
 - [ ] i18n with `next-intl` (U-9) — already installed, scaffold strings now
 - [ ] Soft-delete cleanup Vercel cron (DATABASE_SPEC §12 #4)
 - [ ] `audit_log` triggers (gated by `app_settings.audit_enabled`)
+
+### Chart polish epic (v1.5, P3) — see [docs/chart-roadmap.md](docs/chart-roadmap.md)
+
+The v1 chart on `/s/[symbol]` is intentionally minimal — area + 6 range chips,
+no interactions beyond range switch. The list below captures the gap to a
+"mature" chart experience; rough magnitude per item.
+
+- [ ] **Drag-pan for earlier data** (~3-5d) — `subscribeVisibleTimeRangeChange` + cursor-based history fetch; prepend bars
+- [ ] **Range-relative up/down line color** (~1d) — color the line based on first-vs-last sign in the current window
+- [ ] **OHLC / candle mode toggle** (~3-5d) — `/api/history` already accepts candle params; SymbolView needs a series-mode switch + segmented control
+- [ ] **Extended-hours overlay toggle** (~3-5d) — show pre/post-market bars merged with regular session
+- [ ] **Event markers** (~3-5d) — dividend / split / earnings dots on the time axis, read from `dividends_announced` + future earnings table
+- [ ] **Daily-bar density on long ranges** (~1-2d) — switch to weekly/monthly aggregation when 1Y/5Y/Max compresses below a pixel-per-bar threshold, OR upgrade to intraday data for short ranges
+- [ ] **Crosshair + hover readout (R-I1)** (~1-2d) — REVISIONS R-I1 has the design; lightweight-charts has the API
+- [ ] **On-chart cost line + buy/sell markers (U-3)** (~3-5d) — avg-cost horizontal line + per-trade dot/triangle, only for held symbols
+- [ ] **Tooltip / drag-to-zoom selection / Y-axis labels** (~3d total) — the polish items
+
+Total epic ≈ **3-4 weeks** (15-25 working days). Schedule as v1.5's first
+named epic. NOT to be scattered across M3/M4 — keep it coherent so the chart
+goes from "toy" to "tool" in one focused stretch.
 
 ---
 
@@ -91,6 +110,7 @@ Still open:
 - ❓ **Home today-% denominator excludes failed quotes** (2026-05-17) — `getHomeSummary` computes today % as `Σ todayPl / Σ qty × prevClose`, both sums skipping symbols whose quote fetch failed. The percent stays correct over the _known_ portion, but a 429 on one row silently shrinks both numerator and denominator. Acceptable for M2 (failed-quote banner tells operator which symbols are missing). M3 fix: append "Today % excludes N symbol(s)" to the failed-quote banner copy + show a stale-data indicator in the hero.
 - ❓ **Home quote-fetch concurrency cap** (2026-05-17) — `Promise.allSettled` on `getQuote` per held symbol with no cap. Fine for the typical household (1-10 symbols) but a 50+ symbol holder will fan out 50 parallel yahoo requests and trip 429. M3 fix: cap at 8 (`p-limit` or hand-rolled) OR migrate to a batched `quote.batch(symbols[])` endpoint per INTERACTION_SPEC §3.3.
 - ❓ **TabBar height as a token** (2026-05-17) — TabBar height (`bottom-24` on TradeButton, `pb-24` on (app)/layout) is a magic Tailwind utility duplicated across files. Extract `--tabbar-h` CSS var in `styles.css` (with `env(safe-area-inset-bottom)` accounted for) so a future TabBar resize doesn't require touching N files. Low priority — M3 cleanup.
+- ❓ **Mobile chart horizontal page scroll bug** (2026-05-18, **M3 quick-fix candidate**) — On `/s/[symbol]` mobile viewport, dragging the lightweight-charts canvas can sometimes scroll the underlying page horizontally instead of (or in addition to) panning the chart. Likely cause: chart container missing `touch-action: pan-y` or `overscroll-behavior-x: none`. Carved OUT of the v1.5 Chart polish epic because it's a real interaction bug, not a missing feature. Target: M3 week 1, ~30 min investigation + fix.
 
 ## decision-log conventions
 
