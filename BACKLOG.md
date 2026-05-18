@@ -10,33 +10,29 @@
 
 ## ✓ Done — M1 "See a stock" (closed 2026-05-17, tag `v0.M1`)
 
-All 12 deliverables shipped and verified in prod on operator's real device.
+All 12 deliverables shipped and verified in prod. See [`STATUS.md`](STATUS.md).
+
+## ✓ Done — M2 "Record my first trade" (closed 2026-05-18, tag `v0.M2`)
+
+All 10 deliverables shipped and verified in prod on operator's real device.
+Operator can now record BUY/SELL trades + see aggregated holdings + delete-with-undo.
 See [`STATUS.md`](STATUS.md) for the closing checklist.
 
-## P0 — M2 "Record my first trade" (current sprint, see MVP_PLAN §3)
-
-- [x] Auto-create default "Me" profile on first login if none exists
-- [x] Settings sub-page for account create (no full Profile editor yet)
-- [x] `lib/portfolio/positions.ts` — TS wrappers around `get_positions` / `get_my_position` / `get_net_worth`
-- [x] `app/api/transactions/route.ts` (POST/GET) + `lib/api/mutations/transactions.ts`
-- [x] TradeSheet component (BUY/SELL only)
-- [x] MyPosition aggregated card on SymbolDetail (U-1)
-- [x] Minimal Home tab at `/` (net worth hero + positions table)
-- [x] 2-tab TabBar (Home + Settings)
-- [x] Toast + Undo for trade delete (sonner)
-- [x] Playwright e2e: buy → see position with correct math
-
-## P1 — M3 "Watchlist + family" (next, see MVP_PLAN §4)
+## P0 — M3 "Watchlist + family" (current sprint, see MVP_PLAN §4)
 
 - [ ] Multi-profile UI (R-P0..P3 minus PIN): ProfilesList in Settings · Add/Edit/Delete · ProfileSwitcher (mac sidebar chip + ios sheet) · profile color chrome
-- [ ] Trade Sheet profile-attributed header (R-P3)
+- [ ] Trade Sheet profile-attributed header (R-P3) — replace M2's hard-coded mint dot with `var(--p-N)` of the cookie-resolved current profile
 - [ ] Watchlist CRUD: create/rename/delete lists; add/remove items; reorder via dnd-kit
 - [ ] Home WatchlistStrip (R-N1 #5)
 - [ ] WatchlistFull page at `/watchlists/[id]`
 - [ ] MarketStatusStrip on Home (R-N1 #2) — fully closes U-2
 - [ ] ⌘K search palette (R-I5; holdings + market sections)
+- [ ] **M2-deferred infrastructure** (must land somewhere in M3 — see ❓ section below):
+  - TanStack QueryClient + `lib/api/queryKeys.ts` + `useProfileScopedQuery` / `useProfileMutation` wrappers + central `invalidateAfterTxnMutation` cascade helper (closes the 5-sub-task ❓)
+  - Cookie-resolved `getCurrentProfileId()` (read-only, no bootstrap) + verify `__all__` write-guard fires in every mutation route
+  - Migrate AccountCreateForm + TradeSheet from plain fetch to useMutation
 
-## P2 — M4 "Complete v1" (see MVP_PLAN §5)
+## P1 — M4 "Complete v1" (see MVP_PLAN §5)
 
 - [ ] Market tab 4 sub-tabs: Overview · Stocks · ETF · News (Sectors+Movers placeholders)
 - [ ] MultiLineComparisonChart (R-N3)
