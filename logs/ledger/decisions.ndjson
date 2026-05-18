@@ -18,3 +18,4 @@
 {"ts":"2026-05-18T02:05:50Z","by":"sprint-next","kind":"deliverable","summary":"M2-4 /api/transactions POST+GET + plain mutation wrappers","commit":"cd75946","files":4}
 {"ts":"2026-05-18T02:31:33Z","by":"sprint-next","kind":"deliverable","summary":"M2-5 TradeSheet (BUY/SELL) + sticky CTA on SymbolDetail; first vaul+RHF use","commit":"ab74aba","files":7}
 {"ts":"2026-05-18T02:42:31Z","by":"sprint-next","kind":"deliverable","summary":"M2-6 MyPosition aggregated card on SymbolDetail (U-1); closes MVP §3 exit-criteria formula","commit":"8ca1c9a","files":4}
+{"ts":"2026-05-18T03:15:36Z","by":"sprint-next","kind":"deliverable","summary":"M2-7 Minimal Home tab (NetWorthHero + PositionsTable + EmptyHome)","commit":"a15b828","files":9}
