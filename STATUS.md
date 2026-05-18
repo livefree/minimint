@@ -16,7 +16,7 @@ Vertical slice deliverables:
 - [x] MyPosition aggregated card on SymbolDetail (U-1) (`8ca1c9a`)
 - [x] Minimal Home tab at `/` (net worth hero + positions table) (`a15b828`)
 - [x] 2-tab TabBar (Home + Settings) (`d959964`)
-- [ ] Toast + Undo for trade delete (sonner)
+- [x] Toast + Undo for trade delete (sonner) (`ddaedbe`)
 - [ ] Playwright e2e: buy → see position with correct math
 
 **Exit criteria**: operator records a real buy → MyPosition shows correct avg cost + today P/L matching `qty × (price − prev_close)`.

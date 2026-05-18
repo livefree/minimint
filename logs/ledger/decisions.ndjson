@@ -20,3 +20,4 @@
 {"ts":"2026-05-18T02:42:31Z","by":"sprint-next","kind":"deliverable","summary":"M2-6 MyPosition aggregated card on SymbolDetail (U-1); closes MVP §3 exit-criteria formula","commit":"8ca1c9a","files":4}
 {"ts":"2026-05-18T03:15:36Z","by":"sprint-next","kind":"deliverable","summary":"M2-7 Minimal Home tab (NetWorthHero + PositionsTable + EmptyHome)","commit":"a15b828","files":9}
 {"ts":"2026-05-18T03:35:42Z","by":"sprint-next","kind":"deliverable","summary":"M2-8 2-tab TabBar (Home + Settings) in (app) layout","commit":"d959964","files":5}
+{"ts":"2026-05-18T05:13:21Z","by":"sprint-next","kind":"deliverable","summary":"M2-9 soft-delete + toast-undo for transactions (first sonner use); RecentTradesList on SymbolDetail","commit":"ddaedbe","files":9}

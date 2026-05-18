@@ -23,7 +23,7 @@ See [`STATUS.md`](STATUS.md) for the closing checklist.
 - [x] MyPosition aggregated card on SymbolDetail (U-1)
 - [x] Minimal Home tab at `/` (net worth hero + positions table)
 - [x] 2-tab TabBar (Home + Settings)
-- [ ] Toast + Undo for trade delete (sonner)
+- [x] Toast + Undo for trade delete (sonner)
 - [ ] Playwright e2e: buy → see position with correct math
 
 ## P1 — M3 "Watchlist + family" (next, see MVP_PLAN §4)
