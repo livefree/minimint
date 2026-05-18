@@ -15,7 +15,7 @@ Vertical slice deliverables:
 - [x] TradeSheet component (BUY/SELL only) (`ab74aba`)
 - [x] MyPosition aggregated card on SymbolDetail (U-1) (`8ca1c9a`)
 - [x] Minimal Home tab at `/` (net worth hero + positions table) (`a15b828`)
-- [ ] 2-tab TabBar (Home + Settings)
+- [x] 2-tab TabBar (Home + Settings) (`d959964`)
 - [ ] Toast + Undo for trade delete (sonner)
 - [ ] Playwright e2e: buy → see position with correct math
 

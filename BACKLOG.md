@@ -22,7 +22,7 @@ See [`STATUS.md`](STATUS.md) for the closing checklist.
 - [x] TradeSheet component (BUY/SELL only)
 - [x] MyPosition aggregated card on SymbolDetail (U-1)
 - [x] Minimal Home tab at `/` (net worth hero + positions table)
-- [ ] 2-tab TabBar (Home + Settings)
+- [x] 2-tab TabBar (Home + Settings)
 - [ ] Toast + Undo for trade delete (sonner)
 - [ ] Playwright e2e: buy → see position with correct math
 
