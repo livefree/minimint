@@ -16,3 +16,4 @@
 {"ts":"2026-05-18T01:41:51Z","by":"sprint-next","kind":"deliverable","summary":"M2-2 Settings sub-page for account create + POST /api/accounts","commit":"b4b0d9f","files":7}
 {"ts":"2026-05-18T01:52:19Z","by":"sprint-next","kind":"deliverable","summary":"M2-3 lib/portfolio/positions.ts TS wrappers (first decimal.js consumer)","commit":"3b32ae7","files":2}
 {"ts":"2026-05-18T02:05:50Z","by":"sprint-next","kind":"deliverable","summary":"M2-4 /api/transactions POST+GET + plain mutation wrappers","commit":"cd75946","files":4}
+{"ts":"2026-05-18T02:31:33Z","by":"sprint-next","kind":"deliverable","summary":"M2-5 TradeSheet (BUY/SELL) + sticky CTA on SymbolDetail; first vaul+RHF use","commit":"ab74aba","files":7}

@@ -19,7 +19,7 @@ See [`STATUS.md`](STATUS.md) for the closing checklist.
 - [x] Settings sub-page for account create (no full Profile editor yet)
 - [x] `lib/portfolio/positions.ts` — TS wrappers around `get_positions` / `get_my_position` / `get_net_worth`
 - [x] `app/api/transactions/route.ts` (POST/GET) + `lib/api/mutations/transactions.ts`
-- [ ] TradeSheet component (BUY/SELL only)
+- [x] TradeSheet component (BUY/SELL only)
 - [ ] MyPosition aggregated card on SymbolDetail (U-1)
 - [ ] Minimal Home tab at `/` (net worth hero + positions table)
 - [ ] 2-tab TabBar (Home + Settings)

@@ -12,7 +12,7 @@ Vertical slice deliverables:
 - [x] Settings sub-page for account create (no full Profile editor yet) (`b4b0d9f`)
 - [x] `lib/portfolio/positions.ts` — TS wrappers around `get_positions` / `get_my_position` / `get_net_worth` (`3b32ae7`)
 - [x] `app/api/transactions/route.ts` (POST/GET) + `lib/api/mutations/transactions.ts` (`cd75946`)
-- [ ] TradeSheet component (BUY/SELL only)
+- [x] TradeSheet component (BUY/SELL only) (`ab74aba`)
 - [ ] MyPosition aggregated card on SymbolDetail (U-1)
 - [ ] Minimal Home tab at `/` (net worth hero + positions table)
 - [ ] 2-tab TabBar (Home + Settings)
