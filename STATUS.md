@@ -10,7 +10,7 @@ Vertical slice deliverables:
 
 - [x] Auto-create default "Me" profile on first login if none exists (`b1db5ba`)
 - [x] Settings sub-page for account create (no full Profile editor yet) (`b4b0d9f`)
-- [ ] `lib/portfolio/positions.ts` — TS wrappers around `get_positions` / `get_my_position` / `get_net_worth`
+- [x] `lib/portfolio/positions.ts` — TS wrappers around `get_positions` / `get_my_position` / `get_net_worth` (`3b32ae7`)
 - [ ] `app/api/transactions/route.ts` (POST/GET) + `lib/api/mutations/transactions.ts`
 - [ ] TradeSheet component (BUY/SELL only)
 - [ ] MyPosition aggregated card on SymbolDetail (U-1)
