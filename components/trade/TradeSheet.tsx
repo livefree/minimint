@@ -222,8 +222,12 @@ export function TradeSheet({
           aria-describedby={undefined}
           className="bg-surface-1 text-text hairline-top fixed inset-x-0 bottom-0 z-50 flex max-h-[92vh] flex-col rounded-t-2xl focus:outline-none"
         >
-          <div className="bg-surface-3 mx-auto mt-2 h-1.5 w-10 rounded-full" />
-          <div className="mx-auto w-full max-w-md px-4 pt-4 pb-6">
+          <div className="bg-surface-3 mx-auto mt-2 h-1.5 w-10 shrink-0 rounded-full" />
+          {/* flex-1 + overflow-y-auto so the form scrolls inside the
+              drawer cap (max-h-[92vh]) on short viewports — without
+              this the Save button slides off the bottom of small
+              phones and becomes unclickable. */}
+          <div className="mx-auto w-full max-w-md flex-1 overflow-y-auto px-4 pt-4 pb-6">
             <Drawer.Title className="t-h">Record a trade</Drawer.Title>
             <Drawer.Description className="sr-only">
               Enter the symbol, quantity, price, fees, and account for a buy or sell.
