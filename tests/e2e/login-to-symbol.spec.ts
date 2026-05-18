@@ -21,6 +21,29 @@ const PW = process.env.E2E_PASSWORD ?? 'dev-test-pw';
 // 429 the upstream and produce flake. Sequential is plenty fast (~30s total).
 test.describe.configure({ mode: 'serial' });
 
+// Warm the routes the spec hits so first-time assertions aren't racing
+// Next dev mode's per-route cold compile (can spike to 15-20s on dev,
+// well past the default 5s expect timeout). Each warmup is best-effort
+// — failures are swallowed because the real tests will surface any
+// genuine 4xx/5xx behavior.
+test.beforeAll(async ({ request }) => {
+  await Promise.all([
+    request
+      .post('/api/auth/login', {
+        data: { password: 'warmup-not-real' },
+        failOnStatusCode: false,
+        timeout: 60_000,
+      })
+      .catch(() => undefined),
+    request
+      .get('/api/quote/AAPL', { failOnStatusCode: false, timeout: 60_000 })
+      .catch(() => undefined),
+    request
+      .get('/api/history/AAPL?range=1Y', { failOnStatusCode: false, timeout: 60_000 })
+      .catch(() => undefined),
+  ]);
+});
+
 test.describe('M1 · login → symbol', () => {
   test('unauthenticated / redirects to /login', async ({ page }) => {
     const res = await page.goto('/');
@@ -78,7 +101,7 @@ test.describe('M1 · login → symbol', () => {
     // Market state badge — one of the labels (.first() since "After hours"
     // can appear both in the main state line and in the extended-hours card)
     await expect(
-      page.getByText(/Market open|Market closed|Pre-market|After hours/).first()
+      page.getByText(/Market open|Market closed|Pre-market|After hours/).first(),
     ).toBeVisible();
 
     // Range chip row visible — proves SymbolView client island mounted
@@ -98,10 +121,7 @@ test.describe('M1 · login → symbol', () => {
 
     await page.getByRole('button', { name: '1M' }).click();
     // Range chip becomes active (aria-pressed=true)
-    await expect(page.getByRole('button', { name: '1M' })).toHaveAttribute(
-      'aria-pressed',
-      'true'
-    );
+    await expect(page.getByRole('button', { name: '1M' })).toHaveAttribute('aria-pressed', 'true');
     // Chart canvas still there
     await expect(page.locator('canvas').first()).toBeVisible();
   });
