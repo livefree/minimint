@@ -1,10 +1,23 @@
 /**
- * Authenticated app shell — owns TabBar / Sidebar / NavHeader.
+ * Authenticated app shell — owns TabBar.
  * Spec: INTERACTION_SPEC.md §1.1 frame structure.
  *
- * Current state: stub.
+ * M2: 2-tab bottom bar (Home + Settings). M3 promotes to the 4-tab
+ * IA (Home / Portfolio / Market / Me) per R-N0, with sidebar reflow
+ * on mac per §1.1.
+ *
+ * `pb-24` (≈ 96px) on the content wrapper keeps the last row of any
+ * page above the TabBar's safe area. Sticky bottom CTAs on individual
+ * pages (e.g. TradeButton on SymbolDetail) handle their own offset.
  */
 
+import { TabBar } from '@/components/layout/TabBar';
+
 export default function AppLayout({ children }: { children: React.ReactNode }) {
-  return <div className="min-h-screen bg-bg text-text">{children}</div>;
+  return (
+    <div className="bg-bg text-text min-h-screen">
+      <div className="pb-24">{children}</div>
+      <TabBar />
+    </div>
+  );
 }

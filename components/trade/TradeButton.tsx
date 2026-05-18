@@ -27,9 +27,9 @@ export function TradeButton({ symbol, accounts, lastPrice }: Props): React.React
 
   return (
     <>
-      {/* Sticky bottom rail. Page already has bottom padding from
-          the SymbolView spacing; this slips in beneath the chart. */}
-      <div className="sticky bottom-4 z-30 flex justify-center pt-6">
+      {/* Sticky bottom rail. Offset above the (app) layout TabBar
+          (~64-72px tall + safe area) so the CTA never sits under it. */}
+      <div className="sticky bottom-24 z-30 flex justify-center pt-6">
         <button
           type="button"
           onClick={() => setOpen(true)}
