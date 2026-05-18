@@ -15,3 +15,4 @@
 {"ts":"2026-05-18T00:22:56Z","by":"sprint-next","kind":"deliverable","summary":"M2-1 auto-create default Me profile on first login","commit":"b1db5ba","files":6}
 {"ts":"2026-05-18T01:41:51Z","by":"sprint-next","kind":"deliverable","summary":"M2-2 Settings sub-page for account create + POST /api/accounts","commit":"b4b0d9f","files":7}
 {"ts":"2026-05-18T01:52:19Z","by":"sprint-next","kind":"deliverable","summary":"M2-3 lib/portfolio/positions.ts TS wrappers (first decimal.js consumer)","commit":"3b32ae7","files":2}
+{"ts":"2026-05-18T02:05:50Z","by":"sprint-next","kind":"deliverable","summary":"M2-4 /api/transactions POST+GET + plain mutation wrappers","commit":"cd75946","files":4}
