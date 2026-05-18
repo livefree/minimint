@@ -1,20 +1,26 @@
 /**
- * Temporary M1 home. The real Home tab lands in M2 (per MVP_PLAN §3).
- * Until then this is a tiny "ticker lookup" form so the operator can
- * navigate to any /s/[symbol] from one URL, plus a small grid of demos.
+ * Home — M2 minimal layout.
+ *
+ * Server component. Resolves current profile, pulls home summary
+ * (positions + parallel live quotes), and either renders the empty
+ * onboarding shape or the NetWorthHero + PositionsTable + a sticky
+ * lookup affordance.
+ *
+ * Future M3 sections (MarketStatusStrip, WatchlistStrip, Upcoming
+ * Events) plug in below the positions table when the corresponding
+ * BACKLOG items land.
  */
 
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { EmptyHome } from '@/components/home/EmptyHome';
+import { LookupForm } from '@/components/home/LookupForm';
+import { NetWorthHero } from '@/components/home/NetWorthHero';
+import { PositionsTable } from '@/components/home/PositionsTable';
+import { getHomeSummary } from '@/lib/home/summary';
+import { ensureDefaultProfile } from '@/lib/profiles/bootstrap';
 
-const FEATURED = ['AAPL', 'MSFT', 'NVDA', 'SPY', 'VOO', 'GOOGL'] as const;
-
-async function go(formData: FormData): Promise<void> {
-  'use server';
-  const raw = String(formData.get('symbol') ?? '').trim().toUpperCase();
-  if (!raw) return;
-  redirect(`/s/${encodeURIComponent(raw)}`);
-}
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
 
 async function signOut(): Promise<void> {
   'use server';
@@ -25,58 +31,35 @@ async function signOut(): Promise<void> {
   redirect('/login');
 }
 
-export default function HomePage(): React.ReactElement {
+export default async function HomePage(): Promise<React.ReactElement> {
+  const { profile } = await ensureDefaultProfile();
+  const summary = await getHomeSummary(profile.id);
+  const hasPositions = summary.bySymbol.length > 0;
+
   return (
-    <main className="min-h-screen bg-bg text-text">
-      <div className="mx-auto max-w-3xl space-y-8 px-4 py-10 sm:px-6">
-        <header className="space-y-2">
+    <main className="bg-bg text-text min-h-screen">
+      <div className="mx-auto max-w-3xl space-y-6 px-4 py-8 sm:px-6">
+        <header className="flex items-baseline justify-between">
           <h1 className="t-display-2">mini-mint</h1>
-          <p className="t-aux text-text-2">
-            M1 · look up any US-listed symbol. Real Home lands in M2.
-          </p>
-        </header>
-
-        <form action={go} className="flex gap-2">
-          <input
-            name="symbol"
-            placeholder="AAPL"
-            autoCapitalize="characters"
-            autoCorrect="off"
-            spellCheck={false}
-            className="t-row w-full rounded-md bg-surface-2 px-3 py-2.5 text-text outline-none ring-1 ring-transparent transition focus:ring-mint"
-          />
-          <button
-            type="submit"
-            className="t-row rounded-md bg-mint px-4 font-semibold text-bg"
-          >
-            Open
-          </button>
-        </form>
-
-        <section className="space-y-2">
-          <h2 className="t-meta text-text-3">Try one</h2>
-          <ul className="grid grid-cols-3 gap-2 sm:grid-cols-6">
-            {FEATURED.map((sym) => (
-              <li key={sym}>
-                <Link
-                  href={`/s/${sym}`}
-                  className="t-row block rounded-md bg-surface-1 px-3 py-2.5 text-center hairline-top transition hover:bg-surface-2"
-                >
-                  {sym}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <footer className="t-meta text-text-3">
-          Signed in.{' '}
-          <form action={signOut} className="inline">
+          <form action={signOut} className="t-meta text-text-3">
             <button type="submit" className="underline">
               Sign out
             </button>
           </form>
-        </footer>
+        </header>
+
+        {hasPositions ? (
+          <>
+            <NetWorthHero summary={summary} />
+            <PositionsTable summary={summary} />
+            <section className="space-y-2">
+              <h3 className="t-meta text-text-3">LOOK UP A STOCK</h3>
+              <LookupForm />
+            </section>
+          </>
+        ) : (
+          <EmptyHome />
+        )}
       </div>
     </main>
   );

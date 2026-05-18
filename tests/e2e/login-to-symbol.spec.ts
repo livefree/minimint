@@ -1,12 +1,13 @@
 /**
- * M1 headline e2e: the full path from unauth to seeing a real stock.
+ * Headline e2e: login → home → symbol detail.
  *
  * Coverage:
  *   - Unauthenticated request to /  → 307 → /login?next=/
  *   - Wrong password  → inline WRONG_PASSWORD copy visible
  *   - Right password  → cookie set, navigate to /
- *   - Home renders ticker grid
- *   - Click AAPL  → /s/AAPL renders hero with name + price + chart
+ *   - Home renders (M2: NetWorthHero+PositionsTable when held, else EmptyHome;
+ *     LookupForm is present in both shapes so e2e doesn't depend on DB state)
+ *   - LookupForm submit → /s/AAPL renders hero with name + price + chart
  *
  * Runs against `pnpm dev` (see playwright.config.ts webServer block).
  * Requires .env.local with DATABASE_URL + APP_PASSWORD=dev-test-pw +
@@ -73,12 +74,13 @@ test.describe('M1 · login → symbol', () => {
     await signIn.click();
     await expect(page).toHaveURL('/');
     await expect(page.getByRole('heading', { name: /mini-mint/i })).toBeVisible();
-    await expect(page.getByText(/look up any us-listed symbol/i)).toBeVisible();
-    // ticker grid
-    await expect(page.getByRole('link', { name: 'AAPL' })).toBeVisible();
+    // LookupForm is present in both EmptyHome and populated-home shapes,
+    // so this assertion doesn't depend on DB state.
+    await expect(page.getByLabel(/^symbol$/i)).toBeVisible();
+    await expect(page.getByRole('button', { name: /^open$/i })).toBeVisible();
   });
 
-  test('clicking AAPL opens /s/AAPL with hero and chart', async ({ page }) => {
+  test('lookup AAPL opens /s/AAPL with hero and chart', async ({ page }) => {
     // login first
     await page.goto('/login');
     await page.getByLabel('Password').pressSequentially(PW);
@@ -88,7 +90,8 @@ test.describe('M1 · login → symbol', () => {
     await signIn.click();
     await expect(page).toHaveURL('/');
 
-    await page.getByRole('link', { name: 'AAPL' }).click();
+    await page.getByLabel(/^symbol$/i).fill('AAPL');
+    await page.getByRole('button', { name: /^open$/i }).click();
     await expect(page).toHaveURL('/s/AAPL');
 
     // Hero — symbol + name
@@ -117,7 +120,10 @@ test.describe('M1 · login → symbol', () => {
     const signIn = page.getByRole('button', { name: /sign in/i });
     await expect(signIn).toBeEnabled();
     await signIn.click();
-    await page.getByRole('link', { name: 'AAPL' }).click();
+    await expect(page).toHaveURL('/');
+    await page.getByLabel(/^symbol$/i).fill('AAPL');
+    await page.getByRole('button', { name: /^open$/i }).click();
+    await expect(page).toHaveURL('/s/AAPL');
 
     await page.getByRole('button', { name: '1M' }).click();
     // Range chip becomes active (aria-pressed=true)
