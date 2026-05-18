@@ -21,6 +21,9 @@ import { notFound } from 'next/navigation';
 import { getQuote, getHistory } from '@/lib/market';
 import { upsertQuote, upsertPriceBars } from '@/lib/market/cache';
 import { MarketDataError, type Quote } from '@/lib/market/types';
+import { listAccountsForProfile } from '@/lib/accounts/listForProfile';
+import { ensureDefaultProfile } from '@/lib/profiles/bootstrap';
+import { TradeButton } from '@/components/trade/TradeButton';
 import { SymbolView } from './SymbolView';
 
 export const dynamic = 'force-dynamic';
@@ -32,9 +35,7 @@ interface PageProps {
   params: Promise<{ symbol: string }>;
 }
 
-export default async function SymbolDetailPage({
-  params,
-}: PageProps): Promise<React.ReactElement> {
+export default async function SymbolDetailPage({ params }: PageProps): Promise<React.ReactElement> {
   const { symbol: raw } = await params;
   const symbol = decodeURIComponent(raw).toUpperCase();
   if (!SYMBOL_RE.test(symbol)) notFound();
@@ -48,9 +49,7 @@ export default async function SymbolDetailPage({
   }
 
   // Fire-and-forget cache write
-  upsertQuote(quote).catch((e) =>
-    console.error('[s/page] cache write failed:', e)
-  );
+  upsertQuote(quote).catch((e) => console.error('[s/page] cache write failed:', e));
 
   // Initial 1Y history — load in parallel; degrade gracefully if it fails
   let initialBars: { date: string; close: number }[] = [];
@@ -61,17 +60,24 @@ export default async function SymbolDetailPage({
       close: b.close,
     }));
     upsertPriceBars(h.canonicalSymbol, h.bars).catch((e) =>
-      console.error('[s/page] history write failed:', e)
+      console.error('[s/page] history write failed:', e),
     );
   } catch (e) {
     console.warn('[s/page] history fetch failed; chart will show empty:', e);
   }
 
+  // Resolve current profile (auto-bootstrap on first visit) + load
+  // accounts so the TradeSheet's account picker renders without an
+  // extra client-side fetch.
+  const { profile } = await ensureDefaultProfile();
+  const accounts = await listAccountsForProfile(profile.id);
+
   return (
-    <main className="min-h-screen bg-bg text-text">
+    <main className="bg-bg text-text min-h-screen">
       <div className="mx-auto max-w-3xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
         <Hero quote={quote} />
         <SymbolView symbol={symbol} initialBars={initialBars} />
+        <TradeButton symbol={symbol} accounts={accounts} lastPrice={quote.price} />
       </div>
     </main>
   );
@@ -80,8 +86,7 @@ export default async function SymbolDetailPage({
 // ─── Hero (server component) ─────────────────────────────────────────────
 
 function Hero({ quote }: { quote: Quote }): React.ReactElement {
-  const change =
-    quote.prevClose !== null ? quote.price - quote.prevClose : null;
+  const change = quote.prevClose !== null ? quote.price - quote.prevClose : null;
   const changePct =
     change !== null && quote.prevClose !== null && quote.prevClose !== 0
       ? (change / quote.prevClose) * 100
@@ -105,9 +110,7 @@ function Hero({ quote }: { quote: Quote }): React.ReactElement {
           {formatPrice(quote.price, quote.currency)}
         </div>
         {change !== null && (
-          <div
-            className={`t-row tabular ${up ? 'text-up' : 'text-down'}`}
-          >
+          <div className={`t-row tabular ${up ? 'text-up' : 'text-down'}`}>
             {up ? '+' : ''}
             {formatPrice(change, quote.currency, true)}
             {changePct !== null && (
@@ -120,8 +123,7 @@ function Hero({ quote }: { quote: Quote }): React.ReactElement {
           </div>
         )}
         <div className="t-meta text-text-3">
-          {marketStateLabel(quote.marketState)} · As of{' '}
-          {formatTime(quote.marketTime)} ET
+          {marketStateLabel(quote.marketState)} · As of {formatTime(quote.marketTime)} ET
         </div>
       </div>
 
@@ -145,20 +147,16 @@ function ExtendedHoursLine({ quote }: { quote: Quote }): React.ReactElement {
   const up = (change ?? 0) >= 0;
   const label = isPre ? 'Pre-market' : 'After hours';
   return (
-    <div className="rounded-md bg-surface-1 px-3 py-2 t-aux text-text-2 hairline-top">
+    <div className="bg-surface-1 t-aux text-text-2 hairline-top rounded-md px-3 py-2">
       <span className="text-text-3 t-meta">{label}</span>{' '}
-      <span className="tabular text-text">
-        {formatPrice(price, quote.currency)}
-      </span>{' '}
+      <span className="tabular text-text">{formatPrice(price, quote.currency)}</span>{' '}
       {change !== null && (
         <span className={`tabular ${up ? 'text-up' : 'text-down'}`}>
           {up ? '+' : ''}
           {change.toFixed(2)}
         </span>
       )}
-      {at && (
-        <span className="text-text-3 t-meta"> · {formatTime(at)} ET</span>
-      )}
+      {at && <span className="text-text-3 t-meta"> · {formatTime(at)} ET</span>}
     </div>
   );
 }
