@@ -25,7 +25,9 @@ import { listAccountsForProfile } from '@/lib/accounts/listForProfile';
 import { ensureDefaultProfile } from '@/lib/profiles/bootstrap';
 import { aggregateMyPosition } from '@/lib/portfolio/aggregate';
 import { getMyPosition } from '@/lib/portfolio/positions';
+import { listTransactionsForSymbol } from '@/lib/transactions/listForSymbol';
 import { MyPositionCard } from '@/components/symbol/MyPositionCard';
+import { RecentTradesList } from '@/components/symbol/RecentTradesList';
 import { TradeButton } from '@/components/trade/TradeButton';
 import { SymbolView } from './SymbolView';
 
@@ -73,9 +75,10 @@ export default async function SymbolDetailPage({ params }: PageProps): Promise<R
   // accounts so the TradeSheet's account picker renders without an
   // extra client-side fetch.
   const { profile } = await ensureDefaultProfile();
-  const [accounts, myPositionRows] = await Promise.all([
+  const [accounts, myPositionRows, recentTrades] = await Promise.all([
     listAccountsForProfile(profile.id),
     getMyPosition(profile.id, quote.canonicalSymbol),
+    listTransactionsForSymbol(profile.id, quote.canonicalSymbol),
   ]);
   const aggregate = aggregateMyPosition(myPositionRows, quote.price, quote.prevClose);
 
@@ -84,6 +87,7 @@ export default async function SymbolDetailPage({ params }: PageProps): Promise<R
       <div className="mx-auto max-w-3xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
         <Hero quote={quote} />
         {aggregate && <MyPositionCard aggregate={aggregate} />}
+        <RecentTradesList trades={recentTrades} />
         <SymbolView symbol={symbol} initialBars={initialBars} />
         <TradeButton symbol={symbol} accounts={accounts} lastPrice={quote.price} />
       </div>

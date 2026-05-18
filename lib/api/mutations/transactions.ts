@@ -119,3 +119,35 @@ export async function listTransactions(
   }
   return body.transactions;
 }
+
+/**
+ * DELETE /api/transactions/[id]. Soft-delete (sets deleted_at).
+ * Idempotent. Throws TransactionApiError on non-2xx.
+ */
+export async function deleteTransaction(id: string): Promise<void> {
+  const res = await fetch(`/api/transactions/${encodeURIComponent(id)}`, {
+    method: 'DELETE',
+  });
+  if (!res.ok) {
+    const body = (await res.json().catch(() => ({}))) as { error?: ApiError };
+    const err = body.error ?? { code: 'UNKNOWN', message: 'Unknown error' };
+    throw new TransactionApiError(err.code, err.message, res.status);
+  }
+}
+
+/**
+ * PATCH /api/transactions/[id] { restore: true }. Clears deleted_at,
+ * un-doing a prior soft-delete. Idempotent.
+ */
+export async function restoreTransaction(id: string): Promise<void> {
+  const res = await fetch(`/api/transactions/${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ restore: true }),
+  });
+  if (!res.ok) {
+    const body = (await res.json().catch(() => ({}))) as { error?: ApiError };
+    const err = body.error ?? { code: 'UNKNOWN', message: 'Unknown error' };
+    throw new TransactionApiError(err.code, err.message, res.status);
+  }
+}

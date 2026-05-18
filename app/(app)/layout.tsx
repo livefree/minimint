@@ -12,12 +12,17 @@
  */
 
 import { TabBar } from '@/components/layout/TabBar';
+import { ToasterMount } from '@/components/layout/ToasterMount';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="bg-bg text-text min-h-screen">
       <div className="pb-24">{children}</div>
       <TabBar />
+      {/* sonner Toaster — single mount for the whole (app) tree, via
+          a 'use client' wrapper (see ToasterMount). /login has no
+          Toaster in M2; promote to root app/layout if that changes. */}
+      <ToasterMount />
     </div>
   );
 }
