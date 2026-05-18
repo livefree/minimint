@@ -22,3 +22,4 @@
 {"ts":"2026-05-18T03:35:42Z","by":"sprint-next","kind":"deliverable","summary":"M2-8 2-tab TabBar (Home + Settings) in (app) layout","commit":"d959964","files":5}
 {"ts":"2026-05-18T05:13:21Z","by":"sprint-next","kind":"deliverable","summary":"M2-9 soft-delete + toast-undo for transactions (first sonner use); RecentTradesList on SymbolDetail","commit":"ddaedbe","files":9}
 {"ts":"2026-05-18T05:28:49Z","by":"sprint-next","kind":"deliverable","summary":"M2-10 e2e buy-flow vertical-slice spec; surfaces+fixes TradeSheet drawer scroll bug on small viewports","commit":"80b1a16","files":2}
+{"ts":"2026-05-18T07:36:16Z","by":"milestone-close","kind":"milestone","milestone":"M2","commit":"cd82529","tag":"v0.M2"}
