@@ -17,7 +17,7 @@ Vertical slice deliverables:
 - [x] Minimal Home tab at `/` (net worth hero + positions table) (`a15b828`)
 - [x] 2-tab TabBar (Home + Settings) (`d959964`)
 - [x] Toast + Undo for trade delete (sonner) (`ddaedbe`)
-- [ ] Playwright e2e: buy → see position with correct math
+- [x] Playwright e2e: buy → see position with correct math (`80b1a16`)
 
 **Exit criteria**: operator records a real buy → MyPosition shows correct avg cost + today P/L matching `qty × (price − prev_close)`.
 
