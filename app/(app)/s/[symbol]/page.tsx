@@ -23,6 +23,9 @@ import { upsertQuote, upsertPriceBars } from '@/lib/market/cache';
 import { MarketDataError, type Quote } from '@/lib/market/types';
 import { listAccountsForProfile } from '@/lib/accounts/listForProfile';
 import { ensureDefaultProfile } from '@/lib/profiles/bootstrap';
+import { aggregateMyPosition } from '@/lib/portfolio/aggregate';
+import { getMyPosition } from '@/lib/portfolio/positions';
+import { MyPositionCard } from '@/components/symbol/MyPositionCard';
 import { TradeButton } from '@/components/trade/TradeButton';
 import { SymbolView } from './SymbolView';
 
@@ -70,12 +73,17 @@ export default async function SymbolDetailPage({ params }: PageProps): Promise<R
   // accounts so the TradeSheet's account picker renders without an
   // extra client-side fetch.
   const { profile } = await ensureDefaultProfile();
-  const accounts = await listAccountsForProfile(profile.id);
+  const [accounts, myPositionRows] = await Promise.all([
+    listAccountsForProfile(profile.id),
+    getMyPosition(profile.id, quote.canonicalSymbol),
+  ]);
+  const aggregate = aggregateMyPosition(myPositionRows, quote.price, quote.prevClose);
 
   return (
     <main className="bg-bg text-text min-h-screen">
       <div className="mx-auto max-w-3xl space-y-6 px-4 py-6 sm:px-6 sm:py-8">
         <Hero quote={quote} />
+        {aggregate && <MyPositionCard aggregate={aggregate} />}
         <SymbolView symbol={symbol} initialBars={initialBars} />
         <TradeButton symbol={symbol} accounts={accounts} lastPrice={quote.price} />
       </div>
