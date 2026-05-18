@@ -20,7 +20,7 @@ See [`STATUS.md`](STATUS.md) for the closing checklist.
 - [x] `lib/portfolio/positions.ts` — TS wrappers around `get_positions` / `get_my_position` / `get_net_worth`
 - [x] `app/api/transactions/route.ts` (POST/GET) + `lib/api/mutations/transactions.ts`
 - [x] TradeSheet component (BUY/SELL only)
-- [ ] MyPosition aggregated card on SymbolDetail (U-1)
+- [x] MyPosition aggregated card on SymbolDetail (U-1)
 - [ ] Minimal Home tab at `/` (net worth hero + positions table)
 - [ ] 2-tab TabBar (Home + Settings)
 - [ ] Toast + Undo for trade delete (sonner)
